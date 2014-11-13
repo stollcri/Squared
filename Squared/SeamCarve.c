@@ -45,7 +45,7 @@ static inline int min3(int a, int b, int c)
 
 #pragma mark - pixel energy
 
-static int getPixelEnergySobel(char *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel)
+static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel)
 {
     int imageByteWidth = imageWidth * pixelDepth;
     int currentCol = currentPixel % imageByteWidth;
@@ -160,7 +160,7 @@ static void fillSeamMatrixHorizontal(int *imageEnergies, int *imageSeams, int im
     }
 }
 
-static void cutSeamHorizontal(int *imageEnergies, int *imageSeams, char *imageColor, int imageWidth, int imageHeight)
+static void cutSeamHorizontal(int *imageEnergies, int *imageSeams, unsigned char *imageColor, int imageWidth, int imageHeight)
 {
     int *path = (int*)malloc((unsigned long)imageHeight * sizeof(int));
     
@@ -301,7 +301,7 @@ static void fillSeamMatrixVertical(int *imageEnergies, int *imageSeams, int imag
     }
 }
 
-static void cutSeamVertical(int *imageEnergies, int *imageSeams, char *imageColor, int imageWidth, int imageHeight)
+static void cutSeamVertical(int *imageEnergies, int *imageSeams, unsigned char *imageColor, int imageWidth, int imageHeight)
 {
     int *path = (int*)malloc((unsigned long)imageHeight * sizeof(int));
     
@@ -398,13 +398,13 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, char *imageColo
 
 #pragma mark -
 
-void carveSeams(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgWidth, int tImgHeight, int goHorizontal)
+void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int goHorizontal)
 {
     int bytesPerPixel = 4;
     
     int *newImageEnergy = (int*)malloc((unsigned long)sImgWidth * (unsigned long)sImgHeight * sizeof(int));
     int *newImageSeams = (int*)malloc((unsigned long)sImgWidth * (unsigned long)sImgHeight * sizeof(int));
-    char *newImageColor = (char*)malloc((unsigned long)sImgWidth * (unsigned long)sImgHeight * (unsigned long)bytesPerPixel * sizeof(char));
+    unsigned char *newImageColor = (unsigned char*)malloc((unsigned long)sImgWidth * (unsigned long)sImgHeight * (unsigned long)bytesPerPixel * sizeof(unsigned char));
     
     int colorPixelLocation = 0;
     int bwPixelLocation = 0;
@@ -467,12 +467,12 @@ void carveSeams(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgW
 
 #pragma mark - public functions
 
-void carveSeamsHorizontal(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgWidth, int tImgHeight)
+void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight)
 {
     carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, 1);
 }
 
-void carveSeamsVertical(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgWidth, int tImgHeight)
+void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight)
 {
     carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, 0);
 }

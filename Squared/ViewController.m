@@ -15,9 +15,16 @@
 
 @implementation ViewController
 
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+    
+    [self.squareButton setEnabled:NO];
+    [self.saveButton setEnabled:NO];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -36,6 +43,7 @@
     
     if (img) {
         self.imageView.image = img;
+        [self.squareButton setEnabled:YES];
     }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
@@ -54,7 +62,7 @@
     NSUInteger imgByteCount = imgPixelCount * bytesPerPixel;
     
     // char not int -- to get each channel instead of the entire pixel
-    char *rawPixels = (char*)calloc(imgByteCount, sizeof(char));
+    unsigned char *rawPixels = (unsigned char*)calloc(imgByteCount, sizeof(unsigned char));
     NSUInteger bytesPerRow = bytesPerPixel * imgWidth;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(rawPixels, imgWidth, imgHeight,
@@ -73,8 +81,8 @@
         return;
     }
     
-    unsigned int imgWidthInt = imgWidth;
-    unsigned int imgHeightInt = imgHeight;
+    unsigned int imgWidthInt = (unsigned int)imgWidth;
+    unsigned int imgHeightInt = (unsigned int)imgHeight;
     unsigned int imgNewWidth = 0;
     unsigned int imgNewHeight = 0;
     if (imgWidthInt > imgHeightInt) {
@@ -88,7 +96,7 @@
     }
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
-    char *rawResults = (char*)calloc(imgNewByteCount, sizeof(char));
+    unsigned char *rawResults = (unsigned char*)calloc(imgNewByteCount, sizeof(unsigned char));
     
     // TODO: use blocks to get a background thread
     if (imgWidthInt > imgHeightInt) {
@@ -107,6 +115,13 @@
     free(rawResults);
     
     if (newContext) {
+        //
+        // TODO: Fix this error
+        // CASMBA.local Squared[86652] <Error>: copy_read_only: vm_copy failed: status 1.
+        // it seems to happen after 4 or 5 runs of the algorithm
+        //
+        // http://stackoverflow.com/questions/13100078/ios-crash-cgdataprovidercreatewithcopyofdata-vm-copy-failed-status-1
+        //
         CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
         CGContextRelease(newContext);
         
@@ -194,6 +209,11 @@
 }
 
 - (IBAction)doSaving:(id)sender {
+    UIImage *imagetoshare = self.imageView.image;
+    NSArray *activityItems = @[imagetoshare];
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+    activityVC.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint];
+    [self presentViewController:activityVC animated:TRUE completion:nil];
 }
 
 @end

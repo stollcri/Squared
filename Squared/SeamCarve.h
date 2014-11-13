@@ -32,7 +32,7 @@ struct rgbaPixel {
     int a;
 };
 
-void carveSeamsVertical(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgWidth, int tImgHeight);
-void carveSeamsHorizontal(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgWidth, int tImgHeight);
+void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight);
+void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight);
 
 #endif /* defined(__Squared__SeamCarve__) */
