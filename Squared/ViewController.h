@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <UIImagePickerControllerDelegate>
 
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+- (IBAction)buttonTouched:(id)sender;
+- (IBAction)doSquaring:(id)sender;
 
 @end
 

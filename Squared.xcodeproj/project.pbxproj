@@ -14,6 +14,12 @@
 		7D26E2C61A10F997001849FF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C51A10F997001849FF /* Images.xcassets */; };
 		7D26E2C91A10F997001849FF /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C71A10F997001849FF /* LaunchScreen.xib */; };
 		7D26E2D51A10F997001849FF /* SquaredTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2D41A10F997001849FF /* SquaredTests.m */; };
+		7D26E2E51A10FC7C001849FF /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D26E2E41A10FC7C001849FF /* PhotosUI.framework */; };
+		7D26E2E71A10FC7C001849FF /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D26E2E61A10FC7C001849FF /* Photos.framework */; };
+		7D26E2ED1A10FC7C001849FF /* PhotoEditingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2EC1A10FC7C001849FF /* PhotoEditingViewController.m */; };
+		7D26E2EF1A10FC7C001849FF /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2EE1A10FC7C001849FF /* MainInterface.storyboard */; };
+		7D26E2F21A10FC7C001849FF /* Squared Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7D26E2E21A10FC7C001849FF /* Squared Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7D26E2F91A11086D001849FF /* SeamCarve.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2F71A11086D001849FF /* SeamCarve.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,7 +30,28 @@
 			remoteGlobalIDString = 7D26E2B41A10F997001849FF;
 			remoteInfo = Squared;
 		};
+		7D26E2F01A10FC7C001849FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7D26E2AD1A10F997001849FF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D26E2E11A10FC7C001849FF;
+			remoteInfo = "Squared Extension";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7D26E2F61A10FC7C001849FF /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				7D26E2F21A10FC7C001849FF /* Squared Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7D26E2B51A10F997001849FF /* Squared.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Squared.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,6 +67,15 @@
 		7D26E2CE1A10F997001849FF /* SquaredTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SquaredTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D26E2D31A10F997001849FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D26E2D41A10F997001849FF /* SquaredTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SquaredTests.m; sourceTree = "<group>"; };
+		7D26E2E21A10FC7C001849FF /* Squared Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Squared Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D26E2E41A10FC7C001849FF /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
+		7D26E2E61A10FC7C001849FF /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		7D26E2EA1A10FC7C001849FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D26E2EB1A10FC7C001849FF /* PhotoEditingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotoEditingViewController.h; sourceTree = "<group>"; };
+		7D26E2EC1A10FC7C001849FF /* PhotoEditingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhotoEditingViewController.m; sourceTree = "<group>"; };
+		7D26E2EE1A10FC7C001849FF /* MainInterface.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainInterface.storyboard; sourceTree = "<group>"; };
+		7D26E2F71A11086D001849FF /* SeamCarve.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SeamCarve.c; sourceTree = "<group>"; };
+		7D26E2F81A11086D001849FF /* SeamCarve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeamCarve.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +93,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7D26E2DF1A10FC7C001849FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D26E2E51A10FC7C001849FF /* PhotosUI.framework in Frameworks */,
+				7D26E2E71A10FC7C001849FF /* Photos.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -65,6 +110,8 @@
 			children = (
 				7D26E2B71A10F997001849FF /* Squared */,
 				7D26E2D11A10F997001849FF /* SquaredTests */,
+				7D26E2E81A10FC7C001849FF /* Squared Extension */,
+				7D26E2E31A10FC7C001849FF /* Frameworks */,
 				7D26E2B61A10F997001849FF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,6 +121,7 @@
 			children = (
 				7D26E2B51A10F997001849FF /* Squared.app */,
 				7D26E2CE1A10F997001849FF /* SquaredTests.xctest */,
+				7D26E2E21A10FC7C001849FF /* Squared Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +131,8 @@
 			children = (
 				7D26E2BC1A10F997001849FF /* AppDelegate.h */,
 				7D26E2BD1A10F997001849FF /* AppDelegate.m */,
+				7D26E2F81A11086D001849FF /* SeamCarve.h */,
+				7D26E2F71A11086D001849FF /* SeamCarve.c */,
 				7D26E2BF1A10F997001849FF /* ViewController.h */,
 				7D26E2C01A10F997001849FF /* ViewController.m */,
 				7D26E2C21A10F997001849FF /* Main.storyboard */,
@@ -119,6 +169,34 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		7D26E2E31A10FC7C001849FF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7D26E2E41A10FC7C001849FF /* PhotosUI.framework */,
+				7D26E2E61A10FC7C001849FF /* Photos.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7D26E2E81A10FC7C001849FF /* Squared Extension */ = {
+			isa = PBXGroup;
+			children = (
+				7D26E2EB1A10FC7C001849FF /* PhotoEditingViewController.h */,
+				7D26E2EC1A10FC7C001849FF /* PhotoEditingViewController.m */,
+				7D26E2EE1A10FC7C001849FF /* MainInterface.storyboard */,
+				7D26E2E91A10FC7C001849FF /* Supporting Files */,
+			);
+			path = "Squared Extension";
+			sourceTree = "<group>";
+		};
+		7D26E2E91A10FC7C001849FF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				7D26E2EA1A10FC7C001849FF /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -129,10 +207,12 @@
 				7D26E2B11A10F997001849FF /* Sources */,
 				7D26E2B21A10F997001849FF /* Frameworks */,
 				7D26E2B31A10F997001849FF /* Resources */,
+				7D26E2F61A10FC7C001849FF /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7D26E2F11A10FC7C001849FF /* PBXTargetDependency */,
 			);
 			name = Squared;
 			productName = Squared;
@@ -157,6 +237,23 @@
 			productReference = 7D26E2CE1A10F997001849FF /* SquaredTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		7D26E2E11A10FC7C001849FF /* Squared Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D26E2F31A10FC7C001849FF /* Build configuration list for PBXNativeTarget "Squared Extension" */;
+			buildPhases = (
+				7D26E2DE1A10FC7C001849FF /* Sources */,
+				7D26E2DF1A10FC7C001849FF /* Frameworks */,
+				7D26E2E01A10FC7C001849FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Squared Extension";
+			productName = "Squared Extension";
+			productReference = 7D26E2E21A10FC7C001849FF /* Squared Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -172,6 +269,9 @@
 					7D26E2CD1A10F997001849FF = {
 						CreatedOnToolsVersion = 6.1;
 						TestTargetID = 7D26E2B41A10F997001849FF;
+					};
+					7D26E2E11A10FC7C001849FF = {
+						CreatedOnToolsVersion = 6.1;
 					};
 				};
 			};
@@ -190,6 +290,7 @@
 			targets = (
 				7D26E2B41A10F997001849FF /* Squared */,
 				7D26E2CD1A10F997001849FF /* SquaredTests */,
+				7D26E2E11A10FC7C001849FF /* Squared Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -212,6 +313,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7D26E2E01A10FC7C001849FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D26E2EF1A10FC7C001849FF /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -222,6 +331,7 @@
 				7D26E2C11A10F997001849FF /* ViewController.m in Sources */,
 				7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */,
 				7D26E2BB1A10F997001849FF /* main.m in Sources */,
+				7D26E2F91A11086D001849FF /* SeamCarve.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,6 +343,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7D26E2DE1A10FC7C001849FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7D26E2ED1A10FC7C001849FF /* PhotoEditingViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -240,6 +358,11 @@
 			isa = PBXTargetDependency;
 			target = 7D26E2B41A10F997001849FF /* Squared */;
 			targetProxy = 7D26E2CF1A10F997001849FF /* PBXContainerItemProxy */;
+		};
+		7D26E2F11A10FC7C001849FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D26E2E11A10FC7C001849FF /* Squared Extension */;
+			targetProxy = 7D26E2F01A10FC7C001849FF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -395,6 +518,30 @@
 			};
 			name = Release;
 		};
+		7D26E2F41A10FC7C001849FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Squared Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		7D26E2F51A10FC7C001849FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "Squared Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -420,6 +567,14 @@
 			buildConfigurations = (
 				7D26E2DC1A10F997001849FF /* Debug */,
 				7D26E2DD1A10F997001849FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		7D26E2F31A10FC7C001849FF /* Build configuration list for PBXNativeTarget "Squared Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7D26E2F41A10FC7C001849FF /* Debug */,
+				7D26E2F51A10FC7C001849FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
