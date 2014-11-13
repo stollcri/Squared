@@ -180,7 +180,6 @@ static void cutSeamHorizontal(int *imageEnergies, int *imageSeams, char *imageCo
             break;
         }
     }
-    return;
     
     int pixelLeft = 0;
     int currentRow = 0;

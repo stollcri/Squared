@@ -46,8 +46,6 @@
 }
 
 - (IBAction)doSquaring:(id)sender {
-    NSLog(@"1 Grap pixel data ...");
-    
     NSUInteger bytesPerPixel = 4;
     NSUInteger bitsPerComponent = 8;
     
@@ -56,14 +54,10 @@
     NSUInteger imgHeight = CGImageGetHeight(imgRef);
     NSUInteger imgPixelCount = imgWidth * imgHeight;
     NSUInteger imgByteCount = imgPixelCount * bytesPerPixel;
-    NSLog(@"  img size: %i x %i", imgWidth, imgHeight);
-    NSLog(@"    pixels: %i", imgPixelCount);
-    NSLog(@"     bytes: %i", imgByteCount);
     
     // char not int -- to get each channel instead of the entire pixel
     char *rawPixels = (char*)calloc(imgByteCount, sizeof(char));
     NSUInteger bytesPerRow = bytesPerPixel * imgWidth;
-    NSLog(@"  Bytes per row: %i", bytesPerRow);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(rawPixels, imgWidth, imgHeight,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
@@ -81,9 +75,6 @@
         return;
     }
     
-    NSLog(@"2 Process pixel data ...");
-    NSLog(@"  Prepare data structures");
-    
     unsigned int imgWidthInt = imgWidth;
     unsigned int imgHeightInt = imgHeight;
     unsigned int imgNewWidth = 0;
@@ -100,25 +91,15 @@
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
     char *rawResults = (char*)calloc(imgNewByteCount, sizeof(char));
-
-    NSLog(@"  New size: %i x %i", imgNewWidth, imgNewHeight);
-    NSLog(@"    pixels: %i", imgNewPixelCount);
-    NSLog(@"     bytes: %i", imgNewByteCount);
     
     if (imgWidthInt > imgHeightInt) {
-        NSLog(@"  Make C call (vertical)");
         carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight);
     } else {
-        NSLog(@"  Make C call (horizontal)");
         carveSeamsHorizontal(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight);
     }
     free(rawPixels);
     
-    NSLog(@"3 Return Processed data ...");
-    NSLog(@"  Prepare data structures");
-    
     NSUInteger newBytesPerRow = bytesPerPixel * imgNewWidth;
-    NSLog(@"  Bytes per row: %i", bytesPerRow);
     CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef newContext = CGBitmapContextCreate(rawResults, imgNewWidth, imgNewHeight,
                                                  bitsPerComponent, newBytesPerRow, newColorSpace,
@@ -126,7 +107,6 @@
     CGColorSpaceRelease(newColorSpace);
     free(rawResults);
     
-    NSLog(@"  Display new image");
     if (newContext) {
         CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
         CGContextRelease(newContext);
@@ -137,8 +117,6 @@
         //[self.imageView setImage:newImage];
         //self.imageView.image = [UIImage imageWithCGImage:newImgRef];
     }
-    
-    NSLog(@"4 Done");
 }
 
 @end

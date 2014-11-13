@@ -272,6 +272,7 @@
 					};
 					7D26E2E11A10FC7C001849FF = {
 						CreatedOnToolsVersion = 6.1;
+						DevelopmentTeam = SKWNJR3SRG;
 					};
 				};
 			};
@@ -521,6 +522,7 @@
 		7D26E2F41A10FC7C001849FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -535,6 +537,7 @@
 		7D26E2F51A10FC7C001849FF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Squared Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -561,6 +564,7 @@
 				7D26E2DA1A10F997001849FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7D26E2DB1A10F997001849FF /* Build configuration list for PBXNativeTarget "SquaredTests" */ = {
 			isa = XCConfigurationList;
@@ -569,6 +573,7 @@
 				7D26E2DD1A10F997001849FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		7D26E2F31A10FC7C001849FF /* Build configuration list for PBXNativeTarget "Squared Extension" */ = {
 			isa = XCConfigurationList;
@@ -577,6 +582,7 @@
 				7D26E2F51A10FC7C001849FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
