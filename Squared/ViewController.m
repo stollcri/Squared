@@ -17,7 +17,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    //[[NSNotificationCenter defaultCenter] removeObserver:self name:@"org.christopherstoll.squared.squarecomplete" object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -36,16 +41,9 @@
     [picker dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (IBAction)buttonTouched:(id)sender {
-    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-    imagePicker.delegate = self;
-    imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    imagePicker.mediaTypes = @[(NSString *) kUTTypeImage];
-    imagePicker.allowsEditing = NO;
-    [self presentViewController:imagePicker animated:YES completion:nil];
-}
+#pragma mark - Squaring methods
 
-- (IBAction)doSquaring:(id)sender {
+- (void)squareImage {
     NSUInteger bytesPerPixel = 4;
     NSUInteger bitsPerComponent = 8;
     
@@ -92,6 +90,7 @@
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
     char *rawResults = (char*)calloc(imgNewByteCount, sizeof(char));
     
+    // TODO: use blocks to get a background thread
     if (imgWidthInt > imgHeightInt) {
         carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight);
     } else {
@@ -102,8 +101,8 @@
     NSUInteger newBytesPerRow = bytesPerPixel * imgNewWidth;
     CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef newContext = CGBitmapContextCreate(rawResults, imgNewWidth, imgNewHeight,
-                                                 bitsPerComponent, newBytesPerRow, newColorSpace,
-                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+                                                    bitsPerComponent, newBytesPerRow, newColorSpace,
+                                                    kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(newColorSpace);
     free(rawResults);
     
@@ -111,12 +110,90 @@
         CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
         CGContextRelease(newContext);
         
-        //UIImage *oldImage = self.imageView.image;
+        // TODO: don't update the UI this way, find something better
         UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
-        self.imageView.image = newImage;
-        //[self.imageView setImage:newImage];
-        //self.imageView.image = [UIImage imageWithCGImage:newImgRef];
+        dispatch_async(dispatch_get_main_queue(), ^(){
+            self.imageView.image = newImage;
+            [self enableUIelements];
+        });
     }
+    
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squarecomplete" object:self];
+}
+
+/*
+- (void)squareImageComplete:(NSNotification *)notification {
+}
+*/
+
+#pragma mark - UI Actions
+
+- (void)disableUIelements {
+    [self.openButton setEnabled:NO];
+    [self.squareButton setEnabled:NO];
+    [self.saveButton setEnabled:NO];
+    
+    //
+    // Go out slowly since this will take some time
+    //
+    
+    self.activityIndicator.alpha = 0.2;
+    [self.activityIndicator startAnimating];
+    
+    NSValue *animationDurationValue = @0.8;
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:animationDuration];
+    self.imageView.alpha = 0.2;
+    self.activityIndicator.alpha = 1.0;
+    [UIView commitAnimations];
+    
+    // alternative method for animation
+    //[UIView animateWithDuration:animationDuration delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
+    //    self.imageView.alpha = 0.25;
+    //} completion: nil];
+}
+
+- (void)enableUIelements {
+    [self.activityIndicator stopAnimating];
+    
+    //
+    // Return quickly
+    //
+    
+    NSValue *animationDurationValue = @0.2;
+    NSTimeInterval animationDuration;
+    [animationDurationValue getValue:&animationDuration];
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:animationDuration];
+    self.imageView.alpha = 1.0;
+    [UIView commitAnimations];
+    
+    [self.openButton setEnabled:YES];
+    [self.squareButton setEnabled:YES];
+    [self.saveButton setEnabled:YES];
+}
+
+#pragma mark - UI Interactions
+
+- (IBAction)doOpen:(id)sender {
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+    imagePicker.delegate = self;
+    imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imagePicker.mediaTypes = @[(NSString *) kUTTypeImage];
+    imagePicker.allowsEditing = NO;
+    [self presentViewController:imagePicker animated:YES completion:nil];
+}
+
+- (IBAction)doSquaring:(id)sender {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self squareImage];
+    });
+    [self disableUIelements];
+}
+
+- (IBAction)doSaving:(id)sender {
 }
 
 @end
