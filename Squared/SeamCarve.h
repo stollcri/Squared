@@ -14,11 +14,13 @@
 #include <limits.h>
 #include <math.h>
 
+#define REFRESH_SEAM_MATRIX_EVERY 32
 /*
 #define COLOR_TO_GREY_FACTOR_R 0.2126
 #define COLOR_TO_GREY_FACTOR_G 0.7152
 #define COLOR_TO_GREY_FACTOR_B 0.0722
 */
+
 #define COLOR_TO_GREY_FACTOR_R 0.2
 #define COLOR_TO_GREY_FACTOR_G 0.2
 #define COLOR_TO_GREY_FACTOR_B 0.6

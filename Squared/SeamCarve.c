@@ -193,11 +193,6 @@ static int getPixelEnergySobel(char *imageVector, int imageWidth, int imageHeigh
     double sobelY = (p1val + (p2val + p2val) + p3val - p7val - (p8val + p8val) - p9val);
     
     // bounded gradient magnitude
-    
-    //printf("%i, %i => %i \n", sobelX, sobelY, ((int)sqrt((sobelX * sobelX) + (sobelY * sobelY))));
-    //return (sobelX + sobelY);
-    //return min(max( (int)(sobelX + sobelY) , 1), 254);
-    //return (int)sqrt((sobelX * sobelX) + (sobelY * sobelY));
     return min(max( (int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/4) , 1), 254);
 }
 
@@ -264,10 +259,8 @@ static void setPixelPathVertical(int *imageSeams, int imageWidth, int imageHeigh
     pixelAbove = currentPixel - imageWidth;
     // avoid falling off the left end
     if (currentCol > 0) {
-    //if ((currentCol > 0) && (imageSeams[pixelAbove - 1] != 0)) {
         // avoid falling off the right end
         if (currentCol < imageWidth) {
-        //if ((currentCol < imageWidth) && (imageSeams[pixelAbove + 1] != 0)) {
             aboveL = imageSeams[pixelAbove - 1];
             aboveC = imageSeams[pixelAbove];
             aboveR = imageSeams[pixelAbove + 1];
@@ -284,7 +277,6 @@ static void setPixelPathVertical(int *imageSeams, int imageWidth, int imageHeigh
         aboveR = imageSeams[pixelAbove + 1];
         newValue = min(aboveC, aboveR);
     }
-    //printf("%i, %i, %i => %i \n", aboveL, aboveC, aboveR, newValue);
     imageSeams[currentPixel] += newValue;
 }
 
@@ -314,22 +306,15 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, char *imageColo
     
     for (int i = 0; i < imageWidth; ++i) {
         currentPixel = ((imageHeight - 1) * imageWidth) + i;
-        //printf("%i (%i) = %i (%i) \n", currentPixel, (currentPixel % imageWidth), imageSeams[currentPixel], imageSeams[currentPixel-imageWidth]);
         if ((imageSeams[currentPixel] > 0) && (imageSeams[currentPixel] != INT_MAX)) {
             if (imageSeams[currentPixel] <= minValue) {
                 minValue = imageSeams[currentPixel];
                 minLocation = currentPixel;
-                //printf("^^^ min \n");
             }
         } else {
             break;
         }
     }
-    //printf("^^^ min: %i @ %i (%i) \n", minValue, minLocation, (minLocation % imageWidth));
-    //printf("width = %i \n", ((currentPixel % imageWidth) - 1));
-    
-    // TODO
-    //imageSeams[minLocation] = 0;
     
     int pixelAbove = 0;
     int currentCol = 0;
@@ -340,7 +325,6 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, char *imageColo
     
     currentPixel = minLocation;
     for (int j = 0; j < imageHeight; ++j) {
-        //imageSeams[currentPixel] = 0;
         path[j] = currentPixel;
         
         pixelAbove = currentPixel - imageWidth;
@@ -376,25 +360,15 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, char *imageColo
         }
     }
     
-    //printf("... path[0] = %i / path[%i] = %i\n", path[0], (imageHeight-1), path[imageHeight-1]);
-    
-    int displayed=0;
     int colorPixel = 0;
-    //for (int j = 0; j < (imageHeight - 1); ++j) {
     for (int j = 0; j < imageHeight; ++j) {
-        //printf("%i: %i \n", j, path[j]);
         currentPixel = path[j];
         currentCol = currentPixel % imageWidth;
-        //imageSeams[currentPixel] = INT_MAX;
         
         for (int i = currentCol; i < (imageWidth - 1); ++i) {
             if ((imageSeams[currentPixel] > 0) && (imageSeams[currentPixel] != INT_MAX)) {
                 imageEnergies[currentPixel] = imageEnergies[currentPixel+1];
                 imageSeams[currentPixel] = imageSeams[currentPixel+1];
-                
-                //imageEnergies[currentPixel] = imageEnergies[currentPixel+1];
-                //imageSeams[currentPixel] = imageEnergies[currentPixel];
-                //setPixelPathVertical(imageSeams, imageWidth, imageHeight, currentPixel, currentCol);
                 
                 colorPixel = currentPixel * 4;
                 imageColor[colorPixel] = imageColor[colorPixel+4];
@@ -404,15 +378,9 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, char *imageColo
                 
                 ++currentPixel;
             } else {
-                //if (!displayed) {
-                if ((j == 0) || (j == (imageHeight - 1))) {
-                    //printf("%i (j=%i, i=%i): %i - %i = %i (%i)\n", minValue, j, i, (imageWidth - 1), i, ((imageWidth - 1) - i), imageWidth);
-                    displayed = 1;
-                }
                 break;
             }
         }
-        //imageEnergies[currentPixel] = INT_MAX;
         imageSeams[currentPixel] = INT_MAX;
         
         colorPixel = currentPixel * 4;
@@ -420,37 +388,7 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, char *imageColo
         imageColor[colorPixel+1] = 0;
         imageColor[colorPixel+2] = 0;
         imageColor[colorPixel+3] = 255;
-        
-        
-        
-//        currentPixel = path[j];
-//        currentCol = currentPixel % imageWidth;
-//        for (int i = currentCol; i < (imageWidth - 1); ++i) {
-//            if ((imageSeams[currentPixel] > 0) && (imageSeams[currentPixel] != INT_MAX)) {
-//                imageSeams[currentPixel] = imageEnergies[currentPixel];
-//                setPixelPathVertical(imageSeams, imageWidth, imageHeight, currentPixel, currentCol);
-//                
-//                ++currentPixel;
-//            } else {
-//                break;
-//            }
-//        }
     }
-    
-//    for (int j = (imageHeight - 1); j >= 0; --j) {
-//        currentPixel = path[j] - 1;
-//        colorPixel = currentPixel * 4;
-//        //imageSeams[currentPixel] = getColorPixelEnergySimple(imageColor, imageWidth, imageHeight, 4, colorPixel, 3);
-//        
-//        currentPixel = path[j];
-//        colorPixel = currentPixel * 4;
-//        //printf("%i: %i \n", j, currentPixel);
-//        //imageSeams[currentPixel] = getColorPixelEnergySimple(imageColor, imageWidth, imageHeight, 4, colorPixel, 3);
-//        
-//        currentPixel = path[j] + 1;
-//        colorPixel = currentPixel * 4;
-//        //imageSeams[currentPixel] = getColorPixelEnergySimple(imageColor, imageWidth, imageHeight, 4, colorPixel, 3);
-//    }
 }
 
 #pragma mark -
@@ -471,11 +409,8 @@ void carveSeams(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgW
             colorPixelLocation = (j * (sImgWidth * bytesPerPixel)) + (i * bytesPerPixel);
             bwPixelLocation = (j * sImgWidth) + i;
             
-            //newImageEnergy[bwPixelLocation] = getColorPixelEnergySimple(sImg, sImgWidth, sImgHeight, bytesPerPixel, colorPixelLocation, 3);
             newImageEnergy[bwPixelLocation] = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, bytesPerPixel, colorPixelLocation);
             newImageSeams[bwPixelLocation] = newImageEnergy[bwPixelLocation];
-            
-            //newImageSeams[bwPixelLocation] = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, bytesPerPixel, colorPixelLocation);
             
             newImageColor[colorPixelLocation] = sImg[colorPixelLocation];
             newImageColor[colorPixelLocation+1] = sImg[colorPixelLocation+1];
@@ -492,20 +427,14 @@ void carveSeams(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgW
         fillSeamMatrixVertical(newImageEnergy, newImageSeams, sImgWidth, sImgHeight);
         
         seamRemovalCount = sImgWidth - tImgWidth;
-        printf(" in: %i x %i \n", sImgWidth, sImgHeight);
-        printf(" out: %i x %i \n", tImgWidth, tImgHeight);
-        printf(" seamRemovalCount: %i \n", seamRemovalCount);
         for (int i = 0; i < seamRemovalCount; ++i) {
             cutSeamVertical(newImageEnergy, newImageSeams, newImageColor, sImgWidth, sImgHeight);
-            if ((i % 64) == 0) {
-                printf("matrix check, itteration: %i \n", i);
+            if ((i % REFRESH_SEAM_MATRIX_EVERY) == 0) {
                 fillSeamMatrixVertical(newImageEnergy, newImageSeams, sImgWidth, sImgHeight);
             }
         }
         
     }
-    
-    
     
     int newColorPixelLocation = 0;
     for (int j = 0; j < tImgHeight; ++j) {
@@ -514,113 +443,10 @@ void carveSeams(char *sImg, int sImgWidth, int sImgHeight, char *tImg, int tImgW
             newColorPixelLocation = (j * (tImgWidth * bytesPerPixel)) + (i * bytesPerPixel);
             
             tImg[newColorPixelLocation] = newImageColor[colorPixelLocation];
-            ++newColorPixelLocation;
-            
-            tImg[newColorPixelLocation] = newImageColor[colorPixelLocation+1];
-            ++newColorPixelLocation;
-            
-            tImg[newColorPixelLocation] = newImageColor[colorPixelLocation+2];
-            ++newColorPixelLocation;
-            
-            tImg[newColorPixelLocation] = newImageColor[colorPixelLocation+3];
-            ++newColorPixelLocation;
+            tImg[newColorPixelLocation+1] = newImageColor[colorPixelLocation+1];
+            tImg[newColorPixelLocation+2] = newImageColor[colorPixelLocation+2];
+            tImg[newColorPixelLocation+3] = newImageColor[colorPixelLocation+3];
         }
-    }
-    
-    
-    //int newColorPixelLocation = 0;
-    int zerocount = 0;
-    for (int j = 0; j < sImgHeight; ++j) {
-        for (int i = 0; i < sImgWidth; ++i) {
-            colorPixelLocation = (j * (sImgWidth * bytesPerPixel)) + (i * bytesPerPixel);
-            bwPixelLocation = (j * sImgWidth) + i;
-            
-//            if (newImageSeams[bwPixelLocation] == 0) {
-//                tImg[colorPixelLocation] = 255;
-//                tImg[colorPixelLocation+1] = 0;
-//                tImg[colorPixelLocation+2] = 0;
-//                tImg[colorPixelLocation+3] = 255;
-//            } else if (newImageSeams[bwPixelLocation] == 255) {
-//                tImg[colorPixelLocation] = 0;
-//                tImg[colorPixelLocation+1] = 255;
-//                tImg[colorPixelLocation+2] = 0;
-//                tImg[colorPixelLocation+3] = 255;
-//            } else if (newImageSeams[bwPixelLocation] == INT_MAX) {
-//                tImg[colorPixelLocation] = 0;
-//                tImg[colorPixelLocation+1] = 0;
-//                tImg[colorPixelLocation+2] = 255;
-//                tImg[colorPixelLocation+3] = 255;
-//            } else {
-//                tImg[colorPixelLocation] = newImageSeams[bwPixelLocation];
-//                tImg[colorPixelLocation+1] = newImageSeams[bwPixelLocation];
-//                tImg[colorPixelLocation+2] = newImageSeams[bwPixelLocation];
-//                tImg[colorPixelLocation+3] = 255;
-//            }
-            
-            
-//            tImg[colorPixelLocation] = newImageColor[colorPixelLocation];
-//            tImg[colorPixelLocation+1] = newImageColor[colorPixelLocation+1];
-//            tImg[colorPixelLocation+2] = newImageColor[colorPixelLocation+2];
-//            tImg[colorPixelLocation+3] = 255;
-            
-            
-            //colorPixelLocation = (j * (sImgWidth * bytesPerPixel)) + (i * bytesPerPixel);
-            //bwPixelLocation = (j * sImgWidth) + i;
-            
-//            printf("%i, %i -- %i / %i ", j, i, bwPixelLocation, colorPixelLocation);
-//            if ((newImageSeams[bwPixelLocation] != 0) && (newImageSeams[bwPixelLocation] != INT_MAX)) {
-//                printf("ok \n");
-//                if (newColorPixelLocation < (tImgWidth * tImgHeight * bytesPerPixel)) {
-//                    tImg[newColorPixelLocation] = sImg[colorPixelLocation];
-//                    ++newColorPixelLocation;
-//                    
-//                    tImg[newColorPixelLocation] = sImg[colorPixelLocation+1];
-//                    ++newColorPixelLocation;
-//                    
-//                    tImg[newColorPixelLocation] = sImg[colorPixelLocation+2];
-//                    ++newColorPixelLocation;
-//                    
-//                    tImg[newColorPixelLocation] = sImg[colorPixelLocation+3];
-//                    ++newColorPixelLocation;
-//                } else {
-//                    //printf("oops \n");
-//                }
-//            } else {
-//                printf("skip \n");
-//                /*
-//                ++zerocount;
-//                printf("zero \n");
-//                if (zerocount > seamRemovalCount) {
-//                    tImg[newColorPixelLocation] = 255;
-//                    ++newColorPixelLocation;
-//                    
-//                    tImg[newColorPixelLocation] = 0;
-//                    ++newColorPixelLocation;
-//                    
-//                    tImg[newColorPixelLocation] = 0;
-//                    ++newColorPixelLocation;
-//                    
-//                    tImg[newColorPixelLocation] = 255;
-//                    ++newColorPixelLocation;
-//                }
-//                 */
-//            }
-            
-        }
-        
-        /*
-        if (zerocount > seamRemovalCount) {
-            //printf("zerocount (%i) >> seamRemovalCount (%i) \n", zerocount, seamRemovalCount);
-        } else if (zerocount < seamRemovalCount) {
-            //printf("zerocount (%i) << seamRemovalCount (%i) \n", zerocount, seamRemovalCount);
-            for (int k=0; k<(seamRemovalCount-zerocount); ++k) {
-                newColorPixelLocation -= 4;
-            }
-        } else {
-            //printf("zerocount (%i) == seamRemovalCount (%i) \n", zerocount, seamRemovalCount);
-        }
-        zerocount = 0;
-        */
     }
     
     free(newImageEnergy);
