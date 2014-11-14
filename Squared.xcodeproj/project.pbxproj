@@ -32,6 +32,7 @@
 		7DC52CAB1A156C6F00947F5B /* Squared-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DC52C9F1A156C6E00947F5B /* Squared-Small.png */; };
 		7DC52CAC1A156C6F00947F5B /* Squared-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DC52CA01A156C6F00947F5B /* Squared-Small@2x.png */; };
 		7DC52CAD1A156C6F00947F5B /* Squared-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DC52CA11A156C6F00947F5B /* Squared-Small@3x.png */; };
+		7DC52CB41A15746C00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +101,8 @@
 		7DC52C9F1A156C6E00947F5B /* Squared-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Squared-Small.png"; sourceTree = "<group>"; };
 		7DC52CA01A156C6F00947F5B /* Squared-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Squared-Small@2x.png"; sourceTree = "<group>"; };
 		7DC52CA11A156C6F00947F5B /* Squared-Small@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Squared-Small@3x.png"; sourceTree = "<group>"; };
+		7DC52CB21A15746C00947F5B /* SeamCarveBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeamCarveBridge.h; sourceTree = "<group>"; };
+		7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeamCarveBridge.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,10 +158,12 @@
 			children = (
 				7D26E2BC1A10F997001849FF /* AppDelegate.h */,
 				7D26E2BD1A10F997001849FF /* AppDelegate.m */,
-				7D26E2F81A11086D001849FF /* SeamCarve.h */,
-				7D26E2F71A11086D001849FF /* SeamCarve.c */,
 				7D26E2BF1A10F997001849FF /* ViewController.h */,
 				7D26E2C01A10F997001849FF /* ViewController.m */,
+				7DC52CB21A15746C00947F5B /* SeamCarveBridge.h */,
+				7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */,
+				7D26E2F81A11086D001849FF /* SeamCarve.h */,
+				7D26E2F71A11086D001849FF /* SeamCarve.c */,
 				7D26E2C21A10F997001849FF /* Main.storyboard */,
 				7D26E2C51A10F997001849FF /* Images.xcassets */,
 				7D26E2C71A10F997001849FF /* LaunchScreen.xib */,
@@ -386,6 +391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7DC52CB41A15746C00947F5B /* SeamCarveBridge.m in Sources */,
 				7D26E2C11A10F997001849FF /* ViewController.m in Sources */,
 				7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */,
 				7D26E2BB1A10F997001849FF /* main.m in Sources */,

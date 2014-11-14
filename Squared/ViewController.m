@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "SeamCarve.h"
+#import "SeamCarveBridge.h"
 
 @interface ViewController ()
 
@@ -18,14 +18,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
     
     [self.squareButton setEnabled:NO];
     [self.saveButton setEnabled:NO];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -47,95 +47,20 @@
 
 #pragma mark - Squaring methods
 
-- (void)squareImage {
-    NSUInteger bytesPerPixel = 4;
-    NSUInteger bitsPerComponent = 8;
-    
-    CGImageRef imgRef = self.imageView.image.CGImage;
-    NSUInteger imgWidth = CGImageGetWidth(imgRef);
-    NSUInteger imgHeight = CGImageGetHeight(imgRef);
-    NSUInteger imgPixelCount = imgWidth * imgHeight;
-    NSUInteger imgByteCount = imgPixelCount * bytesPerPixel;
-    
-    // char not int -- to get each channel instead of the entire pixel
-    unsigned char *rawPixels = (unsigned char*)calloc(imgByteCount, sizeof(unsigned char));
-    NSUInteger bytesPerRow = bytesPerPixel * imgWidth;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(rawPixels, imgWidth, imgHeight,
-                                                 bitsPerComponent, bytesPerRow, colorSpace,
-                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    CGColorSpaceRelease(colorSpace);
-    if (context) {
-        CGContextDrawImage(context, CGRectMake(0, 0, imgWidth, imgHeight), imgRef);
-        CGContextRelease(context);
-        // This causes zombies which when released result in bad access errors
-        //CGImageRelease(imgRef);
-    } else {
-        // There is a problem with the context, so we will not be able to process anything
-        // The most likely cause is that there was no image data provided
-        // TODO: imporve error handling
-        return;
-    }
-    
-    unsigned int imgWidthInt = (unsigned int)imgWidth;
-    unsigned int imgHeightInt = (unsigned int)imgHeight;
-    unsigned int imgNewWidth = 0;
-    unsigned int imgNewHeight = 0;
-    if (imgWidthInt > imgHeightInt) {
-        imgNewWidth = imgHeightInt;
-        //imgNewWidth = imgWidthInt;
-        imgNewHeight = imgHeightInt;
-    } else {
-        imgNewWidth = imgWidthInt;
-        imgNewHeight = imgWidthInt;
-        //imgNewHeight = imgHeightInt;
-    }
-    NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
-    NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
-    unsigned char *rawResults = (unsigned char*)calloc(imgNewByteCount, sizeof(unsigned char));
-    
-    // TODO: use blocks to get a background thread
-    if (imgWidthInt > imgHeightInt) {
-        carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight);
-    } else {
-        carveSeamsHorizontal(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight);
-    }
-    free(rawPixels);
-    
-    NSUInteger newBytesPerRow = bytesPerPixel * imgNewWidth;
-    CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef newContext = CGBitmapContextCreate(rawResults, imgNewWidth, imgNewHeight,
-                                                    bitsPerComponent, newBytesPerRow, newColorSpace,
-                                                    kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-    CGColorSpaceRelease(newColorSpace);
-    free(rawResults);
-    
-    if (newContext) {
-        //
-        // TODO: Fix this error
-        // CASMBA.local Squared[86652] <Error>: copy_read_only: vm_copy failed: status 1.
-        // it seems to happen after 4 or 5 runs of the algorithm
-        //
-        // http://stackoverflow.com/questions/13100078/ios-crash-cgdataprovidercreatewithcopyofdata-vm-copy-failed-status-1
-        //
-        CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
-        CGContextRelease(newContext);
-        
-        // TODO: don't update the UI this way, find something better
-        UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
-        dispatch_async(dispatch_get_main_queue(), ^(){
-            self.imageView.image = newImage;
-            [self enableUIelements];
-        });
-    }
-    
-    //[[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squarecomplete" object:self];
+- (void)squareImageBegin {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [SeamCarveBridge squareImage:self.imageView.image];
+    });
+    [self disableUIelements];
 }
 
-/*
 - (void)squareImageComplete:(NSNotification *)notification {
+    dispatch_async(dispatch_get_main_queue(), ^(){
+        NSLog(@"Catch notification");
+        self.imageView.image = [notification object];
+        [self enableUIelements];
+    });
 }
-*/
 
 #pragma mark - UI Actions
 
@@ -198,10 +123,7 @@
 }
 
 - (IBAction)doSquaring:(id)sender {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self squareImage];
-    });
-    [self disableUIelements];
+    [self squareImageBegin];
 }
 
 - (IBAction)doSaving:(id)sender {

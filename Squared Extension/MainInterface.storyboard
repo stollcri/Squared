@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ObA-dk-sSI">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Photo Editing View Controller-->
@@ -16,17 +17,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="528"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello World" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d1e-fi-ked">
-                                <rect key="frame" x="116" y="253" width="89" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="cwr-BS-fQ0">
+                                <rect key="frame" x="0.0" y="484" width="320" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="b1d-fn-lAK"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem systemItem="flexibleSpace" id="y3F-O5-wTp"/>
+                                    <barButtonItem systemItem="play" id="OMd-zx-iKJ"/>
+                                    <barButtonItem systemItem="flexibleSpace" id="gTI-Qm-RbQ"/>
+                                </items>
+                            </toolbar>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ADb-1l-PYf">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="484"/>
+                            </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="centerY" secondItem="d1e-fi-ked" secondAttribute="centerY" id="H0s-hz-dDP"/>
-                            <constraint firstAttribute="centerX" secondItem="d1e-fi-ked" secondAttribute="centerX" id="wFy-hW-Bib"/>
+                            <constraint firstItem="ADb-1l-PYf" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leadingMargin" constant="-16" id="48u-cO-LA0"/>
+                            <constraint firstItem="cwr-BS-fQ0" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leadingMargin" constant="-16" id="EQq-TN-e4i"/>
+                            <constraint firstItem="ADb-1l-PYf" firstAttribute="top" secondItem="zMn-AG-sqS" secondAttribute="topMargin" id="eMb-95-Qfi"/>
+                            <constraint firstItem="cwr-BS-fQ0" firstAttribute="top" secondItem="ADb-1l-PYf" secondAttribute="bottom" id="kEC-Uj-Lyf"/>
+                            <constraint firstItem="n38-gi-rB5" firstAttribute="top" secondItem="cwr-BS-fQ0" secondAttribute="bottom" id="l4G-bP-NnV"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="cwr-BS-fQ0" secondAttribute="trailing" constant="-16" id="lOB-bu-Wgp"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ADb-1l-PYf" secondAttribute="trailing" constant="-16" id="zcH-SB-eQc"/>
                         </constraints>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -34,7 +48,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X47-rx-isc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="326" y="-128"/>
+            <point key="canvasLocation" x="326" y="-108"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
