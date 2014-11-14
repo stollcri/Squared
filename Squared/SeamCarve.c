@@ -62,7 +62,7 @@ static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int i
         p3 = currentPixel - imageByteWidth + pixelDepth;
         
         p4 = currentPixel - pixelDepth;
-        p4 = currentPixel;
+        //p5 = currentPixel;
         p6 = currentPixel + pixelDepth;
         
         p7 = currentPixel + imageByteWidth - pixelDepth;
@@ -131,11 +131,11 @@ static void setPixelPathHorizontal(int *imageSeams, int imageWidth, int imageHei
             } else {
                 leftT = imageSeams[pixelLeft - imageWidth];
                 leftM = imageSeams[pixelLeft];
-                leftB = INT_MAX;
+                //leftB = INT_MAX;
                 newValue = min(leftT, leftM);
             }
         } else {
-            leftT = INT_MAX;
+            //leftT = INT_MAX;
             leftM = imageSeams[pixelLeft];
             leftB = imageSeams[pixelLeft + imageWidth];
             newValue = min(leftM, leftB);
@@ -162,17 +162,16 @@ static void fillSeamMatrixHorizontal(int *imageEnergies, int *imageSeams, int im
 
 static void cutSeamHorizontal(int *imageEnergies, int *imageSeams, unsigned char *imageColor, int imageWidth, int imageHeight)
 {
-    int *path = (int*)malloc((unsigned long)imageHeight * sizeof(int));
+    int *path = (int*)malloc((unsigned long)imageWidth * sizeof(int));
     
     int currentPixel = 0;
     int minValue = INT_MAX;
     int minLocation = 0;
     
-    //for (int i = 0; i < imageWidth; ++i) {
-    for (int i = 0; i < imageHeight; ++i) {
-        currentPixel = ((imageHeight - 1) * imageWidth) + i;
+    for (int i = 1; i < imageHeight; ++i) {
+        currentPixel = (i * imageWidth) - 1;
         if ((imageSeams[currentPixel] > 0) && (imageSeams[currentPixel] != INT_MAX)) {
-            if (imageSeams[currentPixel] <= minValue) {
+            if (imageSeams[currentPixel] < minValue) {
                 minValue = imageSeams[currentPixel];
                 minLocation = currentPixel;
             }
@@ -189,16 +188,19 @@ static void cutSeamHorizontal(int *imageEnergies, int *imageSeams, unsigned char
     int newValue = 0;
     
     currentPixel = minLocation;
-    //for (int j = 0; j < imageHeight; ++j) {
-    for (int j = 0; j < imageWidth; ++j) {
+    int lastpixel=0;
+    for (int j = 0; j < (imageWidth - 1); ++j) {
         path[j] = currentPixel;
         pixelLeft = currentPixel - 1;
         currentRow = currentPixel / imageWidth;
         
         // avoid falling off the top
-        if ((currentRow > 0) && (imageSeams[pixelLeft - imageWidth] != 0)) {
+        // TODO: better bounds checking
+        //if ((currentCol > 0) && (imageSeams[pixelAbove - 1] > 0)) {
+        if ((currentPixel > imageWidth) && (imageSeams[pixelLeft - imageWidth] > 0)) {
             // avoid falling off the right end
-            if ((currentRow < imageHeight) && (imageSeams[pixelLeft + imageWidth] != 0)) {
+            // TODO: better bounds checking
+            if ((currentPixel < ((imageWidth * imageHeight) - imageWidth)) && (imageSeams[pixelLeft + imageWidth] > 0)) {
                 leftA = imageSeams[pixelLeft - imageWidth];
                 leftC = imageSeams[pixelLeft];
                 leftB = imageSeams[pixelLeft + imageWidth];
@@ -206,50 +208,56 @@ static void cutSeamHorizontal(int *imageEnergies, int *imageSeams, unsigned char
             } else {
                 leftA = imageSeams[pixelLeft - imageWidth];
                 leftC = imageSeams[pixelLeft];
-                leftB = INT_MAX;
+                //leftB = INT_MAX;
                 newValue = min(leftA, leftC);
             }
         } else {
-            leftA = INT_MAX;
+            //leftA = INT_MAX;
             leftC = imageSeams[pixelLeft];
             leftB = imageSeams[pixelLeft + imageWidth];
             newValue = min(leftC, leftB);
         }
         
+        lastpixel = currentPixel;
         if (newValue == leftC) {
             currentPixel = pixelLeft;
-        } else if (newValue == leftA) {
-            currentPixel = pixelLeft - imageWidth;
-        } else {
+        } else if (newValue == leftB) {
             currentPixel = pixelLeft + imageWidth;
+        } else {
+            currentPixel = pixelLeft - imageWidth;
+        }
+        
+        if (currentPixel < 0) {
+            printf("%i, %i: (%i => %i) newValue = %i [%i, %i, %i] \n", minLocation, j, lastpixel, currentPixel, newValue, leftA, leftC, leftB);
+            //printf("%i: (%i) newValue = %i [%i, %i, %i] \n", j, currentPixel, newValue, leftA, leftC, leftB);
         }
     }
     
     int colorPixel = 0;
-    //for (int j = 0; j < imageHeight; ++j) {
     for (int j = 0; j < imageWidth; ++j) {
         currentPixel = path[j];
         currentRow = currentPixel / imageWidth;
         
-        //for (int i = currentCol; i < (imageWidth - 1); ++i) {
         for (int i = currentRow; i < (imageHeight - 1); ++i) {
-            if ((imageSeams[currentPixel] > 0) && (imageSeams[currentPixel] != INT_MAX)) {
+            if ((imageSeams[currentPixel] >= 0) && (imageSeams[currentPixel] != INT_MAX)) {
                 imageEnergies[currentPixel] = imageEnergies[currentPixel+imageWidth];
                 imageSeams[currentPixel] = imageSeams[currentPixel+imageWidth];
                 
                 colorPixel = currentPixel * 4;
-                imageColor[colorPixel] = imageColor[colorPixel+4];
-                imageColor[colorPixel+1] = imageColor[colorPixel+5];
-                imageColor[colorPixel+2] = imageColor[colorPixel+6];
-                imageColor[colorPixel+3] = imageColor[colorPixel+7];
+                imageColor[colorPixel] = imageColor[colorPixel+(imageWidth*4)];
+                imageColor[colorPixel+1] = imageColor[colorPixel+(imageWidth*4)+1];
+                imageColor[colorPixel+2] = imageColor[colorPixel+(imageWidth*4)+2];
+                imageColor[colorPixel+3] = imageColor[colorPixel+(imageWidth*4)+3];
                 
-                ++currentPixel;
+                currentPixel += imageWidth;
             } else {
                 break;
             }
         }
         imageSeams[currentPixel] = INT_MAX;
     }
+    
+    free(path);
 }
 
 #pragma mark - vertical methods
@@ -274,11 +282,11 @@ static void setPixelPathVertical(int *imageSeams, int imageWidth, int imageHeigh
         } else {
             aboveL = imageSeams[pixelAbove - 1];
             aboveC = imageSeams[pixelAbove];
-            aboveR = INT_MAX;
+            //aboveR = INT_MAX;
             newValue = min(aboveL, aboveC);
         }
     } else {
-        aboveL = INT_MAX;
+        //aboveL = INT_MAX;
         aboveC = imageSeams[pixelAbove];
         aboveR = imageSeams[pixelAbove + 1];
         newValue = min(aboveC, aboveR);
@@ -312,7 +320,8 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, unsigned char *
     for (int i = 0; i < imageWidth; ++i) {
         currentPixel = ((imageHeight - 1) * imageWidth) + i;
         if ((imageSeams[currentPixel] > 0) && (imageSeams[currentPixel] != INT_MAX)) {
-            if (imageSeams[currentPixel] <= minValue) {
+            //if (imageSeams[currentPixel] <= minValue) {
+            if (imageSeams[currentPixel] < minValue) {
                 minValue = imageSeams[currentPixel];
                 minLocation = currentPixel;
             }
@@ -335,9 +344,9 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, unsigned char *
         currentCol = currentPixel % imageWidth;
         
         // avoid falling off the left end
-        if ((currentCol > 0) && (imageSeams[pixelAbove - 1] != 0)) {
+        if ((currentCol > 0) && (imageSeams[pixelAbove - 1] > 0)) {
             // avoid falling off the right end
-            if ((currentCol < imageWidth) && (imageSeams[pixelAbove + 1] != 0)) {
+            if ((currentCol < imageWidth) && (imageSeams[pixelAbove + 1] > 0)) {
                 aboveL = imageSeams[pixelAbove - 1];
                 aboveC = imageSeams[pixelAbove];
                 aboveR = imageSeams[pixelAbove + 1];
@@ -345,7 +354,7 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, unsigned char *
             } else {
                 aboveL = imageSeams[pixelAbove - 1];
                 aboveC = imageSeams[pixelAbove];
-                aboveR = INT_MAX;
+                //aboveR = INT_MAX;
                 newValue = min(aboveL, aboveC);
             }
         } else {
@@ -370,7 +379,7 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, unsigned char *
         currentCol = currentPixel % imageWidth;
         
         for (int i = currentCol; i < (imageWidth - 1); ++i) {
-            if ((imageSeams[currentPixel] > 0) && (imageSeams[currentPixel] != INT_MAX)) {
+            if ((imageSeams[currentPixel] >= 0) && (imageSeams[currentPixel] != INT_MAX)) {
                 imageEnergies[currentPixel] = imageEnergies[currentPixel+1];
                 imageSeams[currentPixel] = imageSeams[currentPixel+1];
                 
@@ -394,6 +403,8 @@ static void cutSeamVertical(int *imageEnergies, int *imageSeams, unsigned char *
         imageColor[colorPixel+3] = 255;
         */
     }
+    
+    free(path);
 }
 
 #pragma mark -

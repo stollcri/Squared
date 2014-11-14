@@ -24,19 +24,28 @@
                                 </constraints>
                                 <items>
                                     <barButtonItem systemItem="flexibleSpace" id="y3F-O5-wTp"/>
-                                    <barButtonItem systemItem="play" id="OMd-zx-iKJ"/>
+                                    <barButtonItem systemItem="play" id="OMd-zx-iKJ">
+                                        <connections>
+                                            <action selector="doSquaring:" destination="ObA-dk-sSI" id="cll-Qg-byw"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem systemItem="flexibleSpace" id="gTI-Qm-RbQ"/>
                                 </items>
                             </toolbar>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ADb-1l-PYf">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ADb-1l-PYf">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="484"/>
                             </imageView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="dPo-wY-cr9">
+                                <rect key="frame" x="142" y="245" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="ADb-1l-PYf" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leadingMargin" constant="-16" id="48u-cO-LA0"/>
                             <constraint firstItem="cwr-BS-fQ0" firstAttribute="leading" secondItem="zMn-AG-sqS" secondAttribute="leadingMargin" constant="-16" id="EQq-TN-e4i"/>
+                            <constraint firstAttribute="centerX" secondItem="dPo-wY-cr9" secondAttribute="centerX" id="H6H-IY-d5I"/>
                             <constraint firstItem="ADb-1l-PYf" firstAttribute="top" secondItem="zMn-AG-sqS" secondAttribute="topMargin" id="eMb-95-Qfi"/>
+                            <constraint firstAttribute="centerY" secondItem="dPo-wY-cr9" secondAttribute="centerY" id="ekM-xI-sEU"/>
                             <constraint firstItem="cwr-BS-fQ0" firstAttribute="top" secondItem="ADb-1l-PYf" secondAttribute="bottom" id="kEC-Uj-Lyf"/>
                             <constraint firstItem="n38-gi-rB5" firstAttribute="top" secondItem="cwr-BS-fQ0" secondAttribute="bottom" id="l4G-bP-NnV"/>
                             <constraint firstAttribute="trailingMargin" secondItem="cwr-BS-fQ0" secondAttribute="trailing" constant="-16" id="lOB-bu-Wgp"/>
@@ -45,6 +54,11 @@
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="528"/>
+                    <connections>
+                        <outlet property="activityIndicator" destination="dPo-wY-cr9" id="iMJ-aH-QEd"/>
+                        <outlet property="imageView" destination="ADb-1l-PYf" id="cbF-oM-REP"/>
+                        <outlet property="squareButton" destination="OMd-zx-iKJ" id="unu-pD-ez6"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X47-rx-isc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

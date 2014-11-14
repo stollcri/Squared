@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Christopher Stoll. All rights reserved.
 //
 
+#import <MobileCoreServices/MobileCoreServices.h>
 #import "ViewController.h"
 #import "SeamCarveBridge.h"
 
@@ -55,8 +56,7 @@
 }
 
 - (void)squareImageComplete:(NSNotification *)notification {
-    dispatch_async(dispatch_get_main_queue(), ^(){
-        NSLog(@"Catch notification");
+    dispatch_async(dispatch_get_main_queue(), ^{
         self.imageView.image = [notification object];
         [self enableUIelements];
     });

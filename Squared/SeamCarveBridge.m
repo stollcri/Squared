@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Christopher Stoll. All rights reserved.
 //
 
+#import <MobileCoreServices/MobileCoreServices.h>
 #import "SeamCarveBridge.h"
 #import "SeamCarve.h"
 
@@ -21,6 +22,10 @@
     NSUInteger imgHeight = CGImageGetHeight(imgRef);
     NSUInteger imgPixelCount = imgWidth * imgHeight;
     NSUInteger imgByteCount = imgPixelCount * bytesPerPixel;
+    NSLog(@"size: %lu x %lu", (unsigned long)imgWidth, (unsigned long)imgHeight);
+    NSLog(@"pixels: %lu", (unsigned long)imgPixelCount);
+    NSLog(@"bytes: %lu", (unsigned long)imgByteCount);
+    NSLog(@"seams: %ld", (long)(imgWidth - imgHeight));
     
     // char not int -- to get each channel instead of the entire pixel
     unsigned char *rawPixels = (unsigned char*)calloc(imgByteCount, sizeof(unsigned char));
@@ -48,12 +53,12 @@
     unsigned int imgNewHeight = 0;
     if (imgWidthInt > imgHeightInt) {
         imgNewWidth = imgHeightInt;
-        //imgNewWidth = imgWidthInt;
+        //imgNewWidth = imgWidthInt; // TODO: fix
         imgNewHeight = imgHeightInt;
     } else {
         imgNewWidth = imgWidthInt;
         imgNewHeight = imgWidthInt;
-        //imgNewHeight = imgHeightInt;
+        //imgNewHeight = imgHeightInt; // TODO: fix
     }
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;

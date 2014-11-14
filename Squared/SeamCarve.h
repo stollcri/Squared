@@ -14,7 +14,7 @@
 #include <limits.h>
 #include <math.h>
 
-#define REFRESH_SEAM_MATRIX_EVERY 32
+#define REFRESH_SEAM_MATRIX_EVERY 64
 /*
 #define COLOR_TO_GREY_FACTOR_R 0.2126
 #define COLOR_TO_GREY_FACTOR_G 0.7152
