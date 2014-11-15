@@ -13,13 +13,15 @@
 @implementation SeamCarveBridge
 
 + (void)squareImage:(UIImage *)sourceImage {
-    NSUInteger bytesPerPixel = 4;
-    NSUInteger bitsPerComponent = 8;
-    
-    //CGImageRef imgRef = self.imageView.image.CGImage;
     CGImageRef imgRef = sourceImage.CGImage;
     NSUInteger imgWidth = CGImageGetWidth(imgRef);
     NSUInteger imgHeight = CGImageGetHeight(imgRef);
+    NSLog(@"%lu x %lu", (unsigned long)imgWidth, (unsigned long)imgHeight);
+    
+    // TODO: this shouldn't be hard-coded
+    NSUInteger bytesPerPixel = 4; //CGImageGetBitsPerPixel(sourceImage.CGImage) / 16;
+    NSUInteger bitsPerComponent = CGImageGetBitsPerComponent(sourceImage.CGImage); // 8;
+    
     NSUInteger imgPixelCount = imgWidth * imgHeight;
     NSUInteger imgByteCount = imgPixelCount * bytesPerPixel;
     
@@ -75,7 +77,6 @@
                                                     bitsPerComponent, newBytesPerRow, newColorSpace,
                                                     kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(newColorSpace);
-    free(rawResults);
     
     if (newContext) {
         //
@@ -91,6 +92,7 @@
         UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squarecomplete" object:newImage];
     }
+    free(rawResults);
 }
 
 @end

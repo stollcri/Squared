@@ -159,7 +159,7 @@ static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int im
 
 static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight)
 {
-    int *path = (int*)malloc((unsigned long)imageWidth * sizeof(int)); // TODO: calloc
+    int *path = (int*)calloc((unsigned long)imageWidth, sizeof(int));
     
     int currentPixel = 0;
     int minValue = INT_MAX;
@@ -185,11 +185,9 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
     int newValue = 0;
     
     currentPixel = minLocation;
-    int lastpixel=0;
     for (int j = 0; j < (imageWidth - 1); ++j) {
         path[j] = currentPixel;
         pixelLeft = currentPixel - 1;
-        currentRow = currentPixel / imageWidth;
         
         // avoid falling off the top
         // TODO: better bounds checking
@@ -214,7 +212,6 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
             newValue = min(leftC, leftB);
         }
         
-        lastpixel = currentPixel;
         if (newValue == leftC) {
             currentPixel = pixelLeft;
         } else if (newValue == leftB) {
@@ -293,7 +290,7 @@ static void fillSeamMatrixVertical(struct Pixel *image, int imageWidth, int imag
 
 static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight)
 {
-    int *path = (int*)malloc((unsigned long)imageHeight * sizeof(int)); // TODO: calloc
+    int *path = (int*)calloc((unsigned long)imageHeight, sizeof(int));
     
     int currentPixel = 0;
     int minValue = INT_MAX;
@@ -380,7 +377,6 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
     
     int sImgPixelLoc = 0;
     int pixelLocation = 0;
-
     for (int j = 0; j < sImgHeight; ++j) {
         for (int i = 0; i < sImgWidth; ++i) {
             sImgPixelLoc = (j * (sImgWidth * pixelDepth)) + (i * pixelDepth);
@@ -422,7 +418,6 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
     int tImgPixelLoc = 0;
     for (int j = 0; j < tImgHeight; ++j) {
         for (int i = 0; i < tImgWidth; ++i) {
-            sImgPixelLoc = (j * (sImgWidth * pixelDepth)) + (i * pixelDepth);
             tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
             pixelLocation = (j * sImgWidth) + i;
             

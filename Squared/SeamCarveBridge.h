@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#define MAXIMUM_IMAGE_SIZE 1000
+
 @interface SeamCarveBridge : NSObject
 
 + (void)squareImage:(UIImage *)sourceImage;

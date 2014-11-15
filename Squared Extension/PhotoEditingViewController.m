@@ -47,7 +47,7 @@
     // If you returned NO, the contentEditingInput has past edits "baked in".
     self.input = contentEditingInput;
     NSURL *currentImageURL = self.input.fullSizeImageURL;
-    self.imageView.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:currentImageURL]];
+    [self loadImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:currentImageURL]]];
 }
 
 - (void)finishContentEditingWithCompletionHandler:(void (^)(PHContentEditingOutput *))completionHandler {
@@ -62,6 +62,11 @@
         // output.adjustmentData = <#new adjustment data#>;
         // NSData *renderedJPEGData = <#output JPEG#>;
         // [renderedJPEGData writeToURL:output.renderedContentURL atomically:YES];
+        
+        PHAdjustmentData *adjustData = [[PHAdjustmentData alloc] initWithFormatIdentifier:@"org.christopherstoll.squared" formatVersion:@"0.1" data:nil];
+        output.adjustmentData = adjustData;
+        NSData *imageData = UIImageJPEGRepresentation(self.imageView.image, 1.0f); // UIImagePNGRepresentation(self.imageView.image);
+        [imageData writeToURL:output.renderedContentURL atomically:YES];
         
         // Call completion handler to commit edit to Photos.
         completionHandler(output);
@@ -100,6 +105,37 @@
 }
 
 #pragma mark - UI Actions
+
+- (void)loadImage:(UIImage *)img {
+    if (img) {
+        if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
+            int temp = 0.0;
+            float newWidth = 0;
+            float newHeight = 0;
+            
+            if (img.size.height > img.size.width) {
+                temp = img.size.width * MAXIMUM_IMAGE_SIZE / img.size.height;
+                newWidth = temp;
+                newHeight = MAXIMUM_IMAGE_SIZE;
+            } else {
+                temp = img.size.height * MAXIMUM_IMAGE_SIZE / img.size.width;
+                newWidth = MAXIMUM_IMAGE_SIZE;
+                newHeight = temp;
+            }
+            
+            CGSize newSize = CGSizeMake(newWidth, newHeight);
+            UIGraphicsBeginImageContext(newSize);
+            //UIGraphicsBeginImageContextWithOptions(newSize, 1.0f, 0.0f);
+            [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+            UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            self.imageView.image = newImage;
+        } else {
+            self.imageView.image = img;
+        }
+    }
+}
 
 - (void)disableUIelements {
     [self.squareButton setEnabled:NO];

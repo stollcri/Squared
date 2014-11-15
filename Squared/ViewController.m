@@ -39,7 +39,32 @@
     UIImage *img = [info objectForKey:UIImagePickerControllerOriginalImage];
     
     if (img) {
-        self.imageView.image = img;
+        if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
+            int temp = 0.0;
+            float newWidth = 0;
+            float newHeight = 0;
+            
+            if (img.size.height > img.size.width) {
+                temp = img.size.width * MAXIMUM_IMAGE_SIZE / img.size.height;
+                newWidth = temp;
+                newHeight = MAXIMUM_IMAGE_SIZE;
+            } else {
+                temp = img.size.height * MAXIMUM_IMAGE_SIZE / img.size.width;
+                newWidth = MAXIMUM_IMAGE_SIZE;
+                newHeight = temp;
+            }
+            
+            CGSize newSize = CGSizeMake(newWidth, newHeight);
+            UIGraphicsBeginImageContext(newSize);
+            //UIGraphicsBeginImageContextWithOptions(newSize, 1.0f, 0.0f);
+            [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+            UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            self.imageView.image = newImage;
+        } else {
+            self.imageView.image = img;
+        }
         [self.squareButton setEnabled:YES];
     }
     
