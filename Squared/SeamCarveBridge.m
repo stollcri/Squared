@@ -22,10 +22,6 @@
     NSUInteger imgHeight = CGImageGetHeight(imgRef);
     NSUInteger imgPixelCount = imgWidth * imgHeight;
     NSUInteger imgByteCount = imgPixelCount * bytesPerPixel;
-    NSLog(@"size: %lu x %lu", (unsigned long)imgWidth, (unsigned long)imgHeight);
-    NSLog(@"pixels: %lu", (unsigned long)imgPixelCount);
-    NSLog(@"bytes: %lu", (unsigned long)imgByteCount);
-    NSLog(@"seams: %ld", (long)(imgWidth - imgHeight));
     
     // char not int -- to get each channel instead of the entire pixel
     unsigned char *rawPixels = (unsigned char*)calloc(imgByteCount, sizeof(unsigned char));
