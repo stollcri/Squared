@@ -47,6 +47,7 @@
     unsigned int imgHeightInt = (unsigned int)imgHeight;
     unsigned int imgNewWidth = 0;
     unsigned int imgNewHeight = 0;
+    unsigned int pixelDepth = (unsigned int)bytesPerPixel;
     if (imgWidthInt > imgHeightInt) {
         imgNewWidth = imgHeightInt;
         //imgNewWidth = imgWidthInt; // TODO: fix
@@ -62,9 +63,9 @@
     
     // TODO: use blocks to get a background thread
     if (imgWidthInt > imgHeightInt) {
-        carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight);
+        carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth);
     } else {
-        carveSeamsHorizontal(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight);
+        carveSeamsHorizontal(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth);
     }
     free(rawPixels);
     

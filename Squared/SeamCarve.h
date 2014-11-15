@@ -20,19 +20,20 @@
 #define COLOR_TO_GREY_FACTOR_G 0.7152
 #define COLOR_TO_GREY_FACTOR_B 0.0722
 */
-
 #define COLOR_TO_GREY_FACTOR_R 0.2
 #define COLOR_TO_GREY_FACTOR_G 0.2
 #define COLOR_TO_GREY_FACTOR_B 0.6
 
-struct rgbaPixel {
+struct Pixel {
     int r;
     int g;
     int b;
     int a;
+    int energy;
+    int seamval;
 };
 
-void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight);
-void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight);
+void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth);
+void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth);
 
 #endif /* defined(__Squared__SeamCarve__) */
