@@ -185,7 +185,8 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
     int newValue = 0;
     
     currentPixel = minLocation;
-    for (int j = 0; j < (imageWidth - 1); ++j) {
+    int loopEnd = (imageWidth - 1);
+    for (int j = 0; j < loopEnd; ++j) {
         path[j] = currentPixel;
         pixelLeft = currentPixel - 1;
         
@@ -221,11 +222,13 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
         }
     }
     
-    for (int j = 0; j < (imageWidth-1); ++j) {
+    int outerEnd = (imageWidth-1);
+    int innterEnd = (imageHeight - 1);
+    for (int j = 0; j < outerEnd; ++j) {
         currentPixel = path[j];
         currentRow = currentPixel / imageWidth;
         
-        for (int i = currentRow; i < (imageHeight - 1); ++i) {
+        for (int i = currentRow; i < innterEnd; ++i) {
             if ((image[currentPixel].seamval >= 0) && (image[currentPixel].seamval != INT_MAX)) {
                 image[currentPixel] = image[currentPixel+imageWidth];
                 currentPixel += imageWidth;
@@ -351,11 +354,12 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         }
     }
     
+    int loopEnd = (imageWidth - 1);
     for (int j = 0; j < imageHeight; ++j) {
         currentPixel = path[j];
         currentCol = currentPixel % imageWidth;
         
-        for (int i = currentCol; i < (imageWidth - 1); ++i) {
+        for (int i = currentCol; i < loopEnd; ++i) {
             if ((image[currentPixel].seamval >= 0) && (image[currentPixel].seamval != INT_MAX)) {
                 image[currentPixel] = image[currentPixel+1];
                 ++currentPixel;
@@ -377,9 +381,10 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
     
     int sImgPixelLoc = 0;
     int pixelLocation = 0;
+    int pixelWidth = sImgWidth * pixelDepth;
     for (int j = 0; j < sImgHeight; ++j) {
         for (int i = 0; i < sImgWidth; ++i) {
-            sImgPixelLoc = (j * (sImgWidth * pixelDepth)) + (i * pixelDepth);
+            sImgPixelLoc = (j * pixelWidth) + (i * pixelDepth);
             pixelLocation = (j * sImgWidth) + i;
             struct Pixel currentPixel;
             currentPixel.r = sImg[sImgPixelLoc];
