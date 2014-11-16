@@ -16,7 +16,24 @@ static inline int max(int a, int b)
         return b;
     }
 }
-
+/*
+static inline int max3(int a, int b, int c)
+{
+    if (a > b) {
+        if (a > c) {
+            return a;
+        } else {
+            return c;
+        }
+    } else {
+        if (b > c) {
+            return b;
+        } else {
+            return c;
+        }
+    }
+}
+*/
 static inline int min(int a, int b)
 {
     if (a < b) {
@@ -98,7 +115,16 @@ static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int i
     double p9val = (double)(((double)imageVector[p9] * COLOR_TO_GREY_FACTOR_R) +
                             ((double)imageVector[p9+1] * COLOR_TO_GREY_FACTOR_G) +
                             ((double)imageVector[p9+2] * COLOR_TO_GREY_FACTOR_B));
-    
+    /*
+    double p1val = (double)max3(imageVector[p1], imageVector[p1+1], imageVector[p1+2]);
+    double p2val = (double)max3(imageVector[p2], imageVector[p2+1], imageVector[p2+2]);
+    double p3val = (double)max3(imageVector[p3], imageVector[p3+1], imageVector[p3+2]);
+    double p4val = (double)max3(imageVector[p4], imageVector[p4+1], imageVector[p4+2]);
+    double p6val = (double)max3(imageVector[p6], imageVector[p6+1], imageVector[p6+2]);
+    double p7val = (double)max3(imageVector[p7], imageVector[p7+1], imageVector[p7+2]);
+    double p8val = (double)max3(imageVector[p8], imageVector[p8+1], imageVector[p8+2]);
+    double p9val = (double)max3(imageVector[p9], imageVector[p9+1], imageVector[p9+2]);
+    */
     // apply the sobel filter
     double sobelX = (p3val + (p6val + p6val) + p9val - p1val - (p4val + p4val) - p7val);
     double sobelY = (p1val + (p2val + p2val) + p3val - p7val - (p8val + p8val) - p9val);

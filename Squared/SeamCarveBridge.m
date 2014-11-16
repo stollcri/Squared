@@ -97,7 +97,6 @@
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
     unsigned char *rawResults = (unsigned char*)calloc(imgNewByteCount, sizeof(unsigned char));
     
-    // TODO: use blocks to get a background thread
     if (imgWidthInt > imgHeightInt) {
         carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, faceCount, faceCoordinates);
     } else {
@@ -122,10 +121,9 @@
         // http://stackoverflow.com/questions/13100078/ios-crash-cgdataprovidercreatewithcopyofdata-vm-copy-failed-status-1
         //
         CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
-        CGContextRelease(newContext);
-        
         UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squarecomplete" object:newImage];
+        CGContextRelease(newContext);
     }
     free(rawResults);
 }

@@ -21,8 +21,8 @@
 #define COLOR_TO_GREY_FACTOR_B 0.0722
 */
 #define COLOR_TO_GREY_FACTOR_R 0.2
-#define COLOR_TO_GREY_FACTOR_G 0.2
-#define COLOR_TO_GREY_FACTOR_B 0.6
+#define COLOR_TO_GREY_FACTOR_G 0.3
+#define COLOR_TO_GREY_FACTOR_B 0.5
 
 struct Pixel {
     int r;
