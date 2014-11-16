@@ -60,7 +60,7 @@
     
     // check if the image contains any faces
     NSArray *faceBounds = [SeamCarveBridge findFaces:sourceImage];
-    int faceCount = faceBounds.count;
+    int faceCount = (int)faceBounds.count;
     int *faceCoordinates = (int*)calloc((faceBounds.count * 4), sizeof(int));
     
     // build c data structures for face information
@@ -124,6 +124,7 @@
         UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squarecomplete" object:newImage];
         CGContextRelease(newContext);
+        CGImageRelease(newImgRef);
     }
     free(rawResults);
 }
