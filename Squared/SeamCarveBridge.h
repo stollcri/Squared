@@ -14,5 +14,6 @@
 @interface SeamCarveBridge : NSObject
 
 + (void)squareImage:(UIImage *)sourceImage;
++ (NSArray *)findFaces:(UIImage *)sourceImage;
 
 @end

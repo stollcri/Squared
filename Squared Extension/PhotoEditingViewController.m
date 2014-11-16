@@ -107,6 +107,7 @@
 #pragma mark - UI Actions
 
 - (void)loadImage:(UIImage *)img {
+    // TODO: move to bridge class
     if (img) {
         if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
             int temp = 0.0;
