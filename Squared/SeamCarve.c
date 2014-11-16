@@ -185,24 +185,51 @@ static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int im
 
 static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight)
 {
-    int *path = (int*)calloc((unsigned long)imageWidth, sizeof(int));
-    
     int currentPixel = 0;
-    int minValue = INT_MAX;
-    int minLocation = 0;
+    int minsFound = 0;
+    int *minLocs = (int*)calloc((unsigned long)imageHeight, sizeof(int));
+    int *minVals = (int*)calloc((unsigned long)imageHeight, sizeof(int));
+    minVals[0] = INT_MAX;
     
     for (int i = 1; i < imageHeight; ++i) {
         currentPixel = (i * imageWidth) - 1;
         if ((image[currentPixel].seamval > 0) && (image[currentPixel].seamval != INT_MAX)) {
-            if (image[currentPixel].seamval < minValue) {
-                minValue = image[currentPixel].seamval;
-                minLocation = currentPixel;
+            // find all minimum values
+            if (image[currentPixel].seamval <= minVals[0]) {
+                // this is a new minimum, so clear the min list and store just this minimum
+                if (image[currentPixel].seamval < minVals[0]) {
+                    minsFound = 0;
+                    minVals[minsFound] = image[currentPixel].seamval;
+                    minLocs[minsFound] = currentPixel;
+                    
+                // this is a duplicate minimum, so add it to the list
+                } else {
+                    ++minsFound;
+                    minVals[minsFound] = image[currentPixel].seamval;
+                    minLocs[minsFound] = currentPixel;
+                }
             }
         } else {
             break;
         }
     }
     
+    int minValue = INT_MAX;
+    int minLocation = 0;
+    // when there is more than one seam with the same minimum value
+    // randomly pick one of the minimums so that we do not have all
+    // of the seams taken from the top of the image
+    if (!minsFound) {
+        minValue = minVals[0];
+        minLocation = minLocs[0];
+    } else {
+        int minToTake = rand() % minsFound;
+        minValue = minVals[minToTake];
+        minLocation = minLocs[minToTake];
+        printf("h-- minsFound: %i, minToTake: %i \n", minsFound, minToTake);
+    }
+    
+    int *path = (int*)calloc((unsigned long)imageWidth, sizeof(int));
     int pixelLeft = 0;
     int currentRow = 0;
     int leftA = 0;
@@ -319,24 +346,51 @@ static void fillSeamMatrixVertical(struct Pixel *image, int imageWidth, int imag
 
 static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight)
 {
-    int *path = (int*)calloc((unsigned long)imageHeight, sizeof(int));
-    
     int currentPixel = 0;
-    int minValue = INT_MAX;
-    int minLocation = 0;
-    
+    int minsFound = 0;
+    int *minLocs = (int*)calloc((unsigned long)imageHeight, sizeof(int));
+    int *minVals = (int*)calloc((unsigned long)imageHeight, sizeof(int));
+    minVals[0] = INT_MAX;
+
     for (int i = 0; i < imageWidth; ++i) {
         currentPixel = ((imageHeight - 1) * imageWidth) + i;
         if ((image[currentPixel].seamval > 0) && (image[currentPixel].seamval != INT_MAX)) {
-            if (image[currentPixel].seamval < minValue) {
-                minValue = image[currentPixel].seamval;
-                minLocation = currentPixel;
+            // find all minimum values
+            if (image[currentPixel].seamval <= minVals[0]) {
+                // this is a new minimum, so clear the min list and store just this minimum
+                if (image[currentPixel].seamval < minVals[0]) {
+                    minsFound = 0;
+                    minVals[minsFound] = image[currentPixel].seamval;
+                    minLocs[minsFound] = currentPixel;
+                    
+                // this is a duplicate minimum, so add it to the list
+                } else {
+                    ++minsFound;
+                    minVals[minsFound] = image[currentPixel].seamval;
+                    minLocs[minsFound] = currentPixel;
+                }
             }
         } else {
             break;
         }
     }
     
+    int minValue = INT_MAX;
+    int minLocation = 0;
+    // when there is more than one seam with the same minimum value
+    // randomly pick one of the minimums so that we do not have all
+    // of the seams taken from the left of the image
+    if (!minsFound) {
+        minValue = minVals[0];
+        minLocation = minLocs[0];
+    } else {
+        int minToTake = rand() % minsFound;
+        minValue = minVals[minToTake];
+        minLocation = minLocs[minToTake];
+        printf("v-- minsFound: %i, minToTake: %i \n", minsFound, minToTake);
+    }
+    
+    int *path = (int*)calloc((unsigned long)imageHeight, sizeof(int));
     int pixelAbove = 0;
     int currentCol = 0;
     int aboveL = 0;
@@ -448,10 +502,13 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
         for (int j = yLoopBegin; j < yLoopEnd; ++j) {
             for (int k = xLoopBegin; k < xLoopEnd; ++k) {
                 pixelLocation = (j * sImgWidth) + k;
-                image[pixelLocation].energy = image[pixelLocation].energy * 4;
+                image[pixelLocation].energy = image[pixelLocation].energy * 2;
             }
         }
     }
+    
+    // rand() is used in seam cutting, but only need to seed it once per thread
+    srand(time(NULL));
     
     int seamRemovalCount = 0;
     if (goHorizontal) {
@@ -486,7 +543,12 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
             tImg[tImgPixelLoc+1] = image[pixelLocation].g;
             tImg[tImgPixelLoc+2] = image[pixelLocation].b;
             tImg[tImgPixelLoc+3] = image[pixelLocation].a;
-
+            /*
+            tImg[tImgPixelLoc]   = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+1] = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+2] = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+3] = 255;
+            */
         }
     }
     free(image);
