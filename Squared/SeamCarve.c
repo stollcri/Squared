@@ -226,7 +226,6 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
         int minToTake = rand() % minsFound;
         minValue = minVals[minToTake];
         minLocation = minLocs[minToTake];
-        printf("h-- minsFound: %i, minToTake: %i \n", minsFound, minToTake);
     }
     
     int *path = (int*)calloc((unsigned long)imageWidth, sizeof(int));
@@ -244,10 +243,8 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
         pixelLeft = currentPixel - 1;
         
         // avoid falling off the top
-        // TODO: better bounds checking
         if ((currentPixel > imageWidth) && (image[pixelLeft - imageWidth].seamval > 0)) {
             // avoid falling off the right end
-            // TODO: better bounds checking
             if ((currentPixel < ((imageWidth * imageHeight) - imageWidth)) && (image[pixelLeft + imageWidth].seamval > 0)) {
                 leftA = image[pixelLeft - imageWidth].seamval;
                 leftC = image[pixelLeft].seamval;
@@ -387,7 +384,6 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         int minToTake = rand() % minsFound;
         minValue = minVals[minToTake];
         minLocation = minLocs[minToTake];
-        printf("v-- minsFound: %i, minToTake: %i \n", minsFound, minToTake);
     }
     
     int *path = (int*)calloc((unsigned long)imageHeight, sizeof(int));
