@@ -88,11 +88,11 @@
     unsigned int imgNewHeight = 0;
     unsigned int pixelDepth = (unsigned int)bytesPerPixel;
     if (imgWidthInt > imgHeightInt) {
-        imgNewWidth = imgWidthInt;//imgHeightInt;
+        imgNewWidth = imgHeightInt;
         imgNewHeight = imgHeightInt;
     } else {
         imgNewWidth = imgWidthInt;
-        imgNewHeight = imgHeightInt;//imgWidthInt;
+        imgNewHeight = imgWidthInt;
     }
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
@@ -114,13 +114,6 @@
     CGColorSpaceRelease(newColorSpace);
     
     if (newContext) {
-        //
-        // TODO: Fix this error
-        // CASMBA.local Squared[86652] <Error>: copy_read_only: vm_copy failed: status 1.
-        // it seems to happen after 4 or 5 runs of the algorithm
-        //
-        // http://stackoverflow.com/questions/13100078/ios-crash-cgdataprovidercreatewithcopyofdata-vm-copy-failed-status-1
-        //
         CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
         UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squarecomplete" object:newImage];

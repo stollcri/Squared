@@ -62,120 +62,6 @@ static inline int min3(int a, int b, int c)
 
 #pragma mark - pixel energy
 
-static double getGreyValue(double r, double g, double b)
-{
-    return ((r * COLOR_TO_GREY_FACTOR_R) + (g * COLOR_TO_GREY_FACTOR_G) + (b * COLOR_TO_GREY_FACTOR_B));
-}
-
-static int getPixelGaussian(unsigned char *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel, int sigma)
-{
-    int imageByteWidth = imageWidth * pixelDepth;
-    int points[25];
-    double pointValues[25];
-        
-    points[0] = currentPixel - imageByteWidth - imageByteWidth - pixelDepth - pixelDepth;
-    points[1] = currentPixel - imageByteWidth - imageByteWidth - pixelDepth;
-    points[2] = currentPixel - imageByteWidth - imageByteWidth;
-    points[3] = currentPixel - imageByteWidth - imageByteWidth + pixelDepth;
-    points[4] = currentPixel - imageByteWidth - imageByteWidth + pixelDepth + pixelDepth;
-    
-    points[5] = currentPixel - imageByteWidth - pixelDepth - pixelDepth;
-    points[6] = currentPixel - imageByteWidth - pixelDepth;
-    points[7] = currentPixel - imageByteWidth;
-    points[8] = currentPixel - imageByteWidth + pixelDepth;
-    points[9] = currentPixel - imageByteWidth + pixelDepth + pixelDepth;
-    
-    points[10] = currentPixel - pixelDepth - pixelDepth;
-    points[11] = currentPixel - pixelDepth;
-    points[12] = currentPixel;
-    points[13] = currentPixel + pixelDepth;
-    points[14] = currentPixel + pixelDepth + pixelDepth;
-    
-    points[15] = currentPixel + imageByteWidth - pixelDepth - pixelDepth;
-    points[16] = currentPixel + imageByteWidth - pixelDepth;
-    points[17] = currentPixel + imageByteWidth;
-    points[18] = currentPixel + imageByteWidth + pixelDepth;
-    points[19] = currentPixel + imageByteWidth + pixelDepth + pixelDepth;
-    
-    points[20] = currentPixel + imageByteWidth + imageByteWidth - pixelDepth - pixelDepth;
-    points[21] = currentPixel + imageByteWidth + imageByteWidth - pixelDepth;
-    points[22] = currentPixel + imageByteWidth + imageByteWidth;
-    points[23] = currentPixel + imageByteWidth + imageByteWidth + pixelDepth;
-    points[24] = currentPixel + imageByteWidth + imageByteWidth + pixelDepth + pixelDepth;
-    
-    // TODO: this is wrong, fix it
-    for (int i = 0; i < 25; ++i) {
-        if (points[i] < 0) {
-            points[i] = 0;
-        } else if (points[i] >= (imageHeight * imageWidth * pixelDepth)) {
-            points[i] = (imageHeight * imageWidth * pixelDepth);
-        }
-    }
-
-    // get the pixel values from the image array
-    pointValues[0] = getGreyValue(imageVector[points[0]], imageVector[points[0]+1], imageVector[points[0]+2]);
-    pointValues[1] = getGreyValue(imageVector[points[1]], imageVector[points[1]+1], imageVector[points[1]+2]);
-    pointValues[2] = getGreyValue(imageVector[points[2]], imageVector[points[2]+1], imageVector[points[2]+2]);
-    pointValues[3] = getGreyValue(imageVector[points[3]], imageVector[points[3]+1], imageVector[points[3]+2]);
-    pointValues[4] = getGreyValue(imageVector[points[4]], imageVector[points[4]+1], imageVector[points[4]+2]);
-    pointValues[5] = getGreyValue(imageVector[points[5]], imageVector[points[5]+1], imageVector[points[5]+2]);
-    pointValues[6] = getGreyValue(imageVector[points[6]], imageVector[points[6]+1], imageVector[points[6]+2]);
-    pointValues[7] = getGreyValue(imageVector[points[7]], imageVector[points[7]+1], imageVector[points[7]+2]);
-    pointValues[8] = getGreyValue(imageVector[points[8]], imageVector[points[8]+1], imageVector[points[8]+2]);
-    pointValues[9] = getGreyValue(imageVector[points[9]], imageVector[points[9]+1], imageVector[points[9]+2]);
-    pointValues[10] = getGreyValue(imageVector[points[10]], imageVector[points[10]+1], imageVector[points[10]+2]);
-    pointValues[11] = getGreyValue(imageVector[points[11]], imageVector[points[11]+1], imageVector[points[11]+2]);
-    pointValues[12] = getGreyValue(imageVector[points[12]], imageVector[points[12]+1], imageVector[points[12]+2]);
-    pointValues[13] = getGreyValue(imageVector[points[13]], imageVector[points[13]+1], imageVector[points[13]+2]);
-    pointValues[14] = getGreyValue(imageVector[points[14]], imageVector[points[14]+1], imageVector[points[14]+2]);
-    pointValues[15] = getGreyValue(imageVector[points[15]], imageVector[points[15]+1], imageVector[points[15]+2]);
-    pointValues[16] = getGreyValue(imageVector[points[16]], imageVector[points[16]+1], imageVector[points[16]+2]);
-    pointValues[17] = getGreyValue(imageVector[points[17]], imageVector[points[17]+1], imageVector[points[17]+2]);
-    pointValues[18] = getGreyValue(imageVector[points[18]], imageVector[points[18]+1], imageVector[points[18]+2]);
-    pointValues[19] = getGreyValue(imageVector[points[19]], imageVector[points[19]+1], imageVector[points[19]+2]);
-    pointValues[20] = getGreyValue(imageVector[points[20]], imageVector[points[20]+1], imageVector[points[20]+2]);
-    pointValues[21] = getGreyValue(imageVector[points[21]], imageVector[points[21]+1], imageVector[points[21]+2]);
-    pointValues[22] = getGreyValue(imageVector[points[22]], imageVector[points[22]+1], imageVector[points[22]+2]);
-    pointValues[23] = getGreyValue(imageVector[points[23]], imageVector[points[23]+1], imageVector[points[23]+2]);
-    pointValues[24] = getGreyValue(imageVector[points[24]], imageVector[points[24]+1], imageVector[points[24]+2]);
-    
-    double gaussL1 = 0.0;
-    double gaussL2 = 0.0;
-    double gaussL3 = 0.0;
-    double gaussL4 = 0.0;
-    double gaussL5 = 0.0;
-    double gaussAll = 0.0;
-    if (sigma == 14) {
-        // apply the gaussian kernel (sigma = 1.4)
-        gaussL1 = (2 * pointValues[0]) + (4 * pointValues[1]) + (5 * pointValues[2]) + (4 * pointValues[3]) + (2 * pointValues[4]);
-        gaussL2 = (4 * pointValues[5]) + (9 * pointValues[6]) + (12 * pointValues[7]) + (9 * pointValues[8]) + (4 * pointValues[9]);
-        gaussL3 = (5 * pointValues[10]) + (12 * pointValues[11]) + (15 * pointValues[12]) + (12 * pointValues[13]) + (5 * pointValues[14]);
-        gaussL4 = (4 * pointValues[15]) + (9 * pointValues[16]) + (12 * pointValues[17]) + (9 * pointValues[18]) + (4 * pointValues[19]);
-        gaussL5 = (2 * pointValues[20]) + (4 * pointValues[21]) + (5 * pointValues[22]) + (4 * pointValues[23]) + (2 * pointValues[24]);
-        gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / 159;
-    } else {
-        // apply the gaussian kernel (sigma = 1)
-        gaussL1 = (1 * pointValues[0]) + (4 * pointValues[1]) + (7 * pointValues[2]) + (4 * pointValues[3]) + (1 * pointValues[4]);
-        gaussL2 = (4 * pointValues[5]) + (16 * pointValues[6]) + (26 * pointValues[7]) + (16 * pointValues[8]) + (4 * pointValues[9]);
-        gaussL3 = (7 * pointValues[10]) + (26 * pointValues[11]) + (41 * pointValues[12]) + (26 * pointValues[13]) + (7 * pointValues[14]);
-        gaussL4 = (4 * pointValues[15]) + (16 * pointValues[16]) + (26 * pointValues[17]) + (16 * pointValues[18]) + (4 * pointValues[19]);
-        gaussL5 = (1 * pointValues[20]) + (4 * pointValues[21]) + (7 * pointValues[22]) + (4 * pointValues[23]) + (1 * pointValues[24]);
-        gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / 273;
-    }
-    
-    return min(max((int)gaussAll, 0), 255);
-}
-
-static int getPixelEnergyDoG(unsigned char *imageVector, int currentPixel, int gaussianValue1, int gaussianValue2)
-{
-    //double currentValue = getGreyValue(imageVector[currentPixel], imageVector[currentPixel+1], imageVector[currentPixel+2]);
-    if (gaussianValue1 > gaussianValue2) {
-        return min(max( (int)((gaussianValue1 - gaussianValue2) * 8), 0), 255);
-    } else {
-        return min(max( (int)((gaussianValue2 - gaussianValue1) * 8), 0), 255);
-    }
-}
-
 static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel)
 {
     int imageByteWidth = imageWidth * pixelDepth;
@@ -244,8 +130,7 @@ static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int i
     double sobelY = (p1val + (p2val + p2val) + p3val - p7val - (p8val + p8val) - p9val);
     
     // bounded gradient magnitude
-    //printf("%f \n", sqrt((sobelX * sobelX) + (sobelY * sobelY)));
-    return min(max( (int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/1) , 0), 255);
+    return min(max((int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/2) , 0), 255);
 }
 
 #pragma mark - horizontal methods
@@ -571,13 +456,7 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
             currentPixel.g = sImg[sImgPixelLoc+1];
             currentPixel.b = sImg[sImgPixelLoc+2];
             currentPixel.a = sImg[sImgPixelLoc+3];
-            
             currentPixel.energy = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc);
-            //currentPixel.gauss1 = getPixelGaussian(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc, 14);
-            //currentPixel.gauss2 = getPixelGaussian(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc, 10);
-            //currentPixel.energy = getPixelEnergyDoG(sImg, sImgPixelLoc, currentPixel.gauss1, currentPixel.gauss2);
-            //currentPixel.energy = currentPixel.gauss2;
-            
             currentPixel.seamval = currentPixel.energy;
             image[pixelLocation] = currentPixel;
         }
@@ -644,17 +523,17 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
         for (int i = 0; i < tImgWidth; ++i) {
             tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
             pixelLocation = (j * sImgWidth) + i;
-            /*
+            
             tImg[tImgPixelLoc]   = image[pixelLocation].r;
             tImg[tImgPixelLoc+1] = image[pixelLocation].g;
             tImg[tImgPixelLoc+2] = image[pixelLocation].b;
             tImg[tImgPixelLoc+3] = image[pixelLocation].a;
-            */
+            /*
             tImg[tImgPixelLoc]   = image[pixelLocation].energy;
             tImg[tImgPixelLoc+1] = image[pixelLocation].energy;
             tImg[tImgPixelLoc+2] = image[pixelLocation].energy;
             tImg[tImgPixelLoc+3] = 255;
-            
+            */
         }
     }
     free(image);
