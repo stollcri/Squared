@@ -20,8 +20,9 @@
 //
 + (NSArray *)findFaces:(UIImage *)sourceImage {
     CIImage *image = [CIImage imageWithCGImage:sourceImage.CGImage];
+    // TODO: Consider changing CIDetectorAccuracyLow to CIDetectorAccuracyHigh
     CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace
-                                              context:nil options:[NSDictionary dictionaryWithObject:CIDetectorAccuracyHigh forKey:CIDetectorAccuracy]];
+                                              context:nil options:[NSDictionary dictionaryWithObject:CIDetectorAccuracyLow forKey:CIDetectorAccuracy]];
     return [detector featuresInImage:image];
 }
 
@@ -87,11 +88,11 @@
     unsigned int imgNewHeight = 0;
     unsigned int pixelDepth = (unsigned int)bytesPerPixel;
     if (imgWidthInt > imgHeightInt) {
-        imgNewWidth = imgHeightInt;
+        imgNewWidth = imgWidthInt;//imgHeightInt;
         imgNewHeight = imgHeightInt;
     } else {
         imgNewWidth = imgWidthInt;
-        imgNewHeight = imgWidthInt;
+        imgNewHeight = imgHeightInt;//imgWidthInt;
     }
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
