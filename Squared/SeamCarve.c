@@ -241,12 +241,12 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
     }
     
     int outerEnd = (imageWidth-1);
-    int innterEnd = (imageHeight - 1);
+    int innerEnd = (imageHeight - 1);
     for (int j = 0; j < outerEnd; ++j) {
         currentPixel = path[j];
         currentRow = currentPixel / imageWidth;
         
-        for (int i = currentRow; i < innterEnd; ++i) {
+        for (int i = currentRow; i < innerEnd; ++i) {
             if ((image[currentPixel].seamval >= 0) && (image[currentPixel].seamval != INT_MAX)) {
                 image[currentPixel] = image[currentPixel+imageWidth];
                 currentPixel += imageWidth;
