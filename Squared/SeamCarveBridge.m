@@ -26,8 +26,9 @@
     return [detector featuresInImage:image];
 }
 
-+ (void)squareImage:(UIImage *)sourceImage {
++ (void)squareImage:(UIImage *)sourceImage withMask:(UIImage *)sourceImageMask {
     CGImageRef imgRef = sourceImage.CGImage;
+    CGImageRef imgRefMask = sourceImageMask.CGImage;
     NSUInteger imgWidth = CGImageGetWidth(imgRef);
     NSUInteger imgHeight = CGImageGetHeight(imgRef);
     //NSLog(@"%lu x %lu", (unsigned long)imgWidth, (unsigned long)imgHeight);
@@ -41,9 +42,13 @@
     
     // char not int -- to get each channel instead of the entire pixel
     unsigned char *rawPixels = (unsigned char*)calloc(imgByteCount, sizeof(unsigned char));
+    unsigned char *rawPixelsMask = (unsigned char*)calloc(imgByteCount, sizeof(unsigned char));
     NSUInteger bytesPerRow = bytesPerPixel * imgWidth;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(rawPixels, imgWidth, imgHeight,
+                                                 bitsPerComponent, bytesPerRow, colorSpace,
+                                                 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    CGContextRef contextMask = CGBitmapContextCreate(rawPixelsMask, imgWidth, imgHeight,
                                                  bitsPerComponent, bytesPerRow, colorSpace,
                                                  kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
     CGColorSpaceRelease(colorSpace);
@@ -55,7 +60,13 @@
     } else {
         // There is a problem with the context, so we will not be able to process anything
         // The most likely cause is that there was no image data provided
-        // TODO: imporve error handling
+        // TODO: imporve error handling (below also)
+        return;
+    }
+    if (contextMask) {
+        CGContextDrawImage(contextMask, CGRectMake(0, 0, imgWidth, imgHeight), imgRefMask);
+        CGContextRelease(contextMask);
+    } else {
         return;
     }
     
@@ -99,11 +110,12 @@
     unsigned char *rawResults = (unsigned char*)calloc(imgNewByteCount, sizeof(unsigned char));
     
     if (imgWidthInt > imgHeightInt) {
-        carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, faceCount, faceCoordinates);
+        carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, faceCount, faceCoordinates, rawPixelsMask);
     } else {
-        carveSeamsHorizontal(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, faceCount, faceCoordinates);
+        carveSeamsHorizontal(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, faceCount, faceCoordinates, rawPixelsMask);
     }
     free(faceCoordinates);
+    free(rawPixelsMask);
     free(rawPixels);
     
     NSUInteger newBytesPerRow = bytesPerPixel * imgNewWidth;

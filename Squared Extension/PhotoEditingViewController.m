@@ -91,7 +91,8 @@
 
 - (void)squareImageBegin {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SeamCarveBridge squareImage:self.imageView.image];
+        //[SeamCarveBridge squareImage:self.imageView.image];
+        //[SeamCarveBridge squareImage:self.imageView.image withMask:self.paint]
     });
     [self disableUIelements];
 }

@@ -414,7 +414,7 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
 
 #pragma mark -
 
-void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int goHorizontal, int faceCount, int *faceBoundsArray)
+void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int goHorizontal, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
 {
     struct Pixel *image = (struct Pixel *)calloc(((size_t)sImgWidth * (size_t)sImgHeight), sizeof(struct Pixel));
     
@@ -432,6 +432,14 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
             currentPixel.a = sImg[sImgPixelLoc+3];
             currentPixel.energy = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc);
             currentPixel.seamval = currentPixel.energy;
+            
+            if (sImgMask[sImgPixelLoc] >= 255) {
+                currentPixel.energy = (int)(currentPixel.energy / 5);
+            }
+            if (sImgMask[sImgPixelLoc+2] >= 255) {
+                currentPixel.energy = (int)(currentPixel.energy * 5);
+            }
+            
             image[pixelLocation] = currentPixel;
         }
     }
@@ -515,12 +523,12 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
 
 #pragma mark - public functions
 
-void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray)
+void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
 {
-    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 1, faceCount, faceBoundsArray);
+    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 1, faceCount, faceBoundsArray, sImgMask);
 }
 
-void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray)
+void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
 {
-    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 0, faceCount, faceBoundsArray);
+    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 0, faceCount, faceBoundsArray, sImgMask);
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -44,6 +44,18 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem systemItem="flexibleSpace" id="qQC-p2-oe2"/>
+                                    <barButtonItem systemItem="add" id="UCd-Eo-oHo">
+                                        <connections>
+                                            <action selector="doFreezing:" destination="BYZ-38-t0r" id="8oT-yF-bEU"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem systemItem="flexibleSpace" id="RTW-Xj-H3N"/>
+                                    <barButtonItem systemItem="stop" id="0nN-4D-1Rz">
+                                        <connections>
+                                            <action selector="doUnFreezing:" destination="BYZ-38-t0r" id="YAE-Be-JgW"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem systemItem="flexibleSpace" id="70k-gg-oEa"/>
                                     <barButtonItem systemItem="play" id="gpD-Ni-K8q">
                                         <connections>
                                             <action selector="doSquaring:" destination="BYZ-38-t0r" id="jjD-Bu-hHW"/>
@@ -97,10 +109,12 @@
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="Tsq-id-MEi" id="tRW-qR-Xeh"/>
+                        <outlet property="freezeButton" destination="UCd-Eo-oHo" id="sRd-jy-h9P"/>
                         <outlet property="imageView" destination="KUi-BJ-qmt" id="V9t-5a-yye"/>
                         <outlet property="openButton" destination="5lc-Ml-EHP" id="0uh-81-RO2"/>
                         <outlet property="saveButton" destination="JJw-jc-lwB" id="e5s-SK-oQh"/>
                         <outlet property="squareButton" destination="gpD-Ni-K8q" id="VMa-HO-8nP"/>
+                        <outlet property="unFreezeButton" destination="0nN-4D-1Rz" id="zjG-m8-HKV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
