@@ -434,10 +434,10 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
             currentPixel.seamval = currentPixel.energy;
             
             if (sImgMask[sImgPixelLoc] >= 255) {
-                currentPixel.energy = (int)(currentPixel.energy / 5);
+                currentPixel.energy = (int)(currentPixel.energy / 29);
             }
             if (sImgMask[sImgPixelLoc+2] >= 255) {
-                currentPixel.energy = (int)(currentPixel.energy * 5);
+                currentPixel.energy = (int)(currentPixel.energy * 7);
             }
             
             image[pixelLocation] = currentPixel;

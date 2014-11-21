@@ -30,7 +30,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
     
     [self.freezeButton setEnabled:NO];
@@ -46,7 +46,6 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -72,13 +71,13 @@
             
             CGSize newSize = CGSizeMake(newWidth, newHeight);
             UIGraphicsBeginImageContext(newSize);
-            //UIGraphicsBeginImageContextWithOptions(newSize, 1.0f, 0.0f);
             [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
             UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
             
             self.imageView.image = newImage;
             
+            // TODO: abstract this duplication
             CGRect tmp = [self getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
@@ -88,7 +87,13 @@
         } else {
             self.imageView.image = img;
             
-            // TODO: Add paint frame code from above
+            // TODO: abstract this duplication
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            [self.paintImageView removeFromSuperview];
+            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+            self.paintImageView = tmpImgVw;
+            [self.imageView addSubview:self.paintImageView];
         }
         [self.freezeButton setEnabled:YES];
         [self.unFreezeButton setEnabled:YES];
@@ -109,10 +114,9 @@
 
 - (void)squareImageComplete:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
+        [self.paintImageView removeFromSuperview];
         self.imageView.image = [notification object];
         [self enableUIelements];
-        
-        [self.paintImageView removeFromSuperview];
     });
 }
 
@@ -140,11 +144,6 @@
     self.imageView.alpha = 0.2;
     self.activityIndicator.alpha = 1.0;
     [UIView commitAnimations];
-    
-    // alternative method for animation
-    //[UIView animateWithDuration:animationDuration delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
-    //    self.imageView.alpha = 0.25;
-    //} completion: nil];
 }
 
 - (void)enableUIelements {
@@ -195,25 +194,18 @@
     CGRect results = CGRectZero;
     CGSize imageSize = imageView.image.size;
     CGSize frameSize = imageView.frame.size;
-    
     if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
         results.size = imageSize;
     } else {
-        CGFloat widthRatio  = imageSize.width  / frameSize.width;
+        CGFloat widthRatio = imageSize.width / frameSize.width;
         CGFloat heightRatio = imageSize.height / frameSize.height;
-        //NSLog(@" -- %f / %f", imageSize.width, frameSize.width);
-        //NSLog(@" -- %f / %f", imageSize.height, frameSize.height);
-        //NSLog(@" -- %f, %f", widthRatio, heightRatio);
         CGFloat maxRatio = MAX(widthRatio, heightRatio);
-        //NSLog(@" -- %f", maxRatio);
+        
         results.size.width = roundf(imageSize.width / maxRatio);
         results.size.height = roundf(imageSize.height / maxRatio);
-        //NSLog(@" -- %f, %f", results.size.width, results.size.height);
     }
-    
     results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
     results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
-    //NSLog(@" -- %f, %f", results.origin.x, results.origin.y);
     return results;
 }
 
@@ -266,14 +258,6 @@
             self.paintImageView.image = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
         }
-        /*
-        UIGraphicsBeginImageContext(self.imageView.frame.size);
-        [self.imageView.image drawInRect:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) blendMode:kCGBlendModeNormal alpha:1.0];
-        [self.paintIMageView.image drawInRect:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) blendMode:kCGBlendModeNormal alpha:PAINT_BRUSH_ALPHA];
-        self.imageView.image = UIGraphicsGetImageFromCurrentImageContext();
-        self.paintIMageView.image = nil;
-        UIGraphicsEndImageContext();
-        */
     }
 }
 

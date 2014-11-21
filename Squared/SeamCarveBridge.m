@@ -58,6 +58,9 @@
         // This causes zombies which when released result in bad access errors
         //CGImageRelease(imgRef);
     } else {
+        if (contextMask) {
+            CGContextRelease(contextMask);
+        }
         // There is a problem with the context, so we will not be able to process anything
         // The most likely cause is that there was no image data provided
         // TODO: imporve error handling (below also)

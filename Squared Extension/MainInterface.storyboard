@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ObA-dk-sSI">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="ObA-dk-sSI">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -24,6 +24,18 @@
                                 </constraints>
                                 <items>
                                     <barButtonItem systemItem="flexibleSpace" id="y3F-O5-wTp"/>
+                                    <barButtonItem systemItem="add" id="3hq-io-gAg">
+                                        <connections>
+                                            <action selector="doFreezing:" destination="ObA-dk-sSI" id="Ztv-Mi-JCW"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem systemItem="flexibleSpace" id="iR8-id-deY"/>
+                                    <barButtonItem systemItem="stop" id="cLs-QL-6UT">
+                                        <connections>
+                                            <action selector="doUnFreezing:" destination="ObA-dk-sSI" id="CWV-Lx-ATD"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem systemItem="flexibleSpace" id="A0p-3L-5Je"/>
                                     <barButtonItem systemItem="play" id="OMd-zx-iKJ">
                                         <connections>
                                             <action selector="doSquaring:" destination="ObA-dk-sSI" id="cll-Qg-byw"/>
@@ -56,8 +68,10 @@
                     <size key="freeformSize" width="320" height="528"/>
                     <connections>
                         <outlet property="activityIndicator" destination="dPo-wY-cr9" id="iMJ-aH-QEd"/>
+                        <outlet property="freezeButton" destination="3hq-io-gAg" id="nFZ-lh-Hoq"/>
                         <outlet property="imageView" destination="ADb-1l-PYf" id="cbF-oM-REP"/>
                         <outlet property="squareButton" destination="OMd-zx-iKJ" id="unu-pD-ez6"/>
+                        <outlet property="unFreezeButton" destination="cLs-QL-6UT" id="l0Z-wt-wFG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X47-rx-isc" userLabel="First Responder" sceneMemberID="firstResponder"/>

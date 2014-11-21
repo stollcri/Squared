@@ -13,8 +13,18 @@
 
 
 @interface PhotoEditingViewController () <PHContentEditingController>
+
 @property (strong) PHContentEditingInput *input;
 @property BOOL squaringComplete;
+
+@property CGPoint lastPoint;
+@property BOOL mouseSwiped;
+@property PaintMode paintMode;
+@property CGFloat paintColorR;
+@property CGFloat paintColorG;
+@property CGFloat paintColorB;
+@property UIImageView *paintImageView;
+
 @end
 
 @implementation PhotoEditingViewController
@@ -91,17 +101,18 @@
 
 - (void)squareImageBegin {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        //[SeamCarveBridge squareImage:self.imageView.image];
-        //[SeamCarveBridge squareImage:self.imageView.image withMask:self.paint]
+        [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
     });
     [self disableUIelements];
 }
 
 - (void)squareImageComplete:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^(){
+        [self.paintImageView removeFromSuperview];
         self.imageView.image = [notification object];
         self.squaringComplete = YES;
         [self enableUIelements];
+        
     });
 }
 
@@ -133,13 +144,31 @@
             UIGraphicsEndImageContext();
             
             self.imageView.image = newImage;
+            
+            // TODO: abstract this duplication
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            [self.paintImageView removeFromSuperview];
+            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+            self.paintImageView = tmpImgVw;
+            [self.imageView addSubview:self.paintImageView];
         } else {
             self.imageView.image = img;
+            
+            // TODO: abstract this duplication
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            [self.paintImageView removeFromSuperview];
+            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+            self.paintImageView = tmpImgVw;
+            [self.imageView addSubview:self.paintImageView];
         }
     }
 }
 
 - (void)disableUIelements {
+    [self.freezeButton setEnabled:NO];
+    [self.unFreezeButton setEnabled:NO];
     [self.squareButton setEnabled:NO];
     
     self.activityIndicator.alpha = 0.2;
@@ -166,13 +195,133 @@
     self.imageView.alpha = 1.0;
     [UIView commitAnimations];
     
+    [self.freezeButton setEnabled:YES];
+    [self.unFreezeButton setEnabled:YES];
     [self.squareButton setEnabled:YES];
+}
+
+#pragma mark Paint actions
+
+- (void)updatePatintUI {
+    if (self.paintMode == PaintModeFreeze) {
+        [self.freezeButton setTintColor:[UIColor whiteColor]];
+        [self.unFreezeButton setTintColor:self.view.tintColor];
+        self.paintColorR = PAINT_COLOR_FRZ_R;
+        self.paintColorG = PAINT_COLOR_FRZ_G;
+        self.paintColorB = PAINT_COLOR_FRZ_B;
+    } else if (self.paintMode == PaintModeUnFreeze) {
+        [self.freezeButton setTintColor:self.view.tintColor];
+        [self.unFreezeButton setTintColor:[UIColor whiteColor]];
+        self.paintColorR = PAINT_COLOR_UFZ_R;
+        self.paintColorG = PAINT_COLOR_UFZ_G;
+        self.paintColorB = PAINT_COLOR_UFZ_B;
+    } else {
+        [self.freezeButton setTintColor:self.view.tintColor];
+        [self.unFreezeButton setTintColor:self.view.tintColor];
+    }
+}
+
+//
+// TODO: The paint window is not being calculated corectly
+//       (in the Photo editing extension only)
+//
+- (CGRect)getImageDisplaySize:(UIImageView *)imageView
+{
+    CGRect results = CGRectZero;
+    CGSize imageSize = imageView.image.size;
+    CGSize frameSize = imageView.frame.size;
+    if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
+        results.size = imageSize;
+    } else {
+        CGFloat widthRatio = imageSize.width / frameSize.width;
+        CGFloat heightRatio = imageSize.height / frameSize.height;
+        CGFloat maxRatio = MAX(widthRatio, heightRatio);
+        NSLog(@"%f = %f / %f", widthRatio, imageSize.width, frameSize.width);
+        NSLog(@"%f = %f / %f", heightRatio, imageSize.height, frameSize.height);
+        
+        results.size.width = roundf(imageSize.width / maxRatio);
+        results.size.height = roundf(imageSize.height / maxRatio);
+    }
+    results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
+    results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
+    NSLog(@"%f, %f -- %f, %f", results.origin.x, results.origin.y, results.size.width, results.size.height);
+    return results;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    if (self.paintMode) {
+        self.mouseSwiped = NO;
+        UITouch *touch = [touches anyObject];
+        self.lastPoint = [touch locationInView:self.paintImageView];
+    }
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (self.paintMode) {
+        self.mouseSwiped = YES;
+        UITouch *touch = [touches anyObject];
+        CGPoint currentPoint = [touch locationInView:self.paintImageView];
+        
+        UIGraphicsBeginImageContext(self.paintImageView.frame.size);
+        [self.paintImageView.image drawInRect:CGRectMake(0, 0, self.paintImageView.frame.size.width, self.paintImageView.frame.size.height)];
+        CGContextMoveToPoint(UIGraphicsGetCurrentContext(), self.lastPoint.x, self.lastPoint.y);
+        CGContextAddLineToPoint(UIGraphicsGetCurrentContext(), currentPoint.x, currentPoint.y);
+        CGContextSetLineCap(UIGraphicsGetCurrentContext(), kCGLineCapRound);
+        CGContextSetLineWidth(UIGraphicsGetCurrentContext(), PAINT_BRUSH_SIZE);
+        CGContextSetRGBStrokeColor(UIGraphicsGetCurrentContext(), self.paintColorR, self.paintColorG, self.paintColorB, 1.0);
+        CGContextSetBlendMode(UIGraphicsGetCurrentContext(),kCGBlendModeNormal);
+        
+        CGContextStrokePath(UIGraphicsGetCurrentContext());
+        self.paintImageView.image = UIGraphicsGetImageFromCurrentImageContext();
+        [self.paintImageView setAlpha:PAINT_BRUSH_ALPHA];
+        UIGraphicsEndImageContext();
+        
+        self.lastPoint = currentPoint;
+    }
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (self.paintMode) {
+        if(!self.mouseSwiped) {
+            UIGraphicsBeginImageContext(self.paintImageView.frame.size);
+            [self.paintImageView.image drawInRect:CGRectMake(0, 0, self.paintImageView.frame.size.width, self.paintImageView.frame.size.height)];
+            CGContextSetLineCap(UIGraphicsGetCurrentContext(), kCGLineCapRound);
+            CGContextSetLineWidth(UIGraphicsGetCurrentContext(), PAINT_BRUSH_SIZE);
+            CGContextSetRGBStrokeColor(UIGraphicsGetCurrentContext(), self.paintColorR, self.paintColorG, self.paintColorB, 1.0);
+            CGContextMoveToPoint(UIGraphicsGetCurrentContext(), self.lastPoint.x, self.lastPoint.y);
+            CGContextAddLineToPoint(UIGraphicsGetCurrentContext(), self.lastPoint.x, self.lastPoint.y);
+            CGContextStrokePath(UIGraphicsGetCurrentContext());
+            CGContextFlush(UIGraphicsGetCurrentContext());
+            self.paintImageView.image = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+        }
+    }
 }
 
 #pragma mark - UI Interactions
 
 - (IBAction)doSquaring:(id)sender {
     [self squareImageBegin];
+}
+
+- (IBAction)doFreezing:(id)sender {
+    if (self.paintMode == PaintModeFreeze) {
+        self.paintMode = PaintModeNone;
+    } else {
+        self.paintMode = PaintModeFreeze;
+    }
+    [self updatePatintUI];
+}
+
+- (IBAction)doUnFreezing:(id)sender {
+    if (self.paintMode == PaintModeUnFreeze) {
+        self.paintMode = PaintModeNone;
+    } else {
+        self.paintMode = PaintModeUnFreeze;
+    }
+    [self updatePatintUI];
 }
 
 @end
