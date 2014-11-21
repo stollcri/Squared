@@ -24,13 +24,13 @@
                                 </constraints>
                                 <items>
                                     <barButtonItem systemItem="flexibleSpace" id="y3F-O5-wTp"/>
-                                    <barButtonItem systemItem="add" id="3hq-io-gAg">
+                                    <barButtonItem image="Freeze" id="3hq-io-gAg">
                                         <connections>
                                             <action selector="doFreezing:" destination="ObA-dk-sSI" id="Ztv-Mi-JCW"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem systemItem="flexibleSpace" id="iR8-id-deY"/>
-                                    <barButtonItem systemItem="stop" id="cLs-QL-6UT">
+                                    <barButtonItem image="Thaw" id="cLs-QL-6UT">
                                         <connections>
                                             <action selector="doUnFreezing:" destination="ObA-dk-sSI" id="CWV-Lx-ATD"/>
                                         </connections>
@@ -79,6 +79,10 @@
             <point key="canvasLocation" x="326" y="-108"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Freeze" width="22" height="22"/>
+        <image name="Thaw" width="22" height="22"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

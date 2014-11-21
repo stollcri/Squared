@@ -44,13 +44,13 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem systemItem="flexibleSpace" id="qQC-p2-oe2"/>
-                                    <barButtonItem systemItem="add" id="UCd-Eo-oHo">
+                                    <barButtonItem image="Freeze" id="UCd-Eo-oHo">
                                         <connections>
                                             <action selector="doFreezing:" destination="BYZ-38-t0r" id="8oT-yF-bEU"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem systemItem="flexibleSpace" id="RTW-Xj-H3N"/>
-                                    <barButtonItem systemItem="stop" id="0nN-4D-1Rz">
+                                    <barButtonItem image="Thaw" id="0nN-4D-1Rz">
                                         <connections>
                                             <action selector="doUnFreezing:" destination="BYZ-38-t0r" id="YAE-Be-JgW"/>
                                         </connections>
@@ -122,4 +122,8 @@
             <point key="canvasLocation" x="438" y="373"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Freeze" width="22" height="22"/>
+        <image name="Thaw" width="22" height="22"/>
+    </resources>
 </document>
