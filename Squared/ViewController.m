@@ -31,6 +31,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(deviceOrientationDidChange:) name: UIDeviceOrientationDidChangeNotification object: nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
     
     [self.freezeButton setEnabled:NO];
@@ -262,6 +264,14 @@
 }
 
 #pragma mark - UI Interactions
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification {
+    if (self.paintImageView) {
+        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        [self.paintImageView setFrame:tmp];
+    }
+    
+}
 
 - (IBAction)doOpen:(id)sender {
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
