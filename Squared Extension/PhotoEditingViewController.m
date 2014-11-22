@@ -32,7 +32,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(deviceOrientationDidChange:) name: UIDeviceOrientationDidChangeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
 }
@@ -166,6 +166,16 @@
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
         }
+        
+        if (img.size.width != img.size.height) {
+            [self.freezeButton setEnabled:YES];
+            [self.unFreezeButton setEnabled:YES];
+            [self.squareButton setEnabled:YES];
+        } else {
+            [self.freezeButton setEnabled:NO];
+            [self.unFreezeButton setEnabled:NO];
+            [self.squareButton setEnabled:NO];
+        }
     }
 }
 
@@ -198,9 +208,10 @@
     self.imageView.alpha = 1.0;
     [UIView commitAnimations];
     
-    [self.freezeButton setEnabled:YES];
-    [self.unFreezeButton setEnabled:YES];
-    [self.squareButton setEnabled:YES];
+    // image is already square
+    //[self.freezeButton setEnabled:YES];
+    //[self.unFreezeButton setEnabled:YES];
+    //[self.squareButton setEnabled:YES];
 }
 
 #pragma mark Paint actions
@@ -239,15 +250,15 @@
         CGFloat widthRatio = imageSize.width / frameSize.width;
         CGFloat heightRatio = imageSize.height / frameSize.height;
         CGFloat maxRatio = MAX(widthRatio, heightRatio);
-        NSLog(@"%f = %f / %f", widthRatio, imageSize.width, frameSize.width);
-        NSLog(@"%f = %f / %f", heightRatio, imageSize.height, frameSize.height);
+        //NSLog(@"%f = %f / %f", widthRatio, imageSize.width, frameSize.width);
+        //NSLog(@"%f = %f / %f", heightRatio, imageSize.height, frameSize.height);
         
         results.size.width = roundf(imageSize.width / maxRatio);
         results.size.height = roundf(imageSize.height / maxRatio);
     }
     results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
     results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
-    NSLog(@"%f, %f -- %f, %f", results.origin.x, results.origin.y, results.size.width, results.size.height);
+    //NSLog(@"%f, %f -- %f, %f", results.origin.x, results.origin.y, results.size.width, results.size.height);
     return results;
 }
 

@@ -20,6 +20,7 @@
 		7D26E2EF1A10FC7C001849FF /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2EE1A10FC7C001849FF /* MainInterface.storyboard */; };
 		7D26E2F21A10FC7C001849FF /* Squared Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7D26E2E21A10FC7C001849FF /* Squared Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7D26E2F91A11086D001849FF /* SeamCarve.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2F71A11086D001849FF /* SeamCarve.c */; };
+		7DC27B621A203D4B0050E157 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C51A10F997001849FF /* Images.xcassets */; };
 		7DC52CA21A156C6F00947F5B /* Squared-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DC52C961A156C6E00947F5B /* Squared-60.png */; };
 		7DC52CA31A156C6F00947F5B /* Squared-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DC52C971A156C6E00947F5B /* Squared-60@2x.png */; };
 		7DC52CA41A156C6F00947F5B /* Squared-60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DC52C981A156C6E00947F5B /* Squared-60@3x.png */; };
@@ -441,6 +442,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7DD3C4101A1FB221003A7A81 /* Thaw.png in Resources */,
+				7DC27B621A203D4B0050E157 /* Images.xcassets in Resources */,
 				7D26E2EF1A10FC7C001849FF /* MainInterface.storyboard in Resources */,
 				7DD3C4021A1FB221003A7A81 /* Thaw-22.png in Resources */,
 				7DD3C40A1A1FB221003A7A81 /* Freeze-66.png in Resources */,

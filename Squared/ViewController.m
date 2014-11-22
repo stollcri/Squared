@@ -31,7 +31,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(deviceOrientationDidChange:) name: UIDeviceOrientationDidChangeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
     
@@ -97,9 +97,16 @@
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
         }
-        [self.freezeButton setEnabled:YES];
-        [self.unFreezeButton setEnabled:YES];
-        [self.squareButton setEnabled:YES];
+        
+        if (img.size.width != img.size.height) {
+            [self.freezeButton setEnabled:YES];
+            [self.unFreezeButton setEnabled:YES];
+            [self.squareButton setEnabled:YES];
+        } else {
+            [self.freezeButton setEnabled:NO];
+            [self.unFreezeButton setEnabled:NO];
+            [self.squareButton setEnabled:NO];
+        }
     }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
@@ -164,9 +171,10 @@
     [UIView commitAnimations];
     
     [self.openButton setEnabled:YES];
-    [self.freezeButton setEnabled:YES];
-    [self.unFreezeButton setEnabled:YES];
-    [self.squareButton setEnabled:YES];
+    // image is already square
+    //[self.freezeButton setEnabled:YES];
+    //[self.unFreezeButton setEnabled:YES];
+    //[self.squareButton setEnabled:YES];
     [self.saveButton setEnabled:YES];
 }
 
