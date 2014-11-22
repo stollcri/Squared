@@ -58,11 +58,13 @@
     
     // TODO: move to bridge class
     if (img) {
+        // make sure choosen image is less than maximum size
         if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
             int temp = 0.0;
             float newWidth = 0;
             float newHeight = 0;
             
+            // determine new image dimensions
             if (img.size.height > img.size.width) {
                 temp = img.size.width * MAXIMUM_IMAGE_SIZE / img.size.height;
                 newWidth = temp;
@@ -73,6 +75,7 @@
                 newHeight = temp;
             }
             
+            // resize the image (in memory)
             CGSize newSize = CGSizeMake(newWidth, newHeight);
             UIGraphicsBeginImageContext(newSize);
             [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
@@ -81,6 +84,7 @@
             
             self.imageView.image = newImage;
             
+            // add subview for painting image masks
             // TODO: abstract this duplication (create paint subview)
             CGRect tmp = [self getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
@@ -92,6 +96,7 @@
         } else {
             self.imageView.image = img;
             
+            // add subview for painting image masks
             // TODO: abstract this duplication (create paint subview)
             CGRect tmp = [self getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
@@ -102,6 +107,7 @@
             self.hasMaskData = NO;
         }
         
+        // do not enable mask or squaring buttons if the image is already square
         if (img.size.width != img.size.height) {
             [self.freezeButton setEnabled:YES];
             [self.unFreezeButton setEnabled:YES];
@@ -118,6 +124,7 @@
 
 #pragma mark - Utilities
 
+// calculate the size of an image set to aspect-fit
 - (CGRect)getImageDisplaySize:(UIImageView *)imageView
 {
     CGRect results = CGRectZero;
@@ -141,6 +148,7 @@
 #pragma mark - Squaring methods
 
 - (void)squareImageBegin {
+    // launch squaring algorithm on a background thread
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
     });
@@ -148,6 +156,7 @@
 }
 
 - (void)squareImageComplete:(NSNotification *)notification {
+    // return from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.paintImageView removeFromSuperview];
         self.imageView.image = [notification object];

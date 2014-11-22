@@ -433,8 +433,10 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
             currentPixel.energy = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc);
             currentPixel.seamval = currentPixel.energy;
             
+            // handle freeze/melt masks
             if (sImgMask[sImgPixelLoc] >= 255) {
-                currentPixel.energy = (int)(currentPixel.energy / 29);
+                //currentPixel.energy = (int)(currentPixel.energy / 29);
+                currentPixel.energy = 0;
             }
             if (sImgMask[sImgPixelLoc+2] >= 255) {
                 currentPixel.energy = (int)(currentPixel.energy * 7);
@@ -444,6 +446,7 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
         }
     }
     
+    // handle faces
     int faceBeginX = 0;
     int faceBeginY = 0;
     int faceWidth = 0;
@@ -469,7 +472,7 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
         for (int j = yLoopBegin; j < yLoopEnd; ++j) {
             for (int k = xLoopBegin; k < xLoopEnd; ++k) {
                 pixelLocation = (j * sImgWidth) + k;
-                image[pixelLocation].energy = image[pixelLocation].energy * 2;
+                image[pixelLocation].energy = image[pixelLocation].energy * 3;
             }
         }
     }
