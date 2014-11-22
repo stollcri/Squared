@@ -12,6 +12,8 @@
 
 @interface ViewController ()
 
+@property BOOL hasMaskData;
+
 @property CGPoint lastPoint;
 @property BOOL mouseSwiped;
 @property PaintMode paintMode;
@@ -79,23 +81,25 @@
             
             self.imageView.image = newImage;
             
-            // TODO: abstract this duplication
+            // TODO: abstract this duplication (create paint subview)
             CGRect tmp = [self getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
+            self.hasMaskData = NO;
         } else {
             self.imageView.image = img;
             
-            // TODO: abstract this duplication
+            // TODO: abstract this duplication (create paint subview)
             CGRect tmp = [self getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
+            self.hasMaskData = NO;
         }
         
         if (img.size.width != img.size.height) {
@@ -110,6 +114,28 @@
     }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Utilities
+
+- (CGRect)getImageDisplaySize:(UIImageView *)imageView
+{
+    CGRect results = CGRectZero;
+    CGSize imageSize = imageView.image.size;
+    CGSize frameSize = imageView.frame.size;
+    if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
+        results.size = imageSize;
+    } else {
+        CGFloat widthRatio = imageSize.width / frameSize.width;
+        CGFloat heightRatio = imageSize.height / frameSize.height;
+        CGFloat maxRatio = MAX(widthRatio, heightRatio);
+        
+        results.size.width = roundf(imageSize.width / maxRatio);
+        results.size.height = roundf(imageSize.height / maxRatio);
+    }
+    results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
+    results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
+    return results;
 }
 
 #pragma mark - Squaring methods
@@ -129,7 +155,7 @@
     });
 }
 
-#pragma mark - UI Actions
+#pragma mark - UI Updates
 
 - (void)disableUIelements {
     [self.openButton setEnabled:NO];
@@ -178,8 +204,6 @@
     [self.saveButton setEnabled:YES];
 }
 
-#pragma mark Paint actions
-
 - (void)updatePatintUI {
     if (self.paintMode == PaintModeFreeze) {
         [self.freezeButton setTintColor:[UIColor whiteColor]];
@@ -199,29 +223,12 @@
     }
 }
 
-- (CGRect)getImageDisplaySize:(UIImageView *)imageView
-{
-    CGRect results = CGRectZero;
-    CGSize imageSize = imageView.image.size;
-    CGSize frameSize = imageView.frame.size;
-    if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
-        results.size = imageSize;
-    } else {
-        CGFloat widthRatio = imageSize.width / frameSize.width;
-        CGFloat heightRatio = imageSize.height / frameSize.height;
-        CGFloat maxRatio = MAX(widthRatio, heightRatio);
-        
-        results.size.width = roundf(imageSize.width / maxRatio);
-        results.size.height = roundf(imageSize.height / maxRatio);
-    }
-    results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
-    results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
-    return results;
-}
+#pragma mark - UI Responders
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     if (self.paintMode) {
         self.mouseSwiped = NO;
+        self.hasMaskData = YES;
         UITouch *touch = [touches anyObject];
         self.lastPoint = [touch locationInView:self.paintImageView];
     }
@@ -271,15 +278,32 @@
     }
 }
 
-#pragma mark - UI Interactions
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+    if (motion == UIEventSubtypeMotionShake) {
+        if (self.hasMaskData) {
+            // TODO: abstract this duplication (create paint subview)
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            [self.paintImageView removeFromSuperview];
+            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+            self.paintImageView = tmpImgVw;
+            [self.imageView addSubview:self.paintImageView];
+            self.hasMaskData = NO;
+        } else {
+            // TODO: add original image reloading
+        }
+    }
+}
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
     if (self.paintImageView) {
         CGRect tmp = [self getImageDisplaySize:self.imageView];
         [self.paintImageView setFrame:tmp];
     }
-    
 }
+
+#pragma mark - IB Actions
 
 - (IBAction)doOpen:(id)sender {
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];

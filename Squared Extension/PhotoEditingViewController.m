@@ -15,7 +15,10 @@
 @interface PhotoEditingViewController () <PHContentEditingController>
 
 @property (strong) PHContentEditingInput *input;
+@property NSURL *currentImageURL;
+
 @property BOOL squaringComplete;
+@property BOOL hasMaskData;
 
 @property CGPoint lastPoint;
 @property BOOL mouseSwiped;
@@ -59,8 +62,8 @@
     // If you returned YES from canHandleAdjustmentData:, contentEditingInput has the original image and adjustment data.
     // If you returned NO, the contentEditingInput has past edits "baked in".
     self.input = contentEditingInput;
-    NSURL *currentImageURL = self.input.fullSizeImageURL;
-    [self loadImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:currentImageURL]]];
+    self.currentImageURL = self.input.fullSizeImageURL;
+    [self loadImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:self.currentImageURL]]];
 }
 
 - (void)finishContentEditingWithCompletionHandler:(void (^)(PHContentEditingOutput *))completionHandler {
@@ -100,26 +103,7 @@
     // May be called after finishContentEditingWithCompletionHandler: while you prepare output.
 }
 
-#pragma mark - Squaring methods
-
-- (void)squareImageBegin {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
-    });
-    [self disableUIelements];
-}
-
-- (void)squareImageComplete:(NSNotification *)notification {
-    dispatch_async(dispatch_get_main_queue(), ^(){
-        [self.paintImageView removeFromSuperview];
-        self.imageView.image = [notification object];
-        self.squaringComplete = YES;
-        [self enableUIelements];
-        
-    });
-}
-
-#pragma mark - UI Actions
+#pragma mark - Utilities
 
 - (void)loadImage:(UIImage *)img {
     // TODO: move to bridge class
@@ -148,23 +132,25 @@
             
             self.imageView.image = newImage;
             
-            // TODO: abstract this duplication
+            // TODO: abstract this duplication (create paint subview)
             CGRect tmp = [self getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
+            self.hasMaskData = NO;
         } else {
             self.imageView.image = img;
             
-            // TODO: abstract this duplication
+            // TODO: abstract this duplication (create paint subview)
             CGRect tmp = [self getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
+            self.hasMaskData = NO;
         }
         
         if (img.size.width != img.size.height) {
@@ -178,6 +164,54 @@
         }
     }
 }
+
+- (CGRect)getImageDisplaySize:(UIImageView *)imageView
+{
+    //
+    // TODO: The paint window is not being calculated corectly
+    //       (in the Photo editing extension only)
+    //
+    CGRect results = CGRectZero;
+    CGSize imageSize = imageView.image.size;
+    CGSize frameSize = imageView.frame.size;
+    if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
+        results.size = imageSize;
+    } else {
+        CGFloat widthRatio = imageSize.width / frameSize.width;
+        CGFloat heightRatio = imageSize.height / frameSize.height;
+        CGFloat maxRatio = MAX(widthRatio, heightRatio);
+        //NSLog(@"%f = %f / %f", widthRatio, imageSize.width, frameSize.width);
+        //NSLog(@"%f = %f / %f", heightRatio, imageSize.height, frameSize.height);
+        
+        results.size.width = roundf(imageSize.width / maxRatio);
+        results.size.height = roundf(imageSize.height / maxRatio);
+    }
+    results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
+    results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
+    //NSLog(@"%f, %f -- %f, %f", results.origin.x, results.origin.y, results.size.width, results.size.height);
+    return results;
+}
+
+#pragma mark - Squaring methods
+
+- (void)squareImageBegin {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
+    });
+    [self disableUIelements];
+}
+
+- (void)squareImageComplete:(NSNotification *)notification {
+    dispatch_async(dispatch_get_main_queue(), ^(){
+        [self.paintImageView removeFromSuperview];
+        self.imageView.image = [notification object];
+        self.squaringComplete = YES;
+        [self enableUIelements];
+        
+    });
+}
+
+#pragma mark - UI Updates
 
 - (void)disableUIelements {
     [self.freezeButton setEnabled:NO];
@@ -214,8 +248,6 @@
     //[self.squareButton setEnabled:YES];
 }
 
-#pragma mark Paint actions
-
 - (void)updatePatintUI {
     if (self.paintMode == PaintModeFreeze) {
         [self.freezeButton setTintColor:[UIColor whiteColor]];
@@ -235,36 +267,12 @@
     }
 }
 
-//
-// TODO: The paint window is not being calculated corectly
-//       (in the Photo editing extension only)
-//
-- (CGRect)getImageDisplaySize:(UIImageView *)imageView
-{
-    CGRect results = CGRectZero;
-    CGSize imageSize = imageView.image.size;
-    CGSize frameSize = imageView.frame.size;
-    if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
-        results.size = imageSize;
-    } else {
-        CGFloat widthRatio = imageSize.width / frameSize.width;
-        CGFloat heightRatio = imageSize.height / frameSize.height;
-        CGFloat maxRatio = MAX(widthRatio, heightRatio);
-        //NSLog(@"%f = %f / %f", widthRatio, imageSize.width, frameSize.width);
-        //NSLog(@"%f = %f / %f", heightRatio, imageSize.height, frameSize.height);
-        
-        results.size.width = roundf(imageSize.width / maxRatio);
-        results.size.height = roundf(imageSize.height / maxRatio);
-    }
-    results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
-    results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
-    //NSLog(@"%f, %f -- %f, %f", results.origin.x, results.origin.y, results.size.width, results.size.height);
-    return results;
-}
+#pragma mark - UI Responders
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     if (self.paintMode) {
         self.mouseSwiped = NO;
+        self.hasMaskData = YES;
         UITouch *touch = [touches anyObject];
         self.lastPoint = [touch locationInView:self.paintImageView];
     }
@@ -314,7 +322,31 @@
     }
 }
 
-#pragma mark - UI Interactions
+/*
+- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
+{
+    //
+    // TODO: This is not working at all
+    //
+    if (motion == UIEventSubtypeMotionShake) {
+        if (self.hasMaskData) {
+            // TODO: abstract this duplication (create paint subview)
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            [self.paintImageView removeFromSuperview];
+            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+            self.paintImageView = tmpImgVw;
+            [self.imageView addSubview:self.paintImageView];
+            self.hasMaskData = NO;
+        } else {
+            // Don't really need this here, can cancel back to the original and then edit again
+            //if (self.squaringComplete) {
+            //    [self loadImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:self.currentImageURL]]];
+            //}
+        }
+    }
+}
+*/
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
     if (self.paintImageView) {
@@ -323,6 +355,8 @@
     }
     
 }
+
+#pragma mark - IB Actions
 
 - (IBAction)doSquaring:(id)sender {
     [self squareImageBegin];
