@@ -332,6 +332,7 @@
     NSArray *activityItems = @[imagetoshare];
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityVC.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint];
+    activityVC.popoverPresentationController.sourceView = self.popoverAnchor;
     [self presentViewController:activityVC animated:TRUE completion:nil];
 }
 

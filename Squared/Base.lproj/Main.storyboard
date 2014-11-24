@@ -69,15 +69,25 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="E1V-fs-Lyo">
+                                <rect key="frame" x="556" y="556" width="44" height="44"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="rDe-Ax-3Ok"/>
+                                    <constraint firstAttribute="width" constant="44" id="t4Y-xo-PL9"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="KUi-BJ-qmt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="Ca8-We-mw7"/>
                             <constraint firstAttribute="trailingMargin" secondItem="KUi-BJ-qmt" secondAttribute="trailing" constant="16" id="EL7-Hf-Qp1"/>
                             <constraint firstAttribute="centerX" secondItem="Tsq-id-MEi" secondAttribute="centerX" id="Fim-RG-ww3"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="E1V-fs-Lyo" secondAttribute="bottom" id="L43-6H-NDl"/>
                             <constraint firstItem="3gM-6g-6QR" firstAttribute="top" secondItem="KUi-BJ-qmt" secondAttribute="bottom" id="M7j-9U-YFT"/>
                             <constraint firstAttribute="centerY" secondItem="Tsq-id-MEi" secondAttribute="centerY" id="N3L-rX-3ff"/>
                             <constraint firstAttribute="centerX" secondItem="Tsq-id-MEi" secondAttribute="centerX" id="NqC-rw-xRo"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="E1V-fs-Lyo" secondAttribute="trailing" constant="-16" id="P0w-FF-hhw"/>
                             <constraint firstAttribute="centerX" secondItem="Tsq-id-MEi" secondAttribute="centerX" id="RJk-CH-WVu"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="KUi-BJ-qmt" secondAttribute="bottom" constant="46" id="bqz-af-6d7"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="3gM-6g-6QR" secondAttribute="bottom" id="deR-5J-Img"/>
@@ -112,6 +122,7 @@
                         <outlet property="freezeButton" destination="UCd-Eo-oHo" id="sRd-jy-h9P"/>
                         <outlet property="imageView" destination="KUi-BJ-qmt" id="V9t-5a-yye"/>
                         <outlet property="openButton" destination="5lc-Ml-EHP" id="0uh-81-RO2"/>
+                        <outlet property="popoverAnchor" destination="E1V-fs-Lyo" id="PCK-4H-BX7"/>
                         <outlet property="saveButton" destination="JJw-jc-lwB" id="e5s-SK-oQh"/>
                         <outlet property="squareButton" destination="gpD-Ni-K8q" id="VMa-HO-8nP"/>
                         <outlet property="unFreezeButton" destination="0nN-4D-1Rz" id="zjG-m8-HKV"/>

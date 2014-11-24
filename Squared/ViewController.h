@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, PaintMode) {
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *freezeButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *unFreezeButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) IBOutlet UIView *popoverAnchor;
 
 - (IBAction)doOpen:(id)sender;
 - (IBAction)doSquaring:(id)sender;
