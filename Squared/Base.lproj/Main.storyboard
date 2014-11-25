@@ -19,6 +19,7 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="KUi-BJ-qmt">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                                <gestureRecognizers/>
                                 <variation key="heightClass=compact" ambiguous="YES">
                                     <rect key="frame" x="100" y="0.0" width="500" height="400"/>
                                 </variation>
@@ -28,6 +29,9 @@
                                 <variation key="heightClass=regular-widthClass=regular" ambiguous="YES">
                                     <rect key="frame" x="0.0" y="0.0" width="0.0" height="0.0"/>
                                 </variation>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="G2g-b5-VR4" appends="YES" id="1KV-ld-Ppn"/>
+                                </connections>
                             </imageView>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="Tsq-id-MEi">
                                 <rect key="frame" x="282" y="281" width="37" height="37"/>
@@ -79,6 +83,7 @@
                             </view>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="KUi-BJ-qmt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="Ca8-We-mw7"/>
                             <constraint firstAttribute="trailingMargin" secondItem="KUi-BJ-qmt" secondAttribute="trailing" constant="16" id="EL7-Hf-Qp1"/>
@@ -116,6 +121,9 @@
                                 <exclude reference="yq1-Fl-iKA"/>
                             </mask>
                         </variation>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="G2g-b5-VR4" appends="YES" id="Tj4-dS-jWH"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="activityIndicator" destination="Tsq-id-MEi" id="tRW-qR-Xeh"/>
@@ -129,6 +137,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <pinchGestureRecognizer id="G2g-b5-VR4">
+                    <connections>
+                        <action selector="handlePinch:" destination="BYZ-38-t0r" id="rwz-Lz-Q88"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="438" y="373"/>
         </scene>

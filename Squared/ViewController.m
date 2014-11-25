@@ -22,6 +22,9 @@
 @property CGFloat paintColorB;
 @property UIImageView *paintImageView;
 
+@property NSMutableArray *imageStages;
+@property NSInteger currentImageStage;
+
 @end
 
 @implementation ViewController
@@ -43,6 +46,7 @@
     [self.squareButton setEnabled:NO];
     [self.saveButton setEnabled:NO];
     self.paintMode = PaintModeNone;
+    self.currentImageStage = -1;
 }
 
 - (void)dealloc {
@@ -146,20 +150,37 @@
         [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
     });
     [self disableUIelements];
+    
+    // preapre squaring stages array
+    self.imageStages = [[NSMutableArray alloc] init];
+    self.currentImageStage = 0;
+    [self.imageStages addObject:self.imageView.image];
 }
 
 - (void)squareImageUpdate:(NSNotification *)notification {
     // receive updates from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
+        // update present display
         self.imageView.image = [notification object];
+        
+        // add to the stages array
+        self.currentImageStage += 1;
+        [self.imageStages addObject:[notification object]];
     });
 }
 
 - (void)squareImageComplete:(NSNotification *)notification {
     // return from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
+        // remove (invisible) paint window
         [self.paintImageView removeFromSuperview];
+        // update present display
         self.imageView.image = [notification object];
+        
+        // add to the stages array
+        self.currentImageStage += 1;
+        [self.imageStages addObject:[notification object]];
+        
         [self enableUIelements];
     });
 }
@@ -353,6 +374,28 @@
         self.paintMode = PaintModeUnFreeze;
     }
     [self updatePatintUI];
+}
+
+- (IBAction)handlePinch:(UIPinchGestureRecognizer *)sender {
+    // must have an image loaded and squared
+    if (self.currentImageStage >= 0) {
+        // zoom out (un-square)
+        if (sender.scale < 1) {
+            if (self.currentImageStage < (self.imageStages.count - 1)) {
+                self.currentImageStage += 1;
+                self.imageView.image = self.imageStages[self.currentImageStage];
+            }
+        // soom in (re-square)
+        } else if (sender.scale > 1) {
+            if (self.currentImageStage > 0) {
+                self.currentImageStage -= 1;
+                self.imageView.image = self.imageStages[self.currentImageStage];
+            }
+        }
+    }
+    
+    // reset scale
+    sender.scale = 1;
 }
 
 @end
