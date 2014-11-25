@@ -152,6 +152,8 @@ static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int im
             if (image[currentPixel].seamval != INT_MAX) {
                 image[currentPixel].seamval = image[currentPixel].energy;
                 setPixelPathHorizontal(image, imageWidth, imageHeight, currentPixel, j);
+            } else {
+                break;
             }
         }
     }
@@ -304,6 +306,8 @@ static void fillSeamMatrixVertical(struct Pixel *image, int imageWidth, int imag
             if (image[currentPixel].seamval != INT_MAX) {
                 image[currentPixel].seamval = image[currentPixel].energy;
                 setPixelPathVertical(image, imageWidth, imageHeight, currentPixel, i);
+            } else {
+                break;
             }
         }
     }
@@ -414,7 +418,47 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
 
 #pragma mark -
 
-void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int goHorizontal, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
+void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int goHorizontal)
+{
+    // rand() is used in seam cutting, but only need to seed it once per thread
+    srand((int)time(0));
+    
+    if (goHorizontal) {
+        fillSeamMatrixHorizontal(sImgPixels, sImgWidth, sImgHeight);
+        for (int i = 0; i < carveCount; ++i) {
+            cutSeamHorizontal(sImgPixels, sImgWidth, sImgHeight);
+        }
+    } else {
+        fillSeamMatrixVertical(sImgPixels, sImgWidth, sImgHeight);
+        for (int i = 0; i < carveCount; ++i) {
+            cutSeamVertical(sImgPixels, sImgWidth, sImgHeight);
+        }
+    }
+    
+    int tImgPixelLoc = 0;
+    int pixelLocation = 0;
+    for (int j = 0; j < tImgHeight; ++j) {
+        for (int i = 0; i < tImgWidth; ++i) {
+            tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+            pixelLocation = (j * sImgWidth) + i;
+            
+            tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
+            tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
+            tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+            tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+            /*
+            tImg[tImgPixelLoc]   = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+1] = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+2] = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+3] = 255;
+            */
+        }
+    }
+}
+
+#pragma mark - public functions
+
+struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight, int pixelDepth, unsigned char *sImgMask, int faceCount, int *faceBoundsArray)
 {
     struct Pixel *image = (struct Pixel *)calloc(((size_t)sImgWidth * (size_t)sImgHeight), sizeof(struct Pixel));
     
@@ -477,61 +521,15 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
         }
     }
     
-    // rand() is used in seam cutting, but only need to seed it once per thread
-    srand((int)time(0));
-    
-    int seamRemovalCount = 0;
-    if (goHorizontal) {
-        fillSeamMatrixHorizontal(image, sImgWidth, sImgHeight);
-        
-        seamRemovalCount = sImgHeight - tImgHeight;
-        for (int i = 0; i < seamRemovalCount; ++i) {
-            cutSeamHorizontal(image, sImgWidth, sImgHeight);
-            if ((i % REFRESH_SEAM_MATRIX_EVERY) == 0) {
-                fillSeamMatrixHorizontal(image, sImgWidth, sImgHeight);
-            }
-        }
-    } else {
-        fillSeamMatrixVertical(image, sImgWidth, sImgHeight);
-        
-        seamRemovalCount = sImgWidth - tImgWidth;
-        for (int i = 0; i < seamRemovalCount; ++i) {
-            cutSeamVertical(image, sImgWidth, sImgHeight);
-            if ((i % REFRESH_SEAM_MATRIX_EVERY) == 0) {
-                fillSeamMatrixVertical(image, sImgWidth, sImgHeight);
-            }
-        }
-    }
-    
-    int tImgPixelLoc = 0;
-    for (int j = 0; j < tImgHeight; ++j) {
-        for (int i = 0; i < tImgWidth; ++i) {
-            tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
-            pixelLocation = (j * sImgWidth) + i;
-            
-            tImg[tImgPixelLoc]   = image[pixelLocation].r;
-            tImg[tImgPixelLoc+1] = image[pixelLocation].g;
-            tImg[tImgPixelLoc+2] = image[pixelLocation].b;
-            tImg[tImgPixelLoc+3] = image[pixelLocation].a;
-            /*
-            tImg[tImgPixelLoc]   = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+1] = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+2] = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+3] = 255;
-            */
-        }
-    }
-    free(image);
+    return image;
 }
 
-#pragma mark - public functions
-
-void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
+void carveSeamsHorizontal(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)
 {
-    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 1, faceCount, faceBoundsArray, sImgMask);
+    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, 1);
 }
 
-void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
+void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)
 {
-    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 0, faceCount, faceBoundsArray, sImgMask);
+    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, 0);
 }

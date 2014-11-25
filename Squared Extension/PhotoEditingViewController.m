@@ -37,6 +37,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
 }
 
@@ -201,6 +202,13 @@
     [self disableUIelements];
 }
 
+- (void)squareImageUpdate:(NSNotification *)notification {
+    // receive updates from the background thread
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.imageView.image = [notification object];
+    });
+}
+
 - (void)squareImageComplete:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^(){
         [self.paintImageView removeFromSuperview];
@@ -226,7 +234,8 @@
     [animationDurationValue getValue:&animationDuration];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:animationDuration];
-    self.imageView.alpha = 0.2;
+    self.imageView.alpha = 0.5;
+    self.paintImageView.alpha = 0.0;
     self.activityIndicator.alpha = 1.0;
     [UIView commitAnimations];
 }
