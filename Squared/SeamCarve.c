@@ -159,12 +159,11 @@ static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int im
     }
 }
 
-static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight)
+static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight, int *minLocs, int *path)
 {
     int currentPixel = 0;
     int minsFound = 0;
     int minValue = INT_MAX;
-    int *minLocs = (int*)calloc((unsigned long)imageHeight, sizeof(int));
     
     for (int i = 1; i < imageHeight; ++i) {
         currentPixel = (i * imageWidth) - 1;
@@ -196,9 +195,7 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
         int minToTake = rand() % minsFound;
         minLocation = minLocs[minToTake];
     }
-    free(minLocs);
     
-    int *path = (int*)calloc((unsigned long)imageWidth, sizeof(int));
     int pixelLeft = 0;
     int currentRow = 0;
     int leftA = 0;
@@ -258,8 +255,6 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
         }
         image[currentPixel].seamval = INT_MAX;
     }
-    
-    free(path);
 }
 
 #pragma mark - vertical methods
@@ -313,12 +308,11 @@ static void fillSeamMatrixVertical(struct Pixel *image, int imageWidth, int imag
     }
 }
 
-static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight)
+static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight, int *minLocs, int *path)
 {
     int currentPixel = 0;
     int minsFound = 0;
     int minValue = INT_MAX;
-    int *minLocs = (int*)calloc((unsigned long)imageHeight, sizeof(int));
 
     for (int i = 0; i < imageWidth; ++i) {
         currentPixel = ((imageHeight - 1) * imageWidth) + i;
@@ -351,9 +345,7 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         int minToTake = rand() % minsFound;
         minLocation = minLocs[minToTake];
     }
-    free(minLocs);
     
-    int *path = (int*)calloc((unsigned long)imageHeight, sizeof(int));
     int pixelAbove = 0;
     int currentCol = 0;
     int aboveL = 0;
@@ -412,8 +404,6 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         }
         image[currentPixel].seamval = INT_MAX;
     }
-    
-    free(path);
 }
 
 #pragma mark -
@@ -425,14 +415,28 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
     
     if (goHorizontal) {
         fillSeamMatrixHorizontal(sImgPixels, sImgWidth, sImgHeight);
+        
+        int *minLocs = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
+        int *path = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
+        
         for (int i = 0; i < carveCount; ++i) {
-            cutSeamHorizontal(sImgPixels, sImgWidth, sImgHeight);
+            cutSeamHorizontal(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
         }
+        
+        free(path);
+        free(minLocs);
     } else {
         fillSeamMatrixVertical(sImgPixels, sImgWidth, sImgHeight);
+        
+        int *minLocs = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
+        int *path = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
+        
         for (int i = 0; i < carveCount; ++i) {
-            cutSeamVertical(sImgPixels, sImgWidth, sImgHeight);
+            cutSeamVertical(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
         }
+        
+        free(path);
+        free(minLocs);
     }
     
     int tImgPixelLoc = 0;
