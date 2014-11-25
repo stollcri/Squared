@@ -114,6 +114,7 @@
             [self.unFreezeButton setEnabled:NO];
             [self.squareButton setEnabled:NO];
         }
+        self.currentImageStage = -1;
     }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
