@@ -109,6 +109,7 @@
 - (void)loadImage:(UIImage *)img {
     // TODO: move to bridge class
     if (img) {
+        CGSize newSize;
         if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
             int temp = 0.0;
             float newWidth = 0;
@@ -124,35 +125,27 @@
                 newHeight = temp;
             }
             
-            CGSize newSize = CGSizeMake(newWidth, newHeight);
+            newSize = CGSizeMake(newWidth, newHeight);
             UIGraphicsBeginImageContext(newSize);
-            //UIGraphicsBeginImageContextWithOptions(newSize, 1.0f, 0.0f);
-            [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-            UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.imageView.image = newImage;
-            
-            // TODO: abstract this duplication (create paint subview)
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
-            [self.paintImageView removeFromSuperview];
-            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
-            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
-            self.paintImageView = tmpImgVw;
-            [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
         } else {
-            self.imageView.image = img;
-            
-            // TODO: abstract this duplication (create paint subview)
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
-            [self.paintImageView removeFromSuperview];
-            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
-            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
-            self.paintImageView = tmpImgVw;
-            [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
+            newSize = CGSizeMake(img.size.width, img.size.height);
+            UIGraphicsBeginImageContext(newSize);
         }
+        
+        [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+        UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.imageView.image = newImage;
+        
+        // TODO: abstract this duplication (create paint subview)
+        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        [self.paintImageView removeFromSuperview];
+        UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+        [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+        self.paintImageView = tmpImgVw;
+        [self.imageView addSubview:self.paintImageView];
+        self.hasMaskData = NO;
         
         if (img.size.width != img.size.height) {
             [self.freezeButton setEnabled:YES];

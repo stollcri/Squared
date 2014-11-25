@@ -60,6 +60,7 @@
     // TODO: move to bridge class
     if (img) {
         // make sure choosen image is less than maximum size
+        CGSize newSize;
         if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
             int temp = 0.0;
             float newWidth = 0;
@@ -76,37 +77,28 @@
                 newHeight = temp;
             }
             
-            // resize the image (in memory)
-            CGSize newSize = CGSizeMake(newWidth, newHeight);
+            newSize = CGSizeMake(newWidth, newHeight);
             UIGraphicsBeginImageContext(newSize);
-            [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-            UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.imageView.image = newImage;
-            
-            // add subview for painting image masks
-            // TODO: abstract this duplication (create paint subview)
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
-            [self.paintImageView removeFromSuperview];
-            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
-            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
-            self.paintImageView = tmpImgVw;
-            [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
         } else {
-            self.imageView.image = img;
-            
-            // add subview for painting image masks
-            // TODO: abstract this duplication (create paint subview)
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
-            [self.paintImageView removeFromSuperview];
-            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
-            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
-            self.paintImageView = tmpImgVw;
-            [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
+            newSize = CGSizeMake(img.size.width, img.size.height);
+            UIGraphicsBeginImageContext(newSize);
         }
+        
+        [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+        UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.imageView.image = newImage;
+        
+        // add subview for painting image masks
+        // TODO: abstract this duplication (create paint subview)
+        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        [self.paintImageView removeFromSuperview];
+        UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+        [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+        self.paintImageView = tmpImgVw;
+        [self.imageView addSubview:self.paintImageView];
+        self.hasMaskData = NO;
         
         // do not enable mask or squaring buttons if the image is already square
         if (img.size.width != img.size.height) {
