@@ -501,8 +501,9 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
             
             // handle freeze/melt masks
             if (sImgMask[sImgPixelLoc] >= 255) {
-                //currentPixel.energy = (int)(currentPixel.energy / 29);
-                currentPixel.energy = 0;
+                currentPixel.energy = (int)(currentPixel.energy / 37);
+                // if it just zero (below) then the seams become straight and more unnatural
+                //currentPixel.energy = 0;
             }
             if (sImgMask[sImgPixelLoc+2] >= 255) {
                 currentPixel.energy = (int)(currentPixel.energy * 7);
