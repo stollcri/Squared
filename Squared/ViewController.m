@@ -6,12 +6,15 @@
 //  Copyright (c) 2014 Christopher Stoll. All rights reserved.
 //
 
+// TODO: There is some rare conditon where the mask subview is not being resized properly, check this
+
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "ViewController.h"
 #import "SeamCarveBridge.h"
 
 @interface ViewController ()
 
+@property BOOL wasRotated;
 @property BOOL hasMaskData;
 
 @property CGPoint lastPoint;
@@ -36,17 +39,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+    self.wasRotated = NO;
+    self.paintMode = PaintModeNone;
+    self.currentImageStage = -1;
     
     [self.freezeButton setEnabled:NO];
     [self.unFreezeButton setEnabled:NO];
     [self.squareButton setEnabled:NO];
     [self.saveButton setEnabled:NO];
-    self.paintMode = PaintModeNone;
-    self.currentImageStage = -1;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
 }
 
 - (void)dealloc {
@@ -94,6 +99,9 @@
         
         self.imageView.image = newImage;
         
+        self.wasRotated = NO;
+        self.currentImageStage = -1;
+        
         // add subview for painting image masks
         // TODO: abstract this duplication (create paint subview)
         CGRect tmp = [self getImageDisplaySize:self.imageView];
@@ -114,7 +122,6 @@
             [self.unFreezeButton setEnabled:NO];
             [self.squareButton setEnabled:NO];
         }
-        self.currentImageStage = -1;
     }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
@@ -143,12 +150,64 @@
     return results;
 }
 
+- (UIImage *)imageRotatedByDegrees:(UIImage*)oldImage deg:(CGFloat)degrees{
+    // calculate the size of the rotated view's containing box for our drawing space
+    UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0,0,oldImage.size.width, oldImage.size.height)];
+    CGAffineTransform t = CGAffineTransformMakeRotation(degrees * M_PI / 180);
+    rotatedViewBox.transform = t;
+    CGSize rotatedSize = rotatedViewBox.frame.size;
+    // Create the bitmap context
+    UIGraphicsBeginImageContext(rotatedSize);
+    CGContextRef bitmap = UIGraphicsGetCurrentContext();
+    
+    // Move the origin to the middle of the image so we will rotate and scale around the center.
+    CGContextTranslateCTM(bitmap, rotatedSize.width/2, rotatedSize.height/2);
+    
+    //   // Rotate the image context
+    CGContextRotateCTM(bitmap, (degrees * M_PI / 180));
+    
+    // Now, draw the rotated/scaled image into the context
+    CGContextScaleCTM(bitmap, 1.0, -1.0);
+    CGContextDrawImage(bitmap, CGRectMake(-oldImage.size.width / 2, -oldImage.size.height / 2, oldImage.size.width, oldImage.size.height), [oldImage CGImage]);
+    
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 #pragma mark - Squaring methods
 
 - (void)squareImageBegin {
+    //
+    // ** Reasoning for orientation change **
+    //
+    // The seam carving algorithm can handle images in portrait or landscape, HOWEVER...
+    // The seam carving algorithm should receive images which are wider than tall (lanscape)
+    //
+    // This is due to the memory layour of the algorithm; it uses a row-major-order
+    // If it is passed a portrait image it must move down the image -- column-major-order
+    // To move down the image it must skip forward image-width number of pixels
+    // So, the next pixel is never cached near the processor and must be fetched from memory
+    // This means that we basically get no help from the processor caches
+    //
+    // This may not seem like a big deal, but since this is a memory movement intensive algorithm
+    // THE PROCESSING OF THE ALGORITHM TIME IS DOUBLED WHEN IT CUTS HORIZONTAL SEAMS
+    //
+    
+    UIImage *orientedImage;
+    UIImage *orientedMask;
+    if (self.imageView.image.size.height > self.imageView.image.size.width) {
+        orientedImage = [self imageRotatedByDegrees:self.imageView.image deg:-90];
+        orientedMask = [self imageRotatedByDegrees:self.paintImageView.image deg:-90];
+        self.wasRotated = YES;
+    } else {
+        orientedImage = self.imageView.image;
+        orientedMask = self.paintImageView.image;
+    }
+    
     // launch squaring algorithm on a background thread
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
+        [SeamCarveBridge squareImage:orientedImage withMask:orientedMask];
     });
     [self disableUIelements];
     
@@ -162,7 +221,13 @@
     // receive updates from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
         // update present display
-        self.imageView.image = [notification object];
+        if (self.wasRotated) {
+            UIImage *tmpImage = [notification object];
+            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            self.imageView.image = orientedImage;
+        } else {
+            self.imageView.image = [notification object];
+        }
         
         // add to the stages array
         self.currentImageStage += 1;
@@ -176,7 +241,13 @@
         // remove (invisible) paint window
         [self.paintImageView removeFromSuperview];
         // update present display
-        self.imageView.image = [notification object];
+        if (self.wasRotated) {
+            UIImage *tmpImage = [notification object];
+            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            self.imageView.image = orientedImage;
+        } else {
+            self.imageView.image = [notification object];
+        }
         
         // add to the stages array
         self.currentImageStage += 1;

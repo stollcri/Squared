@@ -107,8 +107,14 @@ static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int i
     return min(max((int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/2) , 0), 255);
 }
 
-#pragma mark - horizontal methods
+#pragma mark - horizontal methods (deprecated)
 
+/*
+ * ***** NOTICE *****
+ *
+ * This function is deprecated and should not be used
+ * See note at carveSeamsHorizontal for more details
+ */
 static void setPixelPathHorizontal(struct Pixel *image, int imageWidth, int imageHeight, int unsigned currentPixel, int currentRow)
 {
     int pixelLeft = 0;
@@ -141,6 +147,12 @@ static void setPixelPathHorizontal(struct Pixel *image, int imageWidth, int imag
     image[currentPixel].seamval += newValue;
 }
 
+/*
+ * ***** NOTICE *****
+ *
+ * This function is deprecated and should not be used
+ * See note at carveSeamsHorizontal for more details
+ */
 static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int imageHeight)
 {
     int currentPixel = 0;
@@ -159,6 +171,12 @@ static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int im
     }
 }
 
+/*
+ * ***** NOTICE *****
+ *
+ * This function is deprecated and should not be used
+ * See note at carveSeamsHorizontal for more details
+ */
 static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight, int *minLocs, int *path)
 {
     int currentPixel = 0;
@@ -528,8 +546,25 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
     return image;
 }
 
+/*
+ * ***** NOTICE *****
+ *
+ * The seam carving algorithm can handle images in portrait or landscape, HOWEVER...
+ * The seam carving algorithm should receive images which are wider than tall (lanscape)
+ * (e.g. the algorithm should be called via the carveSeamsVertical function)
+ *
+ * This is due to the memory layour of the algorithm; it uses a row-major-order
+ * If it is passed a portrait image it must move down the image -- column-major-order
+ * To move down the image it must skip forward image-width number of pixels
+ * So, the next pixel is never cached near the processor and must be fetched from memory
+ * This means that we basically get no help from the processor caches
+ *
+ * This may not seem like a big deal, but since this is a memory movement intensive algorithm
+ * THE PROCESSING OF THE ALGORITHM TIME IS DOUBLED WHEN IT CUTS HORIZONTAL SEAMS
+ */
 void carveSeamsHorizontal(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)
 {
+    printf("Function is deprecated and should no longer be used: carveSeamsHorizontal \n");
     carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, 1);
 }
 

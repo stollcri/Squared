@@ -18,6 +18,7 @@
 @property NSURL *currentImageURL;
 
 @property BOOL squaringComplete;
+@property BOOL wasRotated;
 @property BOOL hasMaskData;
 
 @property CGPoint lastPoint;
@@ -37,6 +38,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.wasRotated = NO;
+    self.paintMode = PaintModeNone;
+    self.currentImageStage = -1;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
@@ -141,6 +146,9 @@
         
         self.imageView.image = newImage;
         
+        self.wasRotated = NO;
+        self.currentImageStage = -1;
+        
         // TODO: abstract this duplication (create paint subview)
         CGRect tmp = [self getImageDisplaySize:self.imageView];
         [self.paintImageView removeFromSuperview];
@@ -189,12 +197,48 @@
     return results;
 }
 
+- (UIImage *)imageRotatedByDegrees:(UIImage*)oldImage deg:(CGFloat)degrees{
+    // calculate the size of the rotated view's containing box for our drawing space
+    UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0,0,oldImage.size.width, oldImage.size.height)];
+    CGAffineTransform t = CGAffineTransformMakeRotation(degrees * M_PI / 180);
+    rotatedViewBox.transform = t;
+    CGSize rotatedSize = rotatedViewBox.frame.size;
+    // Create the bitmap context
+    UIGraphicsBeginImageContext(rotatedSize);
+    CGContextRef bitmap = UIGraphicsGetCurrentContext();
+    
+    // Move the origin to the middle of the image so we will rotate and scale around the center.
+    CGContextTranslateCTM(bitmap, rotatedSize.width/2, rotatedSize.height/2);
+    
+    //   // Rotate the image context
+    CGContextRotateCTM(bitmap, (degrees * M_PI / 180));
+    
+    // Now, draw the rotated/scaled image into the context
+    CGContextScaleCTM(bitmap, 1.0, -1.0);
+    CGContextDrawImage(bitmap, CGRectMake(-oldImage.size.width / 2, -oldImage.size.height / 2, oldImage.size.width, oldImage.size.height), [oldImage CGImage]);
+    
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
 #pragma mark - Squaring methods
 
 - (void)squareImageBegin {
+    UIImage *orientedImage;
+    UIImage *orientedMask;
+    if (self.imageView.image.size.height > self.imageView.image.size.width) {
+        orientedImage = [self imageRotatedByDegrees:self.imageView.image deg:-90];
+        orientedMask = [self imageRotatedByDegrees:self.paintImageView.image deg:-90];
+        self.wasRotated = YES;
+    } else {
+        orientedImage = self.imageView.image;
+        orientedMask = self.paintImageView.image;
+    }
+    
     // launch squaring algorithm on a background thread
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
+        [SeamCarveBridge squareImage:orientedImage withMask:orientedMask];
     });
     [self disableUIelements];
     
@@ -208,7 +252,13 @@
     // receive updates from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
         // update present display
-        self.imageView.image = [notification object];
+        if (self.wasRotated) {
+            UIImage *tmpImage = [notification object];
+            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            self.imageView.image = orientedImage;
+        } else {
+            self.imageView.image = [notification object];
+        }
         
         // add to the stages array
         self.currentImageStage += 1;
@@ -221,7 +271,13 @@
         // remove (invisible) paint window
         [self.paintImageView removeFromSuperview];
         // update present display
-        self.imageView.image = [notification object];
+        if (self.wasRotated) {
+            UIImage *tmpImage = [notification object];
+            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            self.imageView.image = orientedImage;
+        } else {
+            self.imageView.image = [notification object];
+        }
         
         // add to the stages array
         self.currentImageStage += 1;

@@ -138,6 +138,7 @@
             if (imgWidthInt > imgHeightInt) {
                 carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
             } else {
+                NSLog(@"Function is deprecated, call should not be made: carveSeamsHorizontal");
                 carveSeamsHorizontal(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
             }
             
