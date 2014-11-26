@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Christopher Stoll. All rights reserved.
 //
 
-// TODO: There is some rare conditon where the mask subview is not being resized properly, check this
-
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "ViewController.h"
 #import "SeamCarveBridge.h"
@@ -409,7 +407,6 @@
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
         } else {
             // TODO: add original image reloading
         }

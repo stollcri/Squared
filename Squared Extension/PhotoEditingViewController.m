@@ -429,7 +429,6 @@
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
         } else {
             // Don't really need this here, can cancel back to the original and then edit again
             //if (self.squaringComplete) {
