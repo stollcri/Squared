@@ -34,5 +34,6 @@ typedef NS_ENUM(NSUInteger, PaintMode) {
 - (IBAction)doSquaring:(id)sender;
 - (IBAction)doFreezing:(id)sender;
 - (IBAction)doUnFreezing:(id)sender;
+- (IBAction)handlePinch:(UIPinchGestureRecognizer *)sender;
 
 @end

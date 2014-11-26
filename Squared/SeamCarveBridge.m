@@ -100,23 +100,74 @@
     unsigned int imgHeightInt = (unsigned int)imgHeight;
     unsigned int imgNewWidth = 0;
     unsigned int imgNewHeight = 0;
+    unsigned int widthIncrement = 0;
+    unsigned int heightIncrement = 0;
+    unsigned int seamRemovalCount = 0;
+    unsigned int seamRemovalItterations = 0;
     unsigned int pixelDepth = (unsigned int)bytesPerPixel;
     if (imgWidthInt > imgHeightInt) {
         imgNewWidth = imgHeightInt;
         imgNewHeight = imgHeightInt;
+        widthIncrement = SEAM_CUTS_PER_ITTERATION;
+        heightIncrement = 0;
+        seamRemovalCount = imgWidthInt - imgHeightInt;
+        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION);
     } else {
         imgNewWidth = imgWidthInt;
         imgNewHeight = imgWidthInt;
+        widthIncrement = 0;
+        heightIncrement = SEAM_CUTS_PER_ITTERATION;
+        seamRemovalCount = imgHeightInt - imgWidthInt;
+        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION);
     }
+    
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
     unsigned char *rawResults = (unsigned char*)calloc(imgNewByteCount, sizeof(unsigned char));
     
-    if (imgWidthInt > imgHeightInt) {
-        carveSeamsVertical(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, faceCount, faceCoordinates, rawPixelsMask);
-    } else {
-        carveSeamsHorizontal(rawPixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, faceCount, faceCoordinates, rawPixelsMask);
+    unsigned int currentWidthT = imgWidthInt;
+    unsigned int currentHeightT = imgHeightInt;
+    struct Pixel *imagePixels = createImageData(rawPixels, imgWidthInt, imgHeightInt, pixelDepth, rawPixelsMask, faceCount, faceCoordinates);
+    
+    for (int i = 0; i < seamRemovalItterations; ++i) {
+        if (i < (seamRemovalItterations - 1)) {
+            currentWidthT = currentWidthT - widthIncrement;
+            currentHeightT = currentHeightT - heightIncrement;
+            unsigned char *rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
+            
+            if (imgWidthInt > imgHeightInt) {
+                carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
+            } else {
+                NSLog(@"Function is deprecated, call should not be made: carveSeamsHorizontal");
+                carveSeamsHorizontal(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
+            }
+            
+            NSUInteger newBytesPerRow = bytesPerPixel * currentWidthT;
+            CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
+            CGContextRef newContext = CGBitmapContextCreate(rawResultsTemp, currentWidthT, currentHeightT,
+                                                            bitsPerComponent, newBytesPerRow, newColorSpace,
+                                                            kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+            CGColorSpaceRelease(newColorSpace);
+            
+            if (newContext) {
+                CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
+                UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squareupdate" object:newImage];
+                CGContextRelease(newContext);
+                CGImageRelease(newImgRef);
+            }
+            
+            free(rawResultsTemp);
+        } else {
+            if (imgWidthInt > imgHeightInt) {
+                carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth));
+            } else {
+                carveSeamsHorizontal(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentHeightT - imgNewHeight));
+            }
+        }
     }
+    
+    free(imagePixels);
     free(faceCoordinates);
     free(rawPixelsMask);
     free(rawPixels);

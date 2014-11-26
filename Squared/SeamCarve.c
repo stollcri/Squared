@@ -107,8 +107,14 @@ static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int i
     return min(max((int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/2) , 0), 255);
 }
 
-#pragma mark - horizontal methods
+#pragma mark - horizontal methods (deprecated)
 
+/*
+ * ***** NOTICE *****
+ *
+ * This function is deprecated and should not be used
+ * See note at carveSeamsHorizontal for more details
+ */
 static void setPixelPathHorizontal(struct Pixel *image, int imageWidth, int imageHeight, int unsigned currentPixel, int currentRow)
 {
     int pixelLeft = 0;
@@ -141,6 +147,12 @@ static void setPixelPathHorizontal(struct Pixel *image, int imageWidth, int imag
     image[currentPixel].seamval += newValue;
 }
 
+/*
+ * ***** NOTICE *****
+ *
+ * This function is deprecated and should not be used
+ * See note at carveSeamsHorizontal for more details
+ */
 static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int imageHeight)
 {
     int currentPixel = 0;
@@ -152,17 +164,24 @@ static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int im
             if (image[currentPixel].seamval != INT_MAX) {
                 image[currentPixel].seamval = image[currentPixel].energy;
                 setPixelPathHorizontal(image, imageWidth, imageHeight, currentPixel, j);
+            } else {
+                break;
             }
         }
     }
 }
 
-static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight)
+/*
+ * ***** NOTICE *****
+ *
+ * This function is deprecated and should not be used
+ * See note at carveSeamsHorizontal for more details
+ */
+static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight, int *minLocs, int *path)
 {
     int currentPixel = 0;
     int minsFound = 0;
     int minValue = INT_MAX;
-    int *minLocs = (int*)calloc((unsigned long)imageHeight, sizeof(int));
     
     for (int i = 1; i < imageHeight; ++i) {
         currentPixel = (i * imageWidth) - 1;
@@ -194,9 +213,7 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
         int minToTake = rand() % minsFound;
         minLocation = minLocs[minToTake];
     }
-    free(minLocs);
     
-    int *path = (int*)calloc((unsigned long)imageWidth, sizeof(int));
     int pixelLeft = 0;
     int currentRow = 0;
     int leftA = 0;
@@ -256,8 +273,6 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
         }
         image[currentPixel].seamval = INT_MAX;
     }
-    
-    free(path);
 }
 
 #pragma mark - vertical methods
@@ -304,17 +319,18 @@ static void fillSeamMatrixVertical(struct Pixel *image, int imageWidth, int imag
             if (image[currentPixel].seamval != INT_MAX) {
                 image[currentPixel].seamval = image[currentPixel].energy;
                 setPixelPathVertical(image, imageWidth, imageHeight, currentPixel, i);
+            } else {
+                break;
             }
         }
     }
 }
 
-static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight)
+static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight, int *minLocs, int *path)
 {
     int currentPixel = 0;
     int minsFound = 0;
     int minValue = INT_MAX;
-    int *minLocs = (int*)calloc((unsigned long)imageHeight, sizeof(int));
 
     for (int i = 0; i < imageWidth; ++i) {
         currentPixel = ((imageHeight - 1) * imageWidth) + i;
@@ -347,9 +363,7 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         int minToTake = rand() % minsFound;
         minLocation = minLocs[minToTake];
     }
-    free(minLocs);
     
-    int *path = (int*)calloc((unsigned long)imageHeight, sizeof(int));
     int pixelAbove = 0;
     int currentCol = 0;
     int aboveL = 0;
@@ -408,13 +422,65 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         }
         image[currentPixel].seamval = INT_MAX;
     }
-    
-    free(path);
 }
 
 #pragma mark -
 
-void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int goHorizontal, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
+void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int goHorizontal)
+{
+    // rand() is used in seam cutting, but only need to seed it once per thread
+    srand((int)time(0));
+    
+    if (goHorizontal) {
+        fillSeamMatrixHorizontal(sImgPixels, sImgWidth, sImgHeight);
+        
+        int *minLocs = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
+        int *path = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
+        
+        for (int i = 0; i < carveCount; ++i) {
+            cutSeamHorizontal(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
+        }
+        
+        free(path);
+        free(minLocs);
+    } else {
+        fillSeamMatrixVertical(sImgPixels, sImgWidth, sImgHeight);
+        
+        int *minLocs = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
+        int *path = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
+        
+        for (int i = 0; i < carveCount; ++i) {
+            cutSeamVertical(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
+        }
+        
+        free(path);
+        free(minLocs);
+    }
+    
+    int tImgPixelLoc = 0;
+    int pixelLocation = 0;
+    for (int j = 0; j < tImgHeight; ++j) {
+        for (int i = 0; i < tImgWidth; ++i) {
+            tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+            pixelLocation = (j * sImgWidth) + i;
+            
+            tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
+            tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
+            tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+            tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+            /*
+            tImg[tImgPixelLoc]   = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+1] = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+2] = image[pixelLocation].energy;
+            tImg[tImgPixelLoc+3] = 255;
+            */
+        }
+    }
+}
+
+#pragma mark - public functions
+
+struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight, int pixelDepth, unsigned char *sImgMask, int faceCount, int *faceBoundsArray)
 {
     struct Pixel *image = (struct Pixel *)calloc(((size_t)sImgWidth * (size_t)sImgHeight), sizeof(struct Pixel));
     
@@ -435,8 +501,9 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
             
             // handle freeze/melt masks
             if (sImgMask[sImgPixelLoc] >= 255) {
-                //currentPixel.energy = (int)(currentPixel.energy / 29);
-                currentPixel.energy = 0;
+                currentPixel.energy = (int)(currentPixel.energy / 37);
+                // if it just zero (below) then the seams become straight and more unnatural
+                //currentPixel.energy = 0;
             }
             if (sImgMask[sImgPixelLoc+2] >= 255) {
                 currentPixel.energy = (int)(currentPixel.energy * 7);
@@ -477,61 +544,32 @@ void carveSeams(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned cha
         }
     }
     
-    // rand() is used in seam cutting, but only need to seed it once per thread
-    srand((int)time(0));
-    
-    int seamRemovalCount = 0;
-    if (goHorizontal) {
-        fillSeamMatrixHorizontal(image, sImgWidth, sImgHeight);
-        
-        seamRemovalCount = sImgHeight - tImgHeight;
-        for (int i = 0; i < seamRemovalCount; ++i) {
-            cutSeamHorizontal(image, sImgWidth, sImgHeight);
-            if ((i % REFRESH_SEAM_MATRIX_EVERY) == 0) {
-                fillSeamMatrixHorizontal(image, sImgWidth, sImgHeight);
-            }
-        }
-    } else {
-        fillSeamMatrixVertical(image, sImgWidth, sImgHeight);
-        
-        seamRemovalCount = sImgWidth - tImgWidth;
-        for (int i = 0; i < seamRemovalCount; ++i) {
-            cutSeamVertical(image, sImgWidth, sImgHeight);
-            if ((i % REFRESH_SEAM_MATRIX_EVERY) == 0) {
-                fillSeamMatrixVertical(image, sImgWidth, sImgHeight);
-            }
-        }
-    }
-    
-    int tImgPixelLoc = 0;
-    for (int j = 0; j < tImgHeight; ++j) {
-        for (int i = 0; i < tImgWidth; ++i) {
-            tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
-            pixelLocation = (j * sImgWidth) + i;
-            
-            tImg[tImgPixelLoc]   = image[pixelLocation].r;
-            tImg[tImgPixelLoc+1] = image[pixelLocation].g;
-            tImg[tImgPixelLoc+2] = image[pixelLocation].b;
-            tImg[tImgPixelLoc+3] = image[pixelLocation].a;
-            /*
-            tImg[tImgPixelLoc]   = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+1] = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+2] = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+3] = 255;
-            */
-        }
-    }
-    free(image);
+    return image;
 }
 
-#pragma mark - public functions
-
-void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
+/*
+ * ***** NOTICE *****
+ *
+ * The seam carving algorithm can handle images in portrait or landscape, HOWEVER...
+ * The seam carving algorithm should receive images which are wider than tall (lanscape)
+ * (e.g. the algorithm should be called via the carveSeamsVertical function)
+ *
+ * This is due to the memory layour of the algorithm; it uses a row-major-order
+ * If it is passed a portrait image it must move down the image -- column-major-order
+ * To move down the image it must skip forward image-width number of pixels
+ * So, the next pixel is never cached near the processor and must be fetched from memory
+ * This means that we basically get no help from the processor caches
+ *
+ * This may not seem like a big deal, but since this is a memory movement intensive algorithm
+ * THE PROCESSING OF THE ALGORITHM TIME IS DOUBLED WHEN IT CUTS HORIZONTAL SEAMS
+ */
+void carveSeamsHorizontal(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)
 {
-    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 1, faceCount, faceBoundsArray, sImgMask);
+    printf("Function is deprecated and should no longer be used: carveSeamsHorizontal \n");
+    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, 1);
 }
 
-void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask)
+void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)
 {
-    carveSeams(sImg, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, 0, faceCount, faceBoundsArray, sImgMask);
+    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, 0);
 }

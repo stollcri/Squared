@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, PaintMode) {
 - (IBAction)doSaving:(id)sender;
 - (IBAction)doFreezing:(id)sender;
 - (IBAction)doUnFreezing:(id)sender;
-
+- (IBAction)handlePinch:(UIPinchGestureRecognizer *)sender;
 
 @end
 

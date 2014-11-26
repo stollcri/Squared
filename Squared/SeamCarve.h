@@ -16,7 +16,7 @@
 #include <time.h>
 #include <string.h>
 
-#define REFRESH_SEAM_MATRIX_EVERY 64
+//#define REFRESH_SEAM_MATRIX_EVERY 64
 /*
 #define COLOR_TO_GREY_FACTOR_R 0.2126
 #define COLOR_TO_GREY_FACTOR_G 0.7152
@@ -35,7 +35,8 @@ struct Pixel {
     int seamval;
 };
 
-void carveSeamsVertical(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask);
-void carveSeamsHorizontal(unsigned char *sImg, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int faceCount, int *faceBoundsArray, unsigned char *sImgMask);
+struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight, int pixelDepth, unsigned char *sImgMask, int faceCount, int *faceBoundsArray);
+void carveSeamsHorizontal(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount);
+void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount);
 
 #endif /* defined(__Squared__SeamCarve__) */

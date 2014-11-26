@@ -46,6 +46,10 @@
                             </toolbar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ADb-1l-PYf">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="484"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="MRD-aU-JEP" appends="YES" id="9FS-wn-QmO"/>
+                                </connections>
                             </imageView>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="dPo-wY-cr9">
                                 <rect key="frame" x="142" y="245" width="37" height="37"/>
@@ -75,6 +79,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="X47-rx-isc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pinchGestureRecognizer id="MRD-aU-JEP">
+                    <connections>
+                        <action selector="handlePinch:" destination="ObA-dk-sSI" id="fvF-35-Fa3"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="326" y="-108"/>
         </scene>

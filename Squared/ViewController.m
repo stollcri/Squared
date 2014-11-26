@@ -12,6 +12,7 @@
 
 @interface ViewController ()
 
+@property BOOL wasRotated;
 @property BOOL hasMaskData;
 
 @property CGPoint lastPoint;
@@ -21,6 +22,9 @@
 @property CGFloat paintColorG;
 @property CGFloat paintColorB;
 @property UIImageView *paintImageView;
+
+@property NSMutableArray *imageStages;
+@property NSInteger currentImageStage;
 
 @end
 
@@ -33,15 +37,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+    self.wasRotated = NO;
+    self.paintMode = PaintModeNone;
+    self.currentImageStage = -1;
     
     [self.freezeButton setEnabled:NO];
     [self.unFreezeButton setEnabled:NO];
     [self.squareButton setEnabled:NO];
     [self.saveButton setEnabled:NO];
-    self.paintMode = PaintModeNone;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
 }
 
 - (void)dealloc {
@@ -59,6 +67,7 @@
     // TODO: move to bridge class
     if (img) {
         // make sure choosen image is less than maximum size
+        CGSize newSize;
         if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
             int temp = 0.0;
             float newWidth = 0;
@@ -75,37 +84,31 @@
                 newHeight = temp;
             }
             
-            // resize the image (in memory)
-            CGSize newSize = CGSizeMake(newWidth, newHeight);
+            newSize = CGSizeMake(newWidth, newHeight);
             UIGraphicsBeginImageContext(newSize);
-            [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
-            UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            self.imageView.image = newImage;
-            
-            // add subview for painting image masks
-            // TODO: abstract this duplication (create paint subview)
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
-            [self.paintImageView removeFromSuperview];
-            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
-            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
-            self.paintImageView = tmpImgVw;
-            [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
         } else {
-            self.imageView.image = img;
-            
-            // add subview for painting image masks
-            // TODO: abstract this duplication (create paint subview)
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
-            [self.paintImageView removeFromSuperview];
-            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
-            [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
-            self.paintImageView = tmpImgVw;
-            [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
+            newSize = CGSizeMake(img.size.width, img.size.height);
+            UIGraphicsBeginImageContext(newSize);
         }
+        
+        [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+        UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        self.imageView.image = newImage;
+        
+        self.wasRotated = NO;
+        self.currentImageStage = -1;
+        
+        // add subview for painting image masks
+        // TODO: abstract this duplication (create paint subview)
+        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        [self.paintImageView removeFromSuperview];
+        UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+        [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
+        self.paintImageView = tmpImgVw;
+        [self.imageView addSubview:self.paintImageView];
+        self.hasMaskData = NO;
         
         // do not enable mask or squaring buttons if the image is already square
         if (img.size.width != img.size.height) {
@@ -145,21 +148,126 @@
     return results;
 }
 
+- (UIImage *)imageRotatedByDegrees:(UIImage*)oldImage deg:(CGFloat)degrees{
+    // calculate the size of the rotated view's containing box for our drawing space
+    UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0, 0, oldImage.size.width, oldImage.size.height)];
+    CGAffineTransform t = CGAffineTransformMakeRotation(degrees * M_PI / 180);
+    rotatedViewBox.transform = t;
+    CGSize rotatedSize = rotatedViewBox.frame.size;
+    // Create the bitmap context
+    UIGraphicsBeginImageContext(rotatedSize);
+    CGContextRef bitmap = UIGraphicsGetCurrentContext();
+    
+    if (bitmap) {
+        // Move the origin to the middle of the image so we will rotate and scale around the center.
+        CGContextTranslateCTM(bitmap, rotatedSize.width/2, rotatedSize.height/2);
+        
+        //   // Rotate the image context
+        CGContextRotateCTM(bitmap, (degrees * M_PI / 180));
+        
+        // Now, draw the rotated/scaled image into the context
+        CGContextScaleCTM(bitmap, 1.0, -1.0);
+        CGContextDrawImage(bitmap, CGRectMake(-oldImage.size.width / 2, -oldImage.size.height / 2, oldImage.size.width, oldImage.size.height), [oldImage CGImage]);
+        
+        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        return newImage;
+    } else {
+        return oldImage;
+    }
+}
+
 #pragma mark - Squaring methods
 
 - (void)squareImageBegin {
+    //
+    // ** Reasoning for orientation change **
+    //
+    // The seam carving algorithm can handle images in portrait or landscape, HOWEVER...
+    // The seam carving algorithm should receive images which are wider than tall (lanscape)
+    //
+    // This is due to the memory layour of the algorithm; it uses a row-major-order
+    // If it is passed a portrait image it must move down the image -- column-major-order
+    // To move down the image it must skip forward image-width number of pixels
+    // So, the next pixel is never cached near the processor and must be fetched from memory
+    // This means that we basically get no help from the processor caches
+    //
+    // This may not seem like a big deal, but since this is a memory movement intensive algorithm
+    // THE PROCESSING OF THE ALGORITHM TIME IS DOUBLED WHEN IT CUTS HORIZONTAL SEAMS
+    //
+    
+    UIImage *orientedImage;
+    UIImage *orientedMask;
+    if (self.imageView.image.size.height > self.imageView.image.size.width) {
+        orientedImage = [self imageRotatedByDegrees:self.imageView.image deg:-90];
+        // don't bother rotating an empty painting sub view, just pass the nil
+        if (self.paintImageView.image) {
+            orientedMask = [self imageRotatedByDegrees:self.paintImageView.image deg:-90];
+        } else {
+            orientedMask = self.paintImageView.image;
+        }
+        self.wasRotated = YES;
+    } else {
+        orientedImage = self.imageView.image;
+        orientedMask = self.paintImageView.image;
+    }
+    
     // launch squaring algorithm on a background thread
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [SeamCarveBridge squareImage:self.imageView.image withMask:self.paintImageView.image];
+        [SeamCarveBridge squareImage:orientedImage withMask:orientedMask];
     });
     [self disableUIelements];
+    
+    // preapre squaring stages array
+    self.imageStages = [[NSMutableArray alloc] init];
+    self.currentImageStage = 0;
+    [self.imageStages addObject:self.imageView.image];
+}
+
+- (void)squareImageUpdate:(NSNotification *)notification {
+    // receive updates from the background thread
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // update present display
+        if (self.wasRotated) {
+            UIImage *tmpImage = [notification object];
+            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            self.imageView.image = orientedImage;
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:orientedImage];
+        } else {
+            self.imageView.image = [notification object];
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:[notification object]];
+        }
+    });
 }
 
 - (void)squareImageComplete:(NSNotification *)notification {
     // return from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
+        // remove (invisible) paint window
         [self.paintImageView removeFromSuperview];
-        self.imageView.image = [notification object];
+        // update present display
+        if (self.wasRotated) {
+            UIImage *tmpImage = [notification object];
+            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            self.imageView.image = orientedImage;
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:orientedImage];
+        } else {
+            self.imageView.image = [notification object];
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:[notification object]];
+        }
+        
         [self enableUIelements];
     });
 }
@@ -185,7 +293,8 @@
     [animationDurationValue getValue:&animationDuration];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:animationDuration];
-    self.imageView.alpha = 0.2;
+    self.imageView.alpha = 0.5;
+    self.paintImageView.alpha = 0.0;
     self.activityIndicator.alpha = 1.0;
     [UIView commitAnimations];
 }
@@ -298,7 +407,6 @@
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
             self.paintImageView = tmpImgVw;
             [self.imageView addSubview:self.paintImageView];
-            self.hasMaskData = NO;
         } else {
             // TODO: add original image reloading
         }
@@ -352,6 +460,28 @@
         self.paintMode = PaintModeUnFreeze;
     }
     [self updatePatintUI];
+}
+
+- (IBAction)handlePinch:(UIPinchGestureRecognizer *)sender {
+    // must have an image loaded and squared
+    if (self.currentImageStage >= 0) {
+        // zoom out (un-square)
+        if (sender.scale < 1) {
+            if (self.currentImageStage < (self.imageStages.count - 1)) {
+                self.currentImageStage += 1;
+                self.imageView.image = self.imageStages[self.currentImageStage];
+            }
+        // soom in (re-square)
+        } else if (sender.scale > 1) {
+            if (self.currentImageStage > 0) {
+                self.currentImageStage -= 1;
+                self.imageView.image = self.imageStages[self.currentImageStage];
+            }
+        }
+    }
+    
+    // reset scale
+    sender.scale = 1;
 }
 
 @end
