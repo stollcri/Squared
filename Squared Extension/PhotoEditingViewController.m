@@ -229,7 +229,12 @@
     UIImage *orientedMask;
     if (self.imageView.image.size.height > self.imageView.image.size.width) {
         orientedImage = [self imageRotatedByDegrees:self.imageView.image deg:-90];
-        orientedMask = [self imageRotatedByDegrees:self.paintImageView.image deg:-90];
+        // don't bother rotating an empty painting sub view, just pass the nil
+        if (self.paintImageView.image) {
+            orientedMask = [self imageRotatedByDegrees:self.paintImageView.image deg:-90];
+        } else {
+            orientedMask = self.paintImageView.image;
+        }
         self.wasRotated = YES;
     } else {
         orientedImage = self.imageView.image;
@@ -256,13 +261,17 @@
             UIImage *tmpImage = [notification object];
             UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
             self.imageView.image = orientedImage;
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:orientedImage];
         } else {
             self.imageView.image = [notification object];
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:[notification object]];
         }
-        
-        // add to the stages array
-        self.currentImageStage += 1;
-        [self.imageStages addObject:[notification object]];
     });
 }
 
@@ -275,13 +284,17 @@
             UIImage *tmpImage = [notification object];
             UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
             self.imageView.image = orientedImage;
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:orientedImage];
         } else {
             self.imageView.image = [notification object];
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:[notification object]];
         }
-        
-        // add to the stages array
-        self.currentImageStage += 1;
-        [self.imageStages addObject:[notification object]];
         
         self.squaringComplete = YES;
         [self enableUIelements];
