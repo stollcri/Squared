@@ -103,8 +103,108 @@ static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int i
     double sobelX = (p3val + (p6val + p6val) + p9val - p1val - (p4val + p4val) - p7val);
     double sobelY = (p1val + (p2val + p2val) + p3val - p7val - (p8val + p8val) - p9val);
     
+    return (int)(sqrt((sobelX * sobelX) + (sobelY * sobelY)));
     // bounded gradient magnitude
     return min(max((int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/2) , 0), 255);
+}
+
+static int getPixelEnergyGaussian(struct Pixel *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel, int sigma)
+{
+    int imageByteWidth = imageWidth * pixelDepth;
+    int points[25];
+    double pointValues[25];
+
+    points[0] = currentPixel - imageByteWidth - imageByteWidth - pixelDepth - pixelDepth;
+    points[1] = currentPixel - imageByteWidth - imageByteWidth - pixelDepth;
+    points[2] = currentPixel - imageByteWidth - imageByteWidth;
+    points[3] = currentPixel - imageByteWidth - imageByteWidth + pixelDepth;
+    points[4] = currentPixel - imageByteWidth - imageByteWidth + pixelDepth + pixelDepth;
+    
+    points[5] = currentPixel - imageByteWidth - pixelDepth - pixelDepth;
+    points[6] = currentPixel - imageByteWidth - pixelDepth;
+    points[7] = currentPixel - imageByteWidth;
+    points[8] = currentPixel - imageByteWidth + pixelDepth;
+    points[9] = currentPixel - imageByteWidth + pixelDepth + pixelDepth;
+    
+    points[10] = currentPixel - pixelDepth - pixelDepth;
+    points[11] = currentPixel - pixelDepth;
+    points[12] = currentPixel;
+    points[13] = currentPixel + pixelDepth;
+    points[14] = currentPixel + pixelDepth + pixelDepth;
+    
+    points[15] = currentPixel + imageByteWidth - pixelDepth - pixelDepth;
+    points[16] = currentPixel + imageByteWidth - pixelDepth;
+    points[17] = currentPixel + imageByteWidth;
+    points[18] = currentPixel + imageByteWidth + pixelDepth;
+    points[19] = currentPixel + imageByteWidth + pixelDepth + pixelDepth;
+    
+    points[20] = currentPixel + imageByteWidth + imageByteWidth - pixelDepth - pixelDepth;
+    points[21] = currentPixel + imageByteWidth + imageByteWidth - pixelDepth;
+    points[22] = currentPixel + imageByteWidth + imageByteWidth;
+    points[23] = currentPixel + imageByteWidth + imageByteWidth + pixelDepth;
+    points[24] = currentPixel + imageByteWidth + imageByteWidth + pixelDepth + pixelDepth;
+    
+    // TODO: this is wrong, fix it
+    for (int i = 0; i < 25; ++i) {
+        if (points[i] < 0) {
+            points[i] = 0;
+        } else if (points[i] >= (imageHeight * imageWidth)) {
+            points[i] = (imageHeight * imageWidth) - pixelDepth;
+        }
+    }
+    
+    // get the pixel values from the image array
+    pointValues[0] = (double)imageVector[points[0]].bright;
+    pointValues[1] = (double)imageVector[points[1]].bright;
+    pointValues[2] = (double)imageVector[points[2]].bright;
+    pointValues[3] = (double)imageVector[points[3]].bright;
+    pointValues[4] = (double)imageVector[points[4]].bright;
+    pointValues[5] = (double)imageVector[points[5]].bright;
+    pointValues[6] = (double)imageVector[points[6]].bright;
+    pointValues[7] = (double)imageVector[points[7]].bright;
+    pointValues[8] = (double)imageVector[points[8]].bright;
+    pointValues[9] = (double)imageVector[points[9]].bright;
+    pointValues[10] = (double)imageVector[points[10]].bright;
+    pointValues[11] = (double)imageVector[points[11]].bright;
+    pointValues[12] = (double)imageVector[points[12]].bright;
+    pointValues[13] = (double)imageVector[points[13]].bright;
+    pointValues[14] = (double)imageVector[points[14]].bright;
+    pointValues[15] = (double)imageVector[points[15]].bright;
+    pointValues[16] = (double)imageVector[points[16]].bright;
+    pointValues[17] = (double)imageVector[points[17]].bright;
+    pointValues[18] = (double)imageVector[points[18]].bright;
+    pointValues[19] = (double)imageVector[points[19]].bright;
+    pointValues[20] = (double)imageVector[points[20]].bright;
+    pointValues[21] = (double)imageVector[points[21]].bright;
+    pointValues[22] = (double)imageVector[points[22]].bright;
+    pointValues[23] = (double)imageVector[points[23]].bright;
+    pointValues[24] = (double)imageVector[points[24]].bright;
+    
+    double gaussL1 = 0.0;
+    double gaussL2 = 0.0;
+    double gaussL3 = 0.0;
+    double gaussL4 = 0.0;
+    double gaussL5 = 0.0;
+    double gaussAll = 0.0;
+    if (sigma == 14) {
+        // apply the gaussian kernel (sigma = 1.4)
+        gaussL1 = (2 * pointValues[0]) + (4 * pointValues[1]) + (5 * pointValues[2]) + (4 * pointValues[3]) + (2 * pointValues[4]);
+        gaussL2 = (4 * pointValues[5]) + (9 * pointValues[6]) + (12 * pointValues[7]) + (9 * pointValues[8]) + (4 * pointValues[9]);
+        gaussL3 = (5 * pointValues[10]) + (12 * pointValues[11]) + (15 * pointValues[12]) + (12 * pointValues[13]) + (5 * pointValues[14]);
+        gaussL4 = (4 * pointValues[15]) + (9 * pointValues[16]) + (12 * pointValues[17]) + (9 * pointValues[18]) + (4 * pointValues[19]);
+        gaussL5 = (2 * pointValues[20]) + (4 * pointValues[21]) + (5 * pointValues[22]) + (4 * pointValues[23]) + (2 * pointValues[24]);
+        gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / 159;
+    } else {
+        // apply the gaussian kernel (sigma = 1)
+        gaussL1 = (1 * pointValues[0]) + (4 * pointValues[1]) + (7 * pointValues[2]) + (4 * pointValues[3]) + (1 * pointValues[4]);
+        gaussL2 = (4 * pointValues[5]) + (16 * pointValues[6]) + (26 * pointValues[7]) + (16 * pointValues[8]) + (4 * pointValues[9]);
+        gaussL3 = (7 * pointValues[10]) + (26 * pointValues[11]) + (41 * pointValues[12]) + (26 * pointValues[13]) + (7 * pointValues[14]);
+        gaussL4 = (4 * pointValues[15]) + (16 * pointValues[16]) + (26 * pointValues[17]) + (16 * pointValues[18]) + (4 * pointValues[19]);
+        gaussL5 = (1 * pointValues[20]) + (4 * pointValues[21]) + (7 * pointValues[22]) + (4 * pointValues[23]) + (1 * pointValues[24]);
+        gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / 273;
+    }
+    
+    return min(max((int)gaussAll, 0), 255);
 }
 
 #pragma mark - horizontal methods (deprecated)
@@ -333,7 +433,7 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
     int minValue = INT_MAX;
 
     for (int i = 0; i < imageWidth; ++i) {
-        currentPixel = ((imageHeight - 1) * imageWidth) + i;
+        currentPixel = ((imageHeight * imageWidth) - imageWidth) + i;
         if ((image[currentPixel].seamval > 0) && (image[currentPixel].seamval != INT_MAX)) {
             // find all minimum values
             if (image[currentPixel].seamval <= minValue) {
@@ -354,12 +454,11 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         }
     }
     
-    
     int minLocation = minLocs[0];
     // when there is more than one seam with the same minimum value
     // randomly pick one of the minimums so that we do not have all
     // of the seams taken from the left of the image
-    if (minsFound) {
+    if (minsFound > 1) {
         int minToTake = rand() % minsFound;
         minLocation = minLocs[minToTake];
     }
@@ -469,9 +568,9 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
             tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
             tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
             /*
-            tImg[tImgPixelLoc]   = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+1] = image[pixelLocation].energy;
-            tImg[tImgPixelLoc+2] = image[pixelLocation].energy;
+            tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].energy;
+            tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].energy;
+            tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].energy;
             tImg[tImgPixelLoc+3] = 255;
             */
         }
@@ -487,6 +586,8 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
     int sImgPixelLoc = 0;
     int pixelLocation = 0;
     int pixelWidth = sImgWidth * pixelDepth;
+    int hasMask = 0;
+    
     for (int j = 0; j < sImgHeight; ++j) {
         for (int i = 0; i < sImgWidth; ++i) {
             sImgPixelLoc = (j * pixelWidth) + (i * pixelDepth);
@@ -496,20 +597,58 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
             currentPixel.g = sImg[sImgPixelLoc+1];
             currentPixel.b = sImg[sImgPixelLoc+2];
             currentPixel.a = sImg[sImgPixelLoc+3];
+            currentPixel.bright = (int)(((double)sImg[sImgPixelLoc] * COLOR_TO_GREY_FACTOR_R) +
+                                        ((double)sImg[sImgPixelLoc+1] * COLOR_TO_GREY_FACTOR_G) +
+                                        ((double)sImg[sImgPixelLoc+2] * COLOR_TO_GREY_FACTOR_B));
             currentPixel.energy = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc);
             currentPixel.seamval = currentPixel.energy;
             
-            // handle freeze/melt masks
-            if (sImgMask[sImgPixelLoc] >= 255) {
-                currentPixel.energy = (int)(currentPixel.energy / 37);
-                // if it just zero (below) then the seams become straight and more unnatural
-                //currentPixel.energy = 0;
-            }
-            if (sImgMask[sImgPixelLoc+2] >= 255) {
-                currentPixel.energy = (int)(currentPixel.energy * 7);
+            if ((sImgMask[sImgPixelLoc] >= 255) || (sImgMask[sImgPixelLoc+2] >= 255)) {
+                hasMask = 1;
             }
             
             image[pixelLocation] = currentPixel;
+        }
+    }
+    
+    for (int j = 0; j < sImgHeight; ++j) {
+        for (int i = 0; i < sImgWidth; ++i) {
+            pixelLocation = (j * sImgWidth) + i;
+            image[pixelLocation].gaussA = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 10);
+            image[pixelLocation].gaussB = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 14);
+        }
+    }
+    
+    for (int j = 0; j < sImgHeight; ++j) {
+        for (int i = 0; i < sImgWidth; ++i) {
+            sImgPixelLoc = (j * pixelWidth) + (i * pixelDepth);
+            pixelLocation = (j * sImgWidth) + i;
+            int gaussianValue1 = image[pixelLocation].gaussA;
+            int gaussianValue2 = image[pixelLocation].gaussB;
+            
+            if (gaussianValue1 > gaussianValue2) {
+                if (!hasMask) {
+                    image[pixelLocation].energy = (int)((gaussianValue1 - gaussianValue2) * 4.0) & (int)(image[pixelLocation].energy * 0.1);
+                } else {
+                    image[pixelLocation].energy = (int)((gaussianValue1 - gaussianValue2) * 2.0) + (int)(image[pixelLocation].energy * 0.4);
+                }
+                
+            } else {
+                if (!hasMask) {
+                    image[pixelLocation].energy = (int)((gaussianValue2 - gaussianValue1) * 4.0) & (int)(image[pixelLocation].energy * 0.1);
+                } else {
+                    image[pixelLocation].energy = (int)((gaussianValue2 - gaussianValue1) * 2.0) + (int)(image[pixelLocation].energy * 0.4);
+                }
+            }
+            
+            // handle freeze/melt masks
+            if (sImgMask[sImgPixelLoc] >= 255) {
+                // if it just zero then the seams become straight and more unnatural
+                image[pixelLocation].energy = (int)(image[pixelLocation].energy / 149);
+            }
+            if (sImgMask[sImgPixelLoc+2] >= 255) {
+                image[pixelLocation].energy = (int)(image[pixelLocation].energy * 37);
+            }
         }
     }
     
@@ -539,7 +678,7 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
         for (int j = yLoopBegin; j < yLoopEnd; ++j) {
             for (int k = xLoopBegin; k < xLoopEnd; ++k) {
                 pixelLocation = (j * sImgWidth) + k;
-                image[pixelLocation].energy = image[pixelLocation].energy * 3;
+                image[pixelLocation].energy = image[pixelLocation].energy * 7;
             }
         }
     }

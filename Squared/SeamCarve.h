@@ -31,6 +31,9 @@ struct Pixel {
     int g;
     int b;
     int a;
+    int bright;
+    int gaussA;
+    int gaussB;
     int energy;
     int seamval;
 };
