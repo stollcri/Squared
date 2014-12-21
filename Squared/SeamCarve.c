@@ -476,6 +476,10 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
         pixelAbove = currentPixel - imageWidth;
         currentCol = currentPixel % imageWidth;
         
+        if (pixelAbove < 0) {
+            break;
+        }
+        
         // avoid falling off the left end
         if ((currentCol > 0) && (image[pixelAbove - 1].seamval > 0)) {
             // avoid falling off the right end
