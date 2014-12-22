@@ -186,24 +186,78 @@ static int getPixelEnergyGaussian(struct Pixel *imageVector, int imageWidth, int
     double gaussL4 = 0.0;
     double gaussL5 = 0.0;
     double gaussAll = 0.0;
-    if (sigma == 14) {
-        // apply the gaussian kernel (sigma = 1.4)
-        gaussL1 = (2 * pointValues[0]) + (4 * pointValues[1]) + (5 * pointValues[2]) + (4 * pointValues[3]) + (2 * pointValues[4]);
-        gaussL2 = (4 * pointValues[5]) + (9 * pointValues[6]) + (12 * pointValues[7]) + (9 * pointValues[8]) + (4 * pointValues[9]);
-        gaussL3 = (5 * pointValues[10]) + (12 * pointValues[11]) + (15 * pointValues[12]) + (12 * pointValues[13]) + (5 * pointValues[14]);
-        gaussL4 = (4 * pointValues[15]) + (9 * pointValues[16]) + (12 * pointValues[17]) + (9 * pointValues[18]) + (4 * pointValues[19]);
-        gaussL5 = (2 * pointValues[20]) + (4 * pointValues[21]) + (5 * pointValues[22]) + (4 * pointValues[23]) + (2 * pointValues[24]);
-        gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / 159;
-    } else {
-        // apply the gaussian kernel (sigma = 1)
-        gaussL1 = (1 * pointValues[0]) + (4 * pointValues[1]) + (7 * pointValues[2]) + (4 * pointValues[3]) + (1 * pointValues[4]);
-        gaussL2 = (4 * pointValues[5]) + (16 * pointValues[6]) + (26 * pointValues[7]) + (16 * pointValues[8]) + (4 * pointValues[9]);
-        gaussL3 = (7 * pointValues[10]) + (26 * pointValues[11]) + (41 * pointValues[12]) + (26 * pointValues[13]) + (7 * pointValues[14]);
-        gaussL4 = (4 * pointValues[15]) + (16 * pointValues[16]) + (26 * pointValues[17]) + (16 * pointValues[18]) + (4 * pointValues[19]);
-        gaussL5 = (1 * pointValues[20]) + (4 * pointValues[21]) + (7 * pointValues[22]) + (4 * pointValues[23]) + (1 * pointValues[24]);
-        gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / 273;
-    }
+    double gaussDvsr = 1.0;
+    double weights[25];
     
+    if (sigma == 10) {
+        gaussDvsr = 273;
+        weights[0]  = 1;
+        weights[1]  = 4;
+        weights[2]  = 7;
+        weights[6]  = 16;
+        weights[7]  = 26;
+        weights[12] = 41;
+    } else if (sigma == 12) {
+        weights[0]  = 0.008173;
+        weights[1]  = 0.021861;
+        weights[2]  = 0.030337;
+        weights[6]  = 0.058473;
+        weights[7]  = 0.081144;
+        weights[12] = 0.112606;
+    } else if (sigma == 13) {
+        weights[0]  = 0.010534;
+        weights[1]  = 0.024530;
+        weights[2]  = 0.032508;
+        weights[6]  = 0.057120;
+        weights[7]  = 0.075698;
+        weights[12] = 0.100318;
+    } else if (sigma == 14) {
+        gaussDvsr = 159;
+        weights[0]  = 2;
+        weights[1]  = 4;
+        weights[2]  = 5;
+        weights[6]  = 9;
+        weights[7]  = 12;
+        weights[12] = 15;
+    } else if (sigma == 16) {
+        weights[0]  = 0.017056;
+        weights[1]  = 0.030076;
+        weights[2]  = 0.036334;
+        weights[6]  = 0.053035;
+        weights[7]  = 0.064071;
+        weights[12] = 0.077404;
+    }
+    // line 1 has 2 duplicated values
+    weights[3] = weights[1];
+    weights[4] = weights[0];
+    // line 2 has 3 duplicated values
+    weights[5] = weights[1];
+    weights[8] = weights[6];
+    weights[9] = weights[5];
+    // line 3 has 4 duplicated values
+    weights[10] = weights[2];
+    weights[11] = weights[7];
+    weights[13] = weights[11];
+    weights[14] = weights[10];
+    // line 4 is the same as line 2
+    weights[15] = weights[5];
+    weights[16] = weights[6];
+    weights[17] = weights[7];
+    weights[18] = weights[8];
+    weights[19] = weights[9];
+    // line 5 is the  same as line 1
+    weights[20] = weights[0];
+    weights[21] = weights[1];
+    weights[22] = weights[2];
+    weights[23] = weights[3];
+    weights[24] = weights[4];
+    
+    gaussL1 = (weights[1]  * pointValues[0])  + (weights[1]  * pointValues[1])  + (weights[2]  * pointValues[2])  + (weights[3]  * pointValues[3])  + (weights[4]  * pointValues[4]);
+    gaussL2 = (weights[5]  * pointValues[5])  + (weights[6]  * pointValues[6])  + (weights[7]  * pointValues[7])  + (weights[8]  * pointValues[8])  + (weights[9]  * pointValues[9]);
+    gaussL3 = (weights[10] * pointValues[10]) + (weights[11] * pointValues[11]) + (weights[12] * pointValues[12]) + (weights[13] * pointValues[13]) + (weights[14] * pointValues[14]);
+    gaussL4 = (weights[15] * pointValues[15]) + (weights[16] * pointValues[16]) + (weights[17] * pointValues[17]) + (weights[18] * pointValues[18]) + (weights[19] * pointValues[19]);
+    gaussL5 = (weights[20] * pointValues[20]) + (weights[21] * pointValues[21]) + (weights[22] * pointValues[22]) + (weights[23] * pointValues[23]) + (weights[24] * pointValues[24]);
+    gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / gaussDvsr;
     return min(max((int)gaussAll, 0), 255);
 }
 
@@ -590,7 +644,6 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
     int sImgPixelLoc = 0;
     int pixelLocation = 0;
     int pixelWidth = sImgWidth * pixelDepth;
-    int hasMask = 0;
     
     for (int j = 0; j < sImgHeight; ++j) {
         for (int i = 0; i < sImgWidth; ++i) {
@@ -607,10 +660,6 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
             currentPixel.energy = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc);
             currentPixel.seamval = currentPixel.energy;
             
-            if ((sImgMask[sImgPixelLoc] >= 255) || (sImgMask[sImgPixelLoc+2] >= 255)) {
-                hasMask = 1;
-            }
-            
             image[pixelLocation] = currentPixel;
         }
     }
@@ -618,8 +667,8 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
     for (int j = 0; j < sImgHeight; ++j) {
         for (int i = 0; i < sImgWidth; ++i) {
             pixelLocation = (j * sImgWidth) + i;
-            image[pixelLocation].gaussA = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 10);
-            image[pixelLocation].gaussB = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 14);
+            image[pixelLocation].gaussA = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 12);
+            image[pixelLocation].gaussB = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 13);
         }
     }
     
@@ -630,28 +679,15 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
             int gaussianValue1 = image[pixelLocation].gaussA;
             int gaussianValue2 = image[pixelLocation].gaussB;
             
-            if (gaussianValue1 > gaussianValue2) {
-                if (!hasMask) {
-                    image[pixelLocation].energy = (int)((gaussianValue1 - gaussianValue2) * 4.0) & (int)(image[pixelLocation].energy * 0.1);
-                } else {
-                    image[pixelLocation].energy = (int)((gaussianValue1 - gaussianValue2) * 2.0) + (int)(image[pixelLocation].energy * 0.4);
-                }
-                
-            } else {
-                if (!hasMask) {
-                    image[pixelLocation].energy = (int)((gaussianValue2 - gaussianValue1) * 4.0) & (int)(image[pixelLocation].energy * 0.1);
-                } else {
-                    image[pixelLocation].energy = (int)((gaussianValue2 - gaussianValue1) * 2.0) + (int)(image[pixelLocation].energy * 0.4);
-                }
-            }
+            image[pixelLocation].energy = (int)((abs(gaussianValue1 - gaussianValue2) * 4.2) + (image[pixelLocation].energy * 0.08));
             
             // handle freeze/melt masks
             if (sImgMask[sImgPixelLoc] >= 255) {
                 // if it just zero then the seams become straight and more unnatural
-                image[pixelLocation].energy = (int)(image[pixelLocation].energy / 149);
+                image[pixelLocation].energy = (int)(image[pixelLocation].energy / 47);
             }
             if (sImgMask[sImgPixelLoc+2] >= 255) {
-                image[pixelLocation].energy = (int)(image[pixelLocation].energy * 37);
+                image[pixelLocation].energy = (int)(image[pixelLocation].energy * 13);
             }
         }
     }

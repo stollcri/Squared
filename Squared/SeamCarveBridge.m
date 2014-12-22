@@ -20,9 +20,9 @@
 //
 + (NSArray *)findFaces:(UIImage *)sourceImage {
     CIImage *image = [CIImage imageWithCGImage:sourceImage.CGImage];
-    // TODO: Consider changing CIDetectorAccuracyLow to CIDetectorAccuracyHigh
+    // TODO: Consider changing CIDetectorAccuracyLow to CIDetectorAccuracyLow
     CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace
-                                              context:nil options:[NSDictionary dictionaryWithObject:CIDetectorAccuracyLow forKey:CIDetectorAccuracy]];
+                                              context:nil options:[NSDictionary dictionaryWithObject:CIDetectorAccuracyHigh forKey:CIDetectorAccuracy]];
     return [detector featuresInImage:image];
 }
 
