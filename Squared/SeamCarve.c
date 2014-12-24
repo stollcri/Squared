@@ -17,7 +17,7 @@ static inline int max(int a, int b)
     }
 }
 
-static inline int min(int a, int b)
+static inline double min(double a, double b)
 {
     if (a < b) {
         return a;
@@ -26,7 +26,7 @@ static inline int min(int a, int b)
     }
 }
 
-static inline int min3(int a, int b, int c)
+static inline double min3(double a, double b, double c)
 {
     if (a < b) {
         if (a < c) {
@@ -45,7 +45,7 @@ static inline int min3(int a, int b, int c)
 
 #pragma mark - pixel energy
 
-static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel)
+static double getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel)
 {
     int imageByteWidth = imageWidth * pixelDepth;
     int currentCol = currentPixel % imageByteWidth;
@@ -103,12 +103,12 @@ static int getPixelEnergySobel(unsigned char *imageVector, int imageWidth, int i
     double sobelX = (p3val + (p6val + p6val) + p9val - p1val - (p4val + p4val) - p7val);
     double sobelY = (p1val + (p2val + p2val) + p3val - p7val - (p8val + p8val) - p9val);
     
-    return (int)(sqrt((sobelX * sobelX) + (sobelY * sobelY)));
+    return sqrt((sobelX * sobelX) + (sobelY * sobelY));
     // bounded gradient magnitude
-    return min(max((int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/2) , 0), 255);
+    //return min(max((int)(sqrt((sobelX * sobelX) + (sobelY * sobelY))/2) , 0), 255);
 }
 
-static int getPixelEnergyGaussian(struct Pixel *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel, int sigma)
+static double getPixelEnergyGaussian(struct Pixel *imageVector, int imageWidth, int imageHeight, int pixelDepth, int currentPixel, int sigma)
 {
     int imageByteWidth = imageWidth * pixelDepth;
     int points[25];
@@ -258,175 +258,9 @@ static int getPixelEnergyGaussian(struct Pixel *imageVector, int imageWidth, int
     gaussL4 = (weights[15] * pointValues[15]) + (weights[16] * pointValues[16]) + (weights[17] * pointValues[17]) + (weights[18] * pointValues[18]) + (weights[19] * pointValues[19]);
     gaussL5 = (weights[20] * pointValues[20]) + (weights[21] * pointValues[21]) + (weights[22] * pointValues[22]) + (weights[23] * pointValues[23]) + (weights[24] * pointValues[24]);
     gaussAll = (gaussL1 + gaussL2 + gaussL3 + gaussL4 + gaussL5) / gaussDvsr;
-    return min(max((int)gaussAll, 0), 255);
-}
-
-#pragma mark - horizontal methods (deprecated)
-
-/*
- * ***** NOTICE *****
- *
- * This function is deprecated and should not be used
- * See note at carveSeamsHorizontal for more details
- */
-static void setPixelPathHorizontal(struct Pixel *image, int imageWidth, int imageHeight, int unsigned currentPixel, int currentRow)
-{
-    int pixelLeft = 0;
-    int leftT = 0;
-    int leftM = 0;
-    int leftB = 0;
-    int newValue = 0;
     
-    pixelLeft = currentPixel - 1;
-    // avoid falling off the top
-    if (currentRow > 0) {
-        // avoid falling off the bottom
-        if (currentRow < (imageHeight - 1)) {
-            leftT = image[pixelLeft - imageWidth].seamval;
-            leftM = image[pixelLeft].seamval;
-            leftB = image[pixelLeft + imageWidth].seamval;
-            newValue = min3(leftT, leftM, leftB);
-        } else {
-            leftT = image[pixelLeft - imageWidth].seamval;
-            leftM = image[pixelLeft].seamval;
-            //leftB = INT_MAX;
-            newValue = min(leftT, leftM);
-        }
-    } else {
-        //leftT = INT_MAX;
-        leftM = image[pixelLeft].seamval;
-        leftB = image[pixelLeft + imageWidth].seamval;
-        newValue = min(leftM, leftB);
-    }
-    image[currentPixel].seamval += newValue;
-}
-
-/*
- * ***** NOTICE *****
- *
- * This function is deprecated and should not be used
- * See note at carveSeamsHorizontal for more details
- */
-static void fillSeamMatrixHorizontal(struct Pixel *image, int imageWidth, int imageHeight)
-{
-    int currentPixel = 0;
-    // do not process the first col, start with i=1
-    // must be in reverse order from verticle seam, calulate colums as we move across (top down, left to right)
-    for (int i = 1; i < imageWidth; ++i) {
-        for (int j = 0; j < imageHeight; ++j) {
-            currentPixel = (j * imageWidth) + i;
-            if (image[currentPixel].seamval != INT_MAX) {
-                image[currentPixel].seamval = image[currentPixel].energy;
-                setPixelPathHorizontal(image, imageWidth, imageHeight, currentPixel, j);
-            } else {
-                break;
-            }
-        }
-    }
-}
-
-/*
- * ***** NOTICE *****
- *
- * This function is deprecated and should not be used
- * See note at carveSeamsHorizontal for more details
- */
-static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeight, int *minLocs, int *path)
-{
-    int currentPixel = 0;
-    int minsFound = 0;
-    int minValue = INT_MAX;
-    
-    for (int i = 1; i < imageHeight; ++i) {
-        currentPixel = (i * imageWidth) - 1;
-        if ((image[currentPixel].seamval > 0) && (image[currentPixel].seamval != INT_MAX)) {
-            // find all minimum values
-            if (image[currentPixel].seamval <= minValue) {
-                // this is a new minimum, so clear the min list and store just this minimum
-                if (image[currentPixel].seamval < minValue) {
-                    minsFound = 0;
-                    minValue = image[currentPixel].seamval;
-                    minLocs[minsFound] = currentPixel;
-                    
-                // this is a duplicate minimum, so add it to the list
-                } else {
-                    ++minsFound;
-                    minLocs[minsFound] = currentPixel;
-                }
-            }
-        } else {
-            break;
-        }
-    }
-    
-    int minLocation = minLocs[0];
-    // when there is more than one seam with the same minimum value
-    // randomly pick one of the minimums so that we do not have all
-    // of the seams taken from the top of the image
-    if (minsFound) {
-        int minToTake = rand() % minsFound;
-        minLocation = minLocs[minToTake];
-    }
-    
-    int pixelLeft = 0;
-    int currentRow = 0;
-    int leftA = 0;
-    int leftC = 0;
-    int leftB = 0;
-    int newValue = 0;
-    
-    currentPixel = minLocation;
-    int loopEnd = (imageWidth - 1);
-    for (int j = 0; j < loopEnd; ++j) {
-        path[j] = currentPixel;
-        pixelLeft = currentPixel - 1;
-        
-        // avoid falling off the top
-        if ((currentPixel > imageWidth) && (image[pixelLeft - imageWidth].seamval > 0)) {
-            // avoid falling off the right end
-            if ((currentPixel < ((imageWidth * imageHeight) - imageWidth)) && (image[pixelLeft + imageWidth].seamval > 0)) {
-                leftA = image[pixelLeft - imageWidth].seamval;
-                leftC = image[pixelLeft].seamval;
-                leftB = image[pixelLeft + imageWidth].seamval;
-                newValue = min3(leftA, leftC, leftB);
-            } else {
-                leftA = image[pixelLeft - imageWidth].seamval;
-                leftC = image[pixelLeft].seamval;
-                //leftB = INT_MAX;
-                newValue = min(leftA, leftC);
-            }
-        } else {
-            //leftA = INT_MAX;
-            leftC = image[pixelLeft].seamval;
-            leftB = image[pixelLeft + imageWidth].seamval;
-            newValue = min(leftC, leftB);
-        }
-        
-        if (newValue == leftC) {
-            currentPixel = pixelLeft;
-        } else if (newValue == leftB) {
-            currentPixel = pixelLeft + imageWidth;
-        } else {
-            currentPixel = pixelLeft - imageWidth;
-        }
-    }
-    
-    int outerEnd = (imageWidth-1);
-    int innerEnd = (imageHeight - 1);
-    for (int j = 0; j < outerEnd; ++j) {
-        currentPixel = path[j];
-        currentRow = currentPixel / imageWidth;
-        
-        for (int i = currentRow; i < innerEnd; ++i) {
-            if ((image[currentPixel].seamval >= 0) && (image[currentPixel].seamval != INT_MAX)) {
-                image[currentPixel] = image[currentPixel+imageWidth];
-                currentPixel += imageWidth;
-            } else {
-                break;
-            }
-        }
-        image[currentPixel].seamval = INT_MAX;
-    }
+    return gaussAll;
+    //return min(max((int)gaussAll, 0), 255);
 }
 
 #pragma mark - vertical methods
@@ -434,10 +268,10 @@ static void cutSeamHorizontal(struct Pixel *image, int imageWidth, int imageHeig
 static void setPixelPathVertical(struct Pixel *image, int imageWidth, int imageHeight, int unsigned currentPixel, int currentCol)
 {
     int pixelAbove = 0;
-    int aboveL = 0;
-    int aboveC = 0;
-    int aboveR = 0;
-    int newValue = 0;
+    double aboveL = 0;
+    double aboveC = 0;
+    double aboveR = 0;
+    double newValue = 0;
     
     pixelAbove = currentPixel - imageWidth;
     // avoid falling off the left end
@@ -461,6 +295,13 @@ static void setPixelPathVertical(struct Pixel *image, int imageWidth, int imageH
         newValue = min(aboveC, aboveR);
     }
     image[currentPixel].seamval += newValue;
+    if (image[currentPixel].seamval > 1) {
+        if (image[currentPixel].seamval < 255) {
+            image[currentPixel].seamval -= SEAM_MOVE_COST;
+        //} else {
+            //image[currentPixel].seamval = 255;
+        }
+    }
 }
 
 static void fillSeamMatrixVertical(struct Pixel *image, int imageWidth, int imageHeight)
@@ -493,14 +334,14 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
             if (image[currentPixel].seamval <= minValue) {
                 // this is a new minimum, so clear the min list and store just this minimum
                 if (image[currentPixel].seamval < minValue) {
-                    minsFound = 0;
                     minValue = image[currentPixel].seamval;
-                    minLocs[minsFound] = currentPixel;
+                    minLocs[0] = currentPixel;
+                    minsFound = 1;
                     
                 // this is a duplicate minimum, so add it to the list
                 } else {
-                    ++minsFound;
                     minLocs[minsFound] = currentPixel;
+                    ++minsFound;
                 }
             }
         } else {
@@ -588,31 +429,17 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
     // rand() is used in seam cutting, but only need to seed it once per thread
     srand((int)time(0));
     
-    if (goHorizontal) {
-        fillSeamMatrixHorizontal(sImgPixels, sImgWidth, sImgHeight);
-        
-        int *minLocs = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
-        int *path = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
-        
-        for (int i = 0; i < carveCount; ++i) {
-            cutSeamHorizontal(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
-        }
-        
-        free(path);
-        free(minLocs);
-    } else {
-        fillSeamMatrixVertical(sImgPixels, sImgWidth, sImgHeight);
-        
-        int *minLocs = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
-        int *path = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
-        
-        for (int i = 0; i < carveCount; ++i) {
-            cutSeamVertical(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
-        }
-        
-        free(path);
-        free(minLocs);
+    fillSeamMatrixVertical(sImgPixels, sImgWidth, sImgHeight);
+    
+    int *minLocs = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
+    int *path = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
+    
+    for (int i = 0; i < carveCount; ++i) {
+        cutSeamVertical(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
     }
+    
+    free(path);
+    free(minLocs);
     
     int tImgPixelLoc = 0;
     int pixelLocation = 0;
@@ -625,10 +452,17 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
             tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
             tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
             tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+            
             /*
-            tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].energy;
-            tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].energy;
-            tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].energy;
+            tImg[tImgPixelLoc]   = (int)sImgPixels[pixelLocation].seamval;
+            tImg[tImgPixelLoc+1] = (int)sImgPixels[pixelLocation].seamval;
+            tImg[tImgPixelLoc+2] = (int)sImgPixels[pixelLocation].seamval;
+            tImg[tImgPixelLoc+3] = 255;
+            */
+            /*
+            tImg[tImgPixelLoc]   = (int)sImgPixels[pixelLocation].energy;
+            tImg[tImgPixelLoc+1] = (int)sImgPixels[pixelLocation].energy;
+            tImg[tImgPixelLoc+2] = (int)sImgPixels[pixelLocation].energy;
             tImg[tImgPixelLoc+3] = 255;
             */
         }
@@ -657,8 +491,9 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
             currentPixel.bright = (int)(((double)sImg[sImgPixelLoc] * COLOR_TO_GREY_FACTOR_R) +
                                         ((double)sImg[sImgPixelLoc+1] * COLOR_TO_GREY_FACTOR_G) +
                                         ((double)sImg[sImgPixelLoc+2] * COLOR_TO_GREY_FACTOR_B));
-            currentPixel.energy = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc);
-            currentPixel.seamval = currentPixel.energy;
+            currentPixel.sobelA = getPixelEnergySobel(sImg, sImgWidth, sImgHeight, pixelDepth, sImgPixelLoc);
+            currentPixel.energy = 1.0;
+            currentPixel.seamval = 1.0;
             
             image[pixelLocation] = currentPixel;
         }
@@ -667,27 +502,35 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
     for (int j = 0; j < sImgHeight; ++j) {
         for (int i = 0; i < sImgWidth; ++i) {
             pixelLocation = (j * sImgWidth) + i;
-            image[pixelLocation].gaussA = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 12);
-            image[pixelLocation].gaussB = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 13);
+            //image[pixelLocation].gaussA = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 12);
+            //image[pixelLocation].gaussB = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 13);
+            image[pixelLocation].gaussA = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 14);
+            image[pixelLocation].gaussB = getPixelEnergyGaussian(image, sImgWidth, sImgHeight, pixelDepth, pixelLocation, 16);
         }
     }
     
+    int energyGwthS;
+    //int energyGandS;
     for (int j = 0; j < sImgHeight; ++j) {
         for (int i = 0; i < sImgWidth; ++i) {
             sImgPixelLoc = (j * pixelWidth) + (i * pixelDepth);
             pixelLocation = (j * sImgWidth) + i;
-            int gaussianValue1 = image[pixelLocation].gaussA;
-            int gaussianValue2 = image[pixelLocation].gaussB;
+            double gaussianValue1 = image[pixelLocation].gaussA;
+            double gaussianValue2 = image[pixelLocation].gaussB;
+            double gaussianDifference = abs(gaussianValue1 - gaussianValue2);
             
-            image[pixelLocation].energy = (int)((abs(gaussianValue1 - gaussianValue2) * 4.2) + (image[pixelLocation].energy * 0.08));
+            energyGwthS = (gaussianDifference + (image[pixelLocation].sobelA / 100) * 20);
+            //energyGandS = 0;//((int)gaussianDifference & (int)(image[pixelLocation].sobelA / 100)) * 32;
+            //image[pixelLocation].energy = min(max((energyGwthS + energyGandS), 0), 255);
+            image[pixelLocation].energy = min(max(energyGwthS, 0), 255);
             
             // handle freeze/melt masks
             if (sImgMask[sImgPixelLoc] >= 255) {
                 // if it just zero then the seams become straight and more unnatural
-                image[pixelLocation].energy = (int)(image[pixelLocation].energy / 47);
+                image[pixelLocation].energy = (image[pixelLocation].energy / 97);
             }
             if (sImgMask[sImgPixelLoc+2] >= 255) {
-                image[pixelLocation].energy = (int)(image[pixelLocation].energy * 13);
+                image[pixelLocation].energy = ((image[pixelLocation].energy + 1) * 13);
             }
         }
     }
@@ -718,34 +561,12 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
         for (int j = yLoopBegin; j < yLoopEnd; ++j) {
             for (int k = xLoopBegin; k < xLoopEnd; ++k) {
                 pixelLocation = (j * sImgWidth) + k;
-                image[pixelLocation].energy = image[pixelLocation].energy * 7;
+                image[pixelLocation].energy = ((image[pixelLocation].energy + 1) * 7);
             }
         }
     }
     
     return image;
-}
-
-/*
- * ***** NOTICE *****
- *
- * The seam carving algorithm can handle images in portrait or landscape, HOWEVER...
- * The seam carving algorithm should receive images which are wider than tall (lanscape)
- * (e.g. the algorithm should be called via the carveSeamsVertical function)
- *
- * This is due to the memory layour of the algorithm; it uses a row-major-order
- * If it is passed a portrait image it must move down the image -- column-major-order
- * To move down the image it must skip forward image-width number of pixels
- * So, the next pixel is never cached near the processor and must be fetched from memory
- * This means that we basically get no help from the processor caches
- *
- * This may not seem like a big deal, but since this is a memory movement intensive algorithm
- * THE PROCESSING OF THE ALGORITHM TIME IS DOUBLED WHEN IT CUTS HORIZONTAL SEAMS
- */
-void carveSeamsHorizontal(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)
-{
-    printf("Function is deprecated and should no longer be used: carveSeamsHorizontal \n");
-    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, 1);
 }
 
 void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)

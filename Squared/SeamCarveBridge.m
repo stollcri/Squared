@@ -111,14 +111,14 @@
         widthIncrement = SEAM_CUTS_PER_ITTERATION;
         heightIncrement = 0;
         seamRemovalCount = imgWidthInt - imgHeightInt;
-        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION);
+        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION) + 1;
     } else {
         imgNewWidth = imgWidthInt;
         imgNewHeight = imgWidthInt;
         widthIncrement = 0;
         heightIncrement = SEAM_CUTS_PER_ITTERATION;
         seamRemovalCount = imgHeightInt - imgWidthInt;
-        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION);
+        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION) + 1;
     }
     
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
@@ -135,12 +135,7 @@
             currentHeightT = currentHeightT - heightIncrement;
             unsigned char *rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
             
-            if (imgWidthInt > imgHeightInt) {
-                carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
-            } else {
-                NSLog(@"Function is deprecated, call should not be made: carveSeamsHorizontal");
-                carveSeamsHorizontal(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
-            }
+            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
             
             NSUInteger newBytesPerRow = bytesPerPixel * currentWidthT;
             CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
@@ -159,11 +154,8 @@
             
             free(rawResultsTemp);
         } else {
-            if (imgWidthInt > imgHeightInt) {
-                carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth));
-            } else {
-                carveSeamsHorizontal(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentHeightT - imgNewHeight));
-            }
+            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth));
+            //NSLog(@"%d => %d", SEAM_CUTS_PER_ITTERATION, (currentWidthT - imgNewWidth));
         }
     }
     

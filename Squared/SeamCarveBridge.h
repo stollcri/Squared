@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 #define MAXIMUM_IMAGE_SIZE 1280
-#define SEAM_CUTS_PER_ITTERATION 32
+#define SEAM_CUTS_PER_ITTERATION 24 // 4 - 44
 
 @interface SeamCarveBridge : NSObject
 

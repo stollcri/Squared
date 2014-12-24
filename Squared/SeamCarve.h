@@ -26,20 +26,22 @@
 #define COLOR_TO_GREY_FACTOR_G 0.587
 #define COLOR_TO_GREY_FACTOR_B 0.114
 
+#define SEAM_MOVE_COST 0.25
+
 struct Pixel {
     int r;
     int g;
     int b;
     int a;
     int bright;
-    int gaussA;
-    int gaussB;
-    int energy;
-    int seamval;
+    double gaussA;
+    double gaussB;
+    double sobelA;
+    double energy;
+    double seamval;
 };
 
 struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight, int pixelDepth, unsigned char *sImgMask, int faceCount, int *faceBoundsArray);
-void carveSeamsHorizontal(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount);
 void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount);
 
 #endif /* defined(__Squared__SeamCarve__) */
