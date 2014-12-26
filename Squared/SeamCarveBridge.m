@@ -27,6 +27,12 @@
 }
 
 + (void)squareImage:(UIImage *)sourceImage withMask:(UIImage *)sourceImageMask {
+    int seamCutsPerItteration = 28;
+    if ([[NSUserDefaults standardUserDefaults] integerForKey:@"cutsPerItteration"]) {
+        seamCutsPerItteration = (12 - [[NSUserDefaults standardUserDefaults] integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER;
+        NSLog(@"cuts per itteration: %d", seamCutsPerItteration);
+    }
+    
     CGImageRef imgRef = sourceImage.CGImage;
     CGImageRef imgRefMask = sourceImageMask.CGImage;
     NSUInteger imgWidth = CGImageGetWidth(imgRef);
@@ -108,17 +114,17 @@
     if (imgWidthInt > imgHeightInt) {
         imgNewWidth = imgHeightInt;
         imgNewHeight = imgHeightInt;
-        widthIncrement = SEAM_CUTS_PER_ITTERATION;
+        widthIncrement = seamCutsPerItteration;
         heightIncrement = 0;
         seamRemovalCount = imgWidthInt - imgHeightInt;
-        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION) + 1;
+        seamRemovalItterations = (int)(seamRemovalCount / seamCutsPerItteration) + 1;
     } else {
         imgNewWidth = imgWidthInt;
         imgNewHeight = imgWidthInt;
         widthIncrement = 0;
-        heightIncrement = SEAM_CUTS_PER_ITTERATION;
+        heightIncrement = seamCutsPerItteration;
         seamRemovalCount = imgHeightInt - imgWidthInt;
-        seamRemovalItterations = (int)(seamRemovalCount / SEAM_CUTS_PER_ITTERATION) + 1;
+        seamRemovalItterations = (int)(seamRemovalCount / seamCutsPerItteration) + 1;
     }
     
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
@@ -129,33 +135,47 @@
     unsigned int currentHeightT = imgHeightInt;
     struct Pixel *imagePixels = createImageData(rawPixels, imgWidthInt, imgHeightInt, pixelDepth, rawPixelsMask, faceCount, faceCoordinates);
     
+    int imageShowModulus = 0;
+    int imageShowModulusTwo = 0;
+    if (seamRemovalItterations > MAX_ITTERATION_IMAGES_TO_SHOW) {
+        if (seamRemovalItterations < (MAX_ITTERATION_IMAGES_TO_SHOW * 2)) {
+            imageShowModulus = (int)(seamRemovalItterations / (seamRemovalItterations - MAX_ITTERATION_IMAGES_TO_SHOW)) + 1;
+        } else {
+            imageShowModulusTwo = (int)(seamRemovalItterations / MAX_ITTERATION_IMAGES_TO_SHOW);
+            imageShowModulus = 0;
+        }
+    }
+    
     for (int i = 0; i < seamRemovalItterations; ++i) {
         if (i < (seamRemovalItterations - 1)) {
             currentWidthT = currentWidthT - widthIncrement;
             currentHeightT = currentHeightT - heightIncrement;
             unsigned char *rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
             
-            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, SEAM_CUTS_PER_ITTERATION);
+            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, seamCutsPerItteration);
             
-            NSUInteger newBytesPerRow = bytesPerPixel * currentWidthT;
-            CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
-            CGContextRef newContext = CGBitmapContextCreate(rawResultsTemp, currentWidthT, currentHeightT,
-                                                            bitsPerComponent, newBytesPerRow, newColorSpace,
-                                                            kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
-            CGColorSpaceRelease(newColorSpace);
-            
-            if (newContext) {
-                CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
-                UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squareupdate" object:newImage];
-                CGContextRelease(newContext);
-                CGImageRelease(newImgRef);
+            if (!imageShowModulus || (i % imageShowModulus)) {
+                if (!imageShowModulusTwo || !(i % imageShowModulusTwo)) {
+                    NSUInteger newBytesPerRow = bytesPerPixel * currentWidthT;
+                    CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
+                    CGContextRef newContext = CGBitmapContextCreate(rawResultsTemp, currentWidthT, currentHeightT,
+                                                                    bitsPerComponent, newBytesPerRow, newColorSpace,
+                                                                    kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+                    CGColorSpaceRelease(newColorSpace);
+                    
+                    if (newContext) {
+                        CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
+                        UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squareupdate" object:newImage];
+                        CGContextRelease(newContext);
+                        CGImageRelease(newImgRef);
+                    }
+                }
             }
             
             free(rawResultsTemp);
         } else {
             carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth));
-            //NSLog(@"%d => %d", SEAM_CUTS_PER_ITTERATION, (currentWidthT - imgNewWidth));
         }
     }
     

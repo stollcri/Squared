@@ -17,6 +17,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    NSDictionary *appDefaults = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:[NSNumber numberWithBool:YES], @5, nil] forKeys:[NSArray arrayWithObjects:@"padRectangularImages", @"cutsPerItteration", nil]];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+    
     return YES;
 }
 

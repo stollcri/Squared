@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D09C95C1A4CD63200F1C5EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
+		7D09C95D1A4CD63200F1C5EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
 		7D26E2BB1A10F997001849FF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2BA1A10F997001849FF /* main.m */; };
 		7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2BD1A10F997001849FF /* AppDelegate.m */; };
 		7D26E2C11A10F997001849FF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2C01A10F997001849FF /* ViewController.m */; };
@@ -86,6 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7D09C95B1A4CD63200F1C5EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		7D26E2B51A10F997001849FF /* Squared.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Squared.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D26E2B91A10F997001849FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D26E2BA1A10F997001849FF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -106,8 +109,8 @@
 		7D26E2EB1A10FC7C001849FF /* PhotoEditingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotoEditingViewController.h; sourceTree = "<group>"; };
 		7D26E2EC1A10FC7C001849FF /* PhotoEditingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhotoEditingViewController.m; sourceTree = "<group>"; };
 		7D26E2EE1A10FC7C001849FF /* MainInterface.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainInterface.storyboard; sourceTree = "<group>"; };
-		7D26E2F71A11086D001849FF /* SeamCarve.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SeamCarve.c; sourceTree = "<group>"; };
-		7D26E2F81A11086D001849FF /* SeamCarve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeamCarve.h; sourceTree = "<group>"; };
+		7D26E2F71A11086D001849FF /* SeamCarve.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SeamCarve.c; path = Squared/SeamCarve.c; sourceTree = "<group>"; };
+		7D26E2F81A11086D001849FF /* SeamCarve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SeamCarve.h; path = Squared/SeamCarve.h; sourceTree = "<group>"; };
 		7D454BCA1A2909CA0008D47E /* SquaredLogoC-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60.png"; sourceTree = "<group>"; };
 		7D454BCB1A2909CA0008D47E /* SquaredLogoC-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60@2x.png"; sourceTree = "<group>"; };
 		7D454BCC1A2909CA0008D47E /* SquaredLogoC-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60@3x.png"; sourceTree = "<group>"; };
@@ -130,8 +133,8 @@
 		7DC27B5F1A1FDDED0050E157 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-MX"; path = "es-MX.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		7DC27B601A1FE0F70050E157 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		7DC27B611A1FE0F70050E157 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
-		7DC52CB21A15746C00947F5B /* SeamCarveBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeamCarveBridge.h; sourceTree = "<group>"; };
-		7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeamCarveBridge.m; sourceTree = "<group>"; };
+		7DC52CB21A15746C00947F5B /* SeamCarveBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SeamCarveBridge.h; path = Squared/SeamCarveBridge.h; sourceTree = "<group>"; };
+		7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SeamCarveBridge.m; path = Squared/SeamCarveBridge.m; sourceTree = "<group>"; };
 		7DD3C3F91A1FB221003A7A81 /* Thaw-22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Thaw-22.png"; sourceTree = "<group>"; };
 		7DD3C3FA1A1FB221003A7A81 /* Freeze-22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Freeze-22.png"; sourceTree = "<group>"; };
 		7DD3C3FB1A1FB221003A7A81 /* Thaw-44.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Thaw-44.png"; sourceTree = "<group>"; };
@@ -172,6 +175,11 @@
 		7D26E2AC1A10F997001849FF = {
 			isa = PBXGroup;
 			children = (
+				7DC52CB21A15746C00947F5B /* SeamCarveBridge.h */,
+				7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */,
+				7D26E2F81A11086D001849FF /* SeamCarve.h */,
+				7D26E2F71A11086D001849FF /* SeamCarve.c */,
+				7D09C95B1A4CD63200F1C5EA /* Settings.bundle */,
 				7D26E2B71A10F997001849FF /* Squared */,
 				7D26E2D11A10F997001849FF /* SquaredTests */,
 				7D26E2E81A10FC7C001849FF /* Squared Extension */,
@@ -197,10 +205,6 @@
 				7D26E2BD1A10F997001849FF /* AppDelegate.m */,
 				7D26E2BF1A10F997001849FF /* ViewController.h */,
 				7D26E2C01A10F997001849FF /* ViewController.m */,
-				7DC52CB21A15746C00947F5B /* SeamCarveBridge.h */,
-				7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */,
-				7D26E2F81A11086D001849FF /* SeamCarve.h */,
-				7D26E2F71A11086D001849FF /* SeamCarve.c */,
 				7D26E2C21A10F997001849FF /* Main.storyboard */,
 				7D26E2C51A10F997001849FF /* Images.xcassets */,
 				7D26E2C71A10F997001849FF /* LaunchScreen.xib */,
@@ -420,6 +424,7 @@
 				7DD3C40B1A1FB221003A7A81 /* Thaw-66.png in Resources */,
 				7DD3C4091A1FB221003A7A81 /* Freeze-66.png in Resources */,
 				7D454BD71A2909CA0008D47E /* SquaredLogoC-60@2x.png in Resources */,
+				7D09C95C1A4CD63200F1C5EA /* Settings.bundle in Resources */,
 				7DD3C40F1A1FB221003A7A81 /* Thaw.png in Resources */,
 				7DD3C4051A1FB221003A7A81 /* Thaw-44.png in Resources */,
 				7D454BDB1A2909CA0008D47E /* SquaredLogoC-AppStore.png in Resources */,
@@ -450,6 +455,7 @@
 				7DD3C4081A1FB221003A7A81 /* Freeze-44.png in Resources */,
 				7DD3C40C1A1FB221003A7A81 /* Thaw-66.png in Resources */,
 				7DD3C40E1A1FB221003A7A81 /* Freeze.png in Resources */,
+				7D09C95D1A4CD63200F1C5EA /* Settings.bundle in Resources */,
 				7DD3C4061A1FB221003A7A81 /* Thaw-44.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
