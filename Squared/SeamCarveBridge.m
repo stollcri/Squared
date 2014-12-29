@@ -28,17 +28,56 @@
 }
 
 + (void)squareImage:(UIImage *)sourceImage withMask:(UIImage *)sourceImageMask {
+    //NSUserDefaults *squaredDefaults = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
+    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+    
     int seamCutsPerItteration = 28;
-    if ([[NSUserDefaults standardUserDefaults] integerForKey:@"cutsPerItteration"]) {
-        seamCutsPerItteration = (12 - [[NSUserDefaults standardUserDefaults] integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER;
-        NSLog(@"cuts per itteration: %d", seamCutsPerItteration);
+    if ([squaredDefaults integerForKey:@"cutsPerItteration"]) {
+        seamCutsPerItteration = (12 - [squaredDefaults integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER;
+    }
+    
+    int padWithColor = 0;
+    int padWithColorR = 0;
+    int padWithColorG = 0;
+    int padWithColorB = 0;
+    int padWithColorA = 0;
+    if ([squaredDefaults integerForKey:@"padSquareColor"]) {
+        padWithColor = [squaredDefaults integerForKey:@"padSquareColor"];
+        
+        if (padWithColor) {
+            if (padWithColor == 1) { // transparent
+                padWithColorR = 0;
+                padWithColorG = 0;
+                padWithColorB = 0;
+                padWithColorA = 256;
+            } else if (padWithColor == 2) { // mirror
+                padWithColorR = 0;
+                padWithColorG = 0;
+                padWithColorB = 0;
+                padWithColorA = 257;
+            } else if (padWithColor == 3) { // smear
+                padWithColorR = 0;
+                padWithColorG = 0;
+                padWithColorB = 0;
+                padWithColorA = 258;
+            } else if (padWithColor == 4) { // black
+                padWithColorR = 0;
+                padWithColorG = 0;
+                padWithColorB = 0;
+                padWithColorA = 255;
+            } else if (padWithColor == 5) { // white
+                padWithColorR = 255;
+                padWithColorG = 255;
+                padWithColorB = 255;
+                padWithColorA = 255;
+            }
+        }
     }
     
     CGImageRef imgRef = sourceImage.CGImage;
     CGImageRef imgRefMask = sourceImageMask.CGImage;
     NSUInteger imgWidth = CGImageGetWidth(imgRef);
     NSUInteger imgHeight = CGImageGetHeight(imgRef);
-    //NSLog(@"%lu x %lu", (unsigned long)imgWidth, (unsigned long)imgHeight);
     
     // TODO: this shouldn't be hard-coded
     NSUInteger bytesPerPixel = 4; //CGImageGetBitsPerPixel(sourceImage.CGImage) / 16;
@@ -119,6 +158,7 @@
         heightIncrement = 0;
         seamRemovalCount = imgWidthInt - imgHeightInt;
         seamRemovalItterations = (int)(seamRemovalCount / seamCutsPerItteration) + 1;
+    /*
     } else {
         imgNewWidth = imgWidthInt;
         imgNewHeight = imgWidthInt;
@@ -126,11 +166,18 @@
         heightIncrement = seamCutsPerItteration;
         seamRemovalCount = imgHeightInt - imgWidthInt;
         seamRemovalItterations = (int)(seamRemovalCount / seamCutsPerItteration) + 1;
+    */
     }
     
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
     NSUInteger imgNewByteCount = imgNewPixelCount * bytesPerPixel;
-    unsigned char *rawResults = (unsigned char*)calloc(imgNewByteCount, sizeof(unsigned char));
+    unsigned char *rawResults;
+    if (imgNewByteCount) {
+        rawResults = (unsigned char*)calloc(imgNewByteCount, sizeof(unsigned char));
+    } else {
+        free(faceCoordinates);
+        return;
+    }
     
     unsigned int currentWidthT = imgWidthInt;
     unsigned int currentHeightT = imgHeightInt;
@@ -151,17 +198,30 @@
         if (i < (seamRemovalItterations - 1)) {
             currentWidthT = currentWidthT - widthIncrement;
             currentHeightT = currentHeightT - heightIncrement;
-            unsigned char *rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
             
-            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, seamCutsPerItteration);
+            unsigned char *rawResultsTemp;
+            if (!padWithColor) {
+                rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
+            } else {
+                rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentWidthT * bytesPerPixel, sizeof(unsigned char));
+            }
+            
+            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, seamCutsPerItteration, padWithColorR, padWithColorG, padWithColorB, padWithColorA);
             
             if (!imageShowModulus || (i % imageShowModulus)) {
                 if (!imageShowModulusTwo || !(i % imageShowModulusTwo)) {
                     NSUInteger newBytesPerRow = bytesPerPixel * currentWidthT;
                     CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
-                    CGContextRef newContext = CGBitmapContextCreate(rawResultsTemp, currentWidthT, currentHeightT,
-                                                                    bitsPerComponent, newBytesPerRow, newColorSpace,
-                                                                    kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+                    CGContextRef newContext;
+                    if (!padWithColor) {
+                        newContext = CGBitmapContextCreate(rawResultsTemp, currentWidthT, currentHeightT,
+                                                           bitsPerComponent, newBytesPerRow, newColorSpace,
+                                                           kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+                    } else {
+                        newContext = CGBitmapContextCreate(rawResultsTemp, currentWidthT, currentWidthT,
+                                                           bitsPerComponent, newBytesPerRow, newColorSpace,
+                                                           kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+                    }
                     CGColorSpaceRelease(newColorSpace);
                     
                     if (newContext) {
@@ -176,7 +236,7 @@
             
             free(rawResultsTemp);
         } else {
-            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth));
+            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth), padWithColorR, padWithColorG, padWithColorB, padWithColorA);
         }
     }
     

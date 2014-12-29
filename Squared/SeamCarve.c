@@ -424,7 +424,7 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
 
 #pragma mark -
 
-void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int goHorizontal)
+void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int padR, int padG, int padB, int padA)
 {
     // rand() is used in seam cutting, but only need to seed it once per thread
     srand((int)time(0));
@@ -441,30 +441,108 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
     free(path);
     free(minLocs);
     
+    int outerLoop = 0;
+    int padLinesTop = 0;
+    int padLinesBottom = 0;
+    int mirorForPadding = 0;
+    int smearForPadding = 0;
+    if (padR || padG || padB || padA) {
+        outerLoop = tImgWidth;
+        int padLines = tImgWidth - tImgHeight;
+        padLinesTop = (int)(padLines / 2);
+        padLinesBottom = padLinesTop + tImgHeight;
+        
+        if (padA == 256) {
+            padA = 0;
+        } else if (padA == 257) {
+            mirorForPadding = 1;
+        } else if (padA == 258) {
+            smearForPadding = 1;
+        }
+    } else {
+        outerLoop = tImgHeight;
+        padLinesTop = -1;
+        padLinesBottom = tImgWidth;
+    }
+    
+    int rowCounter = 0;
     int tImgPixelLoc = 0;
     int pixelLocation = 0;
-    for (int j = 0; j < tImgHeight; ++j) {
-        for (int i = 0; i < tImgWidth; ++i) {
-            tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
-            pixelLocation = (j * sImgWidth) + i;
-            
-            tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
-            tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
-            tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
-            tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
-            
-            /*
-            tImg[tImgPixelLoc]   = (int)sImgPixels[pixelLocation].seamval;
-            tImg[tImgPixelLoc+1] = (int)sImgPixels[pixelLocation].seamval;
-            tImg[tImgPixelLoc+2] = (int)sImgPixels[pixelLocation].seamval;
-            tImg[tImgPixelLoc+3] = 255;
-            */
-            /*
-            tImg[tImgPixelLoc]   = (int)sImgPixels[pixelLocation].energy;
-            tImg[tImgPixelLoc+1] = (int)sImgPixels[pixelLocation].energy;
-            tImg[tImgPixelLoc+2] = (int)sImgPixels[pixelLocation].energy;
-            tImg[tImgPixelLoc+3] = 255;
-            */
+    for (int j = 0; j < outerLoop; ++j) {
+        if ((j >= padLinesTop) && (j < padLinesBottom)) {
+            for (int i = 0; i < tImgWidth; ++i) {
+                tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                pixelLocation = (rowCounter * sImgWidth) + i;
+                
+                tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
+                tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
+                tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+                tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                
+                /*
+                tImg[tImgPixelLoc]   = (int)sImgPixels[pixelLocation].seamval;
+                tImg[tImgPixelLoc+1] = (int)sImgPixels[pixelLocation].seamval;
+                tImg[tImgPixelLoc+2] = (int)sImgPixels[pixelLocation].seamval;
+                tImg[tImgPixelLoc+3] = 255;
+                */
+                /*
+                tImg[tImgPixelLoc]   = (int)sImgPixels[pixelLocation].energy;
+                tImg[tImgPixelLoc+1] = (int)sImgPixels[pixelLocation].energy;
+                tImg[tImgPixelLoc+2] = (int)sImgPixels[pixelLocation].energy;
+                tImg[tImgPixelLoc+3] = 255;
+                */
+            }
+            ++rowCounter;
+        } else {
+            if (!mirorForPadding && !smearForPadding) {
+                for (int i = 0; i < tImgWidth; ++i) {
+                    tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                    tImg[tImgPixelLoc]   = padR;
+                    tImg[tImgPixelLoc+1] = padG;
+                    tImg[tImgPixelLoc+2] = padB;
+                    tImg[tImgPixelLoc+3] = padA;
+                }
+            } else if (mirorForPadding) {
+                if (j < padLinesTop) {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = ((padLinesTop - j) * sImgWidth) + i;
+                        tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
+                        tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
+                        tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                } else {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = (sImgHeight * sImgWidth) - (sImgWidth * (j - padLinesBottom + 1)) + i;
+                        tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
+                        tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
+                        tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                }
+            } else if (smearForPadding) {
+                if (j < padLinesTop) {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = i;
+                        tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
+                        tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
+                        tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                } else {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = (sImgHeight * sImgWidth) - sImgWidth + i;
+                        tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
+                        tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
+                        tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                }
+            }
         }
     }
 }
@@ -569,7 +647,7 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
     return image;
 }
 
-void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount)
+void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int padR, int padG, int padB, int padA)
 {
-    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, 0);
+    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, padR, padG, padG, padA);
 }
