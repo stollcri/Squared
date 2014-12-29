@@ -23,6 +23,9 @@
 		7D26E2EF1A10FC7C001849FF /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2EE1A10FC7C001849FF /* MainInterface.storyboard */; };
 		7D26E2F21A10FC7C001849FF /* Squared Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7D26E2E21A10FC7C001849FF /* Squared Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7D26E2F91A11086D001849FF /* SeamCarve.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2F71A11086D001849FF /* SeamCarve.c */; };
+		7D32FEA61A51F56800B2B072 /* Gear-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D32FEA31A51F56800B2B072 /* Gear-22.png */; };
+		7D32FEA71A51F56800B2B072 /* Gear-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D32FEA41A51F56800B2B072 /* Gear-44.png */; };
+		7D32FEA81A51F56800B2B072 /* Gear-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D32FEA51A51F56800B2B072 /* Gear-66.png */; };
 		7D454BD61A2909CA0008D47E /* SquaredLogoC-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCA1A2909CA0008D47E /* SquaredLogoC-60.png */; };
 		7D454BD71A2909CA0008D47E /* SquaredLogoC-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCB1A2909CA0008D47E /* SquaredLogoC-60@2x.png */; };
 		7D454BD81A2909CA0008D47E /* SquaredLogoC-60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCC1A2909CA0008D47E /* SquaredLogoC-60@3x.png */; };
@@ -128,6 +131,9 @@
 		7D32FEA01A51D78100B2B072 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		7D32FEA11A51D81A00B2B072 /* ar-001 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ar-001"; path = "ar-001.lproj/Main.strings"; sourceTree = "<group>"; };
 		7D32FEA21A51D81A00B2B072 /* ar-001 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ar-001"; path = "ar-001.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		7D32FEA31A51F56800B2B072 /* Gear-22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear-22.png"; sourceTree = "<group>"; };
+		7D32FEA41A51F56800B2B072 /* Gear-44.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear-44.png"; sourceTree = "<group>"; };
+		7D32FEA51A51F56800B2B072 /* Gear-66.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear-66.png"; sourceTree = "<group>"; };
 		7D454BCA1A2909CA0008D47E /* SquaredLogoC-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60.png"; sourceTree = "<group>"; };
 		7D454BCB1A2909CA0008D47E /* SquaredLogoC-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60@2x.png"; sourceTree = "<group>"; };
 		7D454BCC1A2909CA0008D47E /* SquaredLogoC-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60@3x.png"; sourceTree = "<group>"; };
@@ -315,14 +321,17 @@
 		7DD3C3E61A1FAFA1003A7A81 /* Freeze-Thaw */ = {
 			isa = PBXGroup;
 			children = (
-				7DD3C3F91A1FB221003A7A81 /* Thaw-22.png */,
+				7D32FEA31A51F56800B2B072 /* Gear-22.png */,
+				7D32FEA41A51F56800B2B072 /* Gear-44.png */,
+				7D32FEA51A51F56800B2B072 /* Gear-66.png */,
+				7DD3C3FF1A1FB221003A7A81 /* Freeze.png */,
 				7DD3C3FA1A1FB221003A7A81 /* Freeze-22.png */,
-				7DD3C3FB1A1FB221003A7A81 /* Thaw-44.png */,
 				7DD3C3FC1A1FB221003A7A81 /* Freeze-44.png */,
 				7DD3C3FD1A1FB221003A7A81 /* Freeze-66.png */,
-				7DD3C3FE1A1FB221003A7A81 /* Thaw-66.png */,
-				7DD3C3FF1A1FB221003A7A81 /* Freeze.png */,
 				7DD3C4001A1FB221003A7A81 /* Thaw.png */,
+				7DD3C3F91A1FB221003A7A81 /* Thaw-22.png */,
+				7DD3C3FB1A1FB221003A7A81 /* Thaw-44.png */,
+				7DD3C3FE1A1FB221003A7A81 /* Thaw-66.png */,
 			);
 			name = "Freeze-Thaw";
 			sourceTree = "<group>";
@@ -442,7 +451,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D32FEA61A51F56800B2B072 /* Gear-22.png in Resources */,
 				7DD3C4031A1FB221003A7A81 /* Freeze-22.png in Resources */,
+				7D32FEA71A51F56800B2B072 /* Gear-44.png in Resources */,
 				7D454BDE1A2909CA0008D47E /* SquaredLogoC-Small-40@2x.png in Resources */,
 				7DD3C4011A1FB221003A7A81 /* Thaw-22.png in Resources */,
 				7D454BE01A2909CA0008D47E /* SquaredLogoC-Small@2x.png in Resources */,
@@ -450,6 +461,7 @@
 				7D26E2C41A10F997001849FF /* Main.storyboard in Resources */,
 				7DD3C40D1A1FB221003A7A81 /* Freeze.png in Resources */,
 				7D454BD81A2909CA0008D47E /* SquaredLogoC-60@3x.png in Resources */,
+				7D32FEA81A51F56800B2B072 /* Gear-66.png in Resources */,
 				7DD3C4071A1FB221003A7A81 /* Freeze-44.png in Resources */,
 				7D454BDA1A2909CA0008D47E /* SquaredLogoC-76@2x.png in Resources */,
 				7D454BE11A2909CA0008D47E /* SquaredLogoC-Small@3x.png in Resources */,

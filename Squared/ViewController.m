@@ -42,6 +42,14 @@
     self.paintMode = PaintModeNone;
     self.currentImageStage = -1;
     
+    // Only iOS 8 and above supports the UIApplicationOpenSettingsURLString
+    // used to launch the Settings app from your application.  If the
+    // UIApplicationOpenSettingsURLString is not present, we're running on an
+    // old version of iOS.
+    if (&UIApplicationOpenSettingsURLString == NULL) {
+        [self.settingsButton setEnabled:NO];
+    }
+    
     [self.freezeButton setEnabled:NO];
     [self.unFreezeButton setEnabled:NO];
     [self.squareButton setEnabled:NO];
@@ -283,6 +291,7 @@
 
 - (void)disableUIelements {
     [self.openButton setEnabled:NO];
+    [self.settingsButton setEnabled:NO];
     [self.freezeButton setEnabled:NO];
     [self.unFreezeButton setEnabled:NO];
     [self.squareButton setEnabled:NO];
@@ -322,6 +331,9 @@
     [UIView commitAnimations];
     
     [self.openButton setEnabled:YES];
+    if (&UIApplicationOpenSettingsURLString) {
+        [self.settingsButton setEnabled:YES];
+    }
     // image is already square
     //[self.freezeButton setEnabled:YES];
     //[self.unFreezeButton setEnabled:YES];
@@ -436,6 +448,12 @@
     imagePicker.mediaTypes = @[(NSString *) kUTTypeImage];
     imagePicker.allowsEditing = NO;
     [self presentViewController:imagePicker animated:YES completion:nil];
+}
+
+- (IBAction)doSettings:(id)sender {
+    if (&UIApplicationOpenSettingsURLString) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+    }
 }
 
 - (IBAction)doSquaring:(id)sender {

@@ -18,6 +18,7 @@ typedef NS_ENUM(NSUInteger, PaintMode) {
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *openButton;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *settingsButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *squareButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *freezeButton;
@@ -26,6 +27,7 @@ typedef NS_ENUM(NSUInteger, PaintMode) {
 @property (weak, nonatomic) IBOutlet UIView *popoverAnchor;
 
 - (IBAction)doOpen:(id)sender;
+- (IBAction)doSettings:(id)sender;
 - (IBAction)doSquaring:(id)sender;
 - (IBAction)doSaving:(id)sender;
 - (IBAction)doFreezing:(id)sender;
