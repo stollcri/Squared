@@ -128,18 +128,18 @@
     // TODO: move to bridge class
     if (img) {
         CGSize newSize;
-        if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
+        if ((img.size.height > MAXIMUM_SIZE_DEFAULT) || (img.size.width > MAXIMUM_SIZE_DEFAULT)) {
             int temp = 0.0;
             float newWidth = 0;
             float newHeight = 0;
             
             if (img.size.height > img.size.width) {
-                temp = img.size.width * MAXIMUM_IMAGE_SIZE / img.size.height;
+                temp = img.size.width * MAXIMUM_SIZE_DEFAULT / img.size.height;
                 newWidth = temp;
-                newHeight = MAXIMUM_IMAGE_SIZE;
+                newHeight = MAXIMUM_SIZE_DEFAULT;
             } else {
-                temp = img.size.height * MAXIMUM_IMAGE_SIZE / img.size.width;
-                newWidth = MAXIMUM_IMAGE_SIZE;
+                temp = img.size.height * MAXIMUM_SIZE_DEFAULT / img.size.width;
+                newWidth = MAXIMUM_SIZE_DEFAULT;
                 newHeight = temp;
             }
             

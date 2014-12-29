@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#define MAXIMUM_IMAGE_SIZE 1280
-#define CUTS_PER_ITTERATION_MULTIPLIER 4
-#define MAX_ITTERATION_IMAGES_TO_SHOW 18
-
 @interface SeamCarveBridge : NSObject
 
 + (void)squareImage:(UIImage *)sourceImage withMask:(UIImage *)sourceImageMask;

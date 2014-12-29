@@ -12,7 +12,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<integer>5</integer>
+			<integer>8</integer>
 			<key>Key</key>
 			<string>cutsPerItteration</string>
 			<key>MaximumValue</key>
@@ -34,10 +34,11 @@
 			<key>Key</key>
 			<string>padSquareColor</string>
 			<key>DefaultValue</key>
-			<integer>0</integer>
+			<integer>1</integer>
 			<key>Titles</key>
 			<array>
 				<string>None</string>
+				<string>Color</string>
 				<string>Clear</string>
 				<string>Mirror</string>
 				<string>Smear</string>
@@ -52,7 +53,26 @@
 				<integer>3</integer>
 				<integer>4</integer>
 				<integer>5</integer>
+				<string>6</string>
 			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Size</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSSliderSpecifier</string>
+			<key>Key</key>
+			<string>maximumSize</string>
+			<key>DefaultValue</key>
+			<integer>6</integer>
+			<key>MinimumValue</key>
+			<integer>1</integer>
+			<key>MaximumValue</key>
+			<integer>11</integer>
 		</dict>
 	</array>
 	<key>StringsTable</key>

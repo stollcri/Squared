@@ -67,21 +67,27 @@
     
     // TODO: move to bridge class
     if (img) {
+        NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+        int maximumSize = MAXIMUM_SIZE_DEFAULT;
+        if ([squaredDefaults integerForKey:@"maximumSize"]) {
+            maximumSize = ([squaredDefaults integerForKey:@"maximumSize"] * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
+        }
+        
         // make sure choosen image is less than maximum size
         CGSize newSize;
-        if ((img.size.height > MAXIMUM_IMAGE_SIZE) || (img.size.width > MAXIMUM_IMAGE_SIZE)) {
+        if ((img.size.height > maximumSize) || (img.size.width > maximumSize)) {
             int temp = 0.0;
             float newWidth = 0;
             float newHeight = 0;
             
             // determine new image dimensions
             if (img.size.height > img.size.width) {
-                temp = img.size.width * MAXIMUM_IMAGE_SIZE / img.size.height;
+                temp = img.size.width * maximumSize / img.size.height;
                 newWidth = temp;
-                newHeight = MAXIMUM_IMAGE_SIZE;
+                newHeight = maximumSize;
             } else {
-                temp = img.size.height * MAXIMUM_IMAGE_SIZE / img.size.width;
-                newWidth = MAXIMUM_IMAGE_SIZE;
+                temp = img.size.height * maximumSize / img.size.width;
+                newWidth = maximumSize;
                 newHeight = temp;
             }
             

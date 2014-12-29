@@ -7,6 +7,7 @@
 //
 
 #include "SeamCarve.h"
+#include "SquaredDefines.h"
 
 static inline int max(int a, int b)
 {
@@ -424,7 +425,7 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
 
 #pragma mark -
 
-void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int padR, int padG, int padB, int padA)
+void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int padMode, int padR, int padG, int padB, int padA)
 {
     // rand() is used in seam cutting, but only need to seed it once per thread
     srand((int)time(0));
@@ -446,17 +447,30 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
     int padLinesBottom = 0;
     int mirorForPadding = 0;
     int smearForPadding = 0;
-    if (padR || padG || padB || padA) {
+    if (padMode) {
         outerLoop = tImgWidth;
         int padLines = tImgWidth - tImgHeight;
         padLinesTop = (int)(padLines / 2);
         padLinesBottom = padLinesTop + tImgHeight;
         
-        if (padA == 256) {
-            padA = 0;
-        } else if (padA == 257) {
+        if (padMode == PAD_MODE_COLOR) {
+            double avgR = 0;
+            double avgG = 0;
+            double avgB = 0;
+            int pixelCount = (sImgWidth * sImgHeight);
+            int pixelSkip = 64;
+            for (int i = 0; i < (pixelCount - pixelSkip); i += pixelSkip) {
+                avgR += sImgPixels[i].r;
+                avgG += sImgPixels[i].g;
+                avgB += sImgPixels[i].b;
+            }
+            padR = (int)(avgR / (pixelCount / pixelSkip));
+            padG = (int)(avgG / (pixelCount / pixelSkip));
+            padB = (int)(avgB / (pixelCount / pixelSkip));
+            padA = 255;
+        } else if (padMode == PAD_MODE_MIRROR) {
             mirorForPadding = 1;
-        } else if (padA == 258) {
+        } else if (padMode == PAD_MODE_SMEAR) {
             smearForPadding = 1;
         }
     } else {
@@ -647,7 +661,7 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
     return image;
 }
 
-void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int padR, int padG, int padB, int padA)
+void carveSeamsVertical(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int padMode, int padR, int padG, int padB, int padA)
 {
-    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, padR, padG, padG, padA);
+    carveSeams(sImgPixels, sImgWidth, sImgHeight, tImg, tImgWidth, tImgHeight, pixelDepth, carveCount, padMode, padR, padG, padG, padA);
 }

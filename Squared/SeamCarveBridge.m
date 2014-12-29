@@ -31,11 +31,12 @@
     //NSUserDefaults *squaredDefaults = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
     NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
     
-    int seamCutsPerItteration = 28;
+    int seamCutsPerItteration = CUTS_PER_ITTERATION_DEFAULT;
     if ([squaredDefaults integerForKey:@"cutsPerItteration"]) {
-        seamCutsPerItteration = (12 - [squaredDefaults integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER;
+        seamCutsPerItteration = (CUTS_PER_ITTERATION_BASEVALUE - [squaredDefaults integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER;
     }
     
+    int padMode = 0;
     int padWithColor = 0;
     int padWithColorR = 0;
     int padWithColorG = 0;
@@ -45,27 +46,19 @@
         padWithColor = [squaredDefaults integerForKey:@"padSquareColor"];
         
         if (padWithColor) {
-            if (padWithColor == 1) { // transparent
-                padWithColorR = 0;
-                padWithColorG = 0;
-                padWithColorB = 0;
-                padWithColorA = 256;
-            } else if (padWithColor == 2) { // mirror
-                padWithColorR = 0;
-                padWithColorG = 0;
-                padWithColorB = 0;
-                padWithColorA = 257;
-            } else if (padWithColor == 3) { // smear
-                padWithColorR = 0;
-                padWithColorG = 0;
-                padWithColorB = 0;
-                padWithColorA = 258;
-            } else if (padWithColor == 4) { // black
-                padWithColorR = 0;
-                padWithColorG = 0;
-                padWithColorB = 0;
+            if (padWithColor == 1) { // white
+                padMode = PAD_MODE_COLOR;
+            } else if (padWithColor == 2) { // transparent
+                padMode = PAD_MODE_CLEAR;
+            } else if (padWithColor == 3) { // mirror
+                padMode = PAD_MODE_MIRROR;
+            } else if (padWithColor == 4) { // smear
+                padMode = PAD_MODE_SMEAR;
+            } else if (padWithColor == 5) { // black
+                padMode = PAD_MODE_BLACK;
                 padWithColorA = 255;
-            } else if (padWithColor == 5) { // white
+            } else if (padWithColor == 6) { // white
+                padMode = PAD_MODE_WHITE;
                 padWithColorR = 255;
                 padWithColorG = 255;
                 padWithColorB = 255;
@@ -158,15 +151,6 @@
         heightIncrement = 0;
         seamRemovalCount = imgWidthInt - imgHeightInt;
         seamRemovalItterations = (int)(seamRemovalCount / seamCutsPerItteration) + 1;
-    /*
-    } else {
-        imgNewWidth = imgWidthInt;
-        imgNewHeight = imgWidthInt;
-        widthIncrement = 0;
-        heightIncrement = seamCutsPerItteration;
-        seamRemovalCount = imgHeightInt - imgWidthInt;
-        seamRemovalItterations = (int)(seamRemovalCount / seamCutsPerItteration) + 1;
-    */
     }
     
     NSUInteger imgNewPixelCount = imgNewWidth * imgNewHeight;
@@ -206,7 +190,7 @@
                 rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentWidthT * bytesPerPixel, sizeof(unsigned char));
             }
             
-            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, seamCutsPerItteration, padWithColorR, padWithColorG, padWithColorB, padWithColorA);
+            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, seamCutsPerItteration, padMode, padWithColorR, padWithColorG, padWithColorB, padWithColorA);
             
             if (!imageShowModulus || (i % imageShowModulus)) {
                 if (!imageShowModulusTwo || !(i % imageShowModulusTwo)) {
@@ -236,7 +220,7 @@
             
             free(rawResultsTemp);
         } else {
-            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth), padWithColorR, padWithColorG, padWithColorB, padWithColorA);
+            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResults, imgNewWidth, imgNewHeight, pixelDepth, (currentWidthT - imgNewWidth), padMode, padWithColorR, padWithColorG, padWithColorB, padWithColorA);
         }
     }
     
