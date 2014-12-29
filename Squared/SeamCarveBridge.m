@@ -33,7 +33,7 @@
     
     int seamCutsPerItteration = CUTS_PER_ITTERATION_DEFAULT;
     if ([squaredDefaults integerForKey:@"cutsPerItteration"]) {
-        seamCutsPerItteration = (CUTS_PER_ITTERATION_BASEVALUE - [squaredDefaults integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER;
+        seamCutsPerItteration = (int)((CUTS_PER_ITTERATION_BASEVALUE - (int)[squaredDefaults integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER);
     }
     
     int padMode = 0;
@@ -43,7 +43,7 @@
     int padWithColorB = 0;
     int padWithColorA = 0;
     if ([squaredDefaults integerForKey:@"padSquareColor"]) {
-        padWithColor = [squaredDefaults integerForKey:@"padSquareColor"];
+        padWithColor = (int)[squaredDefaults integerForKey:@"padSquareColor"];
         
         if (padWithColor) {
             if (padWithColor == 1) { // white

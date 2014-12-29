@@ -78,7 +78,7 @@
         NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
         int maximumSize = MAXIMUM_SIZE_DEFAULT;
         if ([squaredDefaults integerForKey:@"maximumSize"]) {
-            maximumSize = ([squaredDefaults integerForKey:@"maximumSize"] * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
+            maximumSize = (int)([squaredDefaults integerForKey:@"maximumSize"] * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
         }
         
         // make sure choosen image is less than maximum size
