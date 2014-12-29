@@ -10,6 +10,7 @@
 #import <Photos/Photos.h>
 #import <PhotosUI/PhotosUI.h>
 #import "SquaredDefines.h"
+#import "UserDefaultsUtils.h"
 #import "SeamCarveBridge.h"
 
 
@@ -39,7 +40,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    //
+    // TODO: This is not working at all
+    //
+    /*
+    NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
+    NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
+    [[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
+    [[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
+    */
     self.wasRotated = NO;
     self.paintMode = PaintModeNone;
     self.currentImageStage = -1;
