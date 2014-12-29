@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7D09C95C1A4CD63200F1C5EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
-		7D09C95D1A4CD63200F1C5EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
+		7D16EF581A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */; };
+		7D16EF591A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */; };
 		7D26E2BB1A10F997001849FF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2BA1A10F997001849FF /* main.m */; };
 		7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2BD1A10F997001849FF /* AppDelegate.m */; };
 		7D26E2C11A10F997001849FF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2C01A10F997001849FF /* ViewController.m */; };
@@ -34,6 +35,7 @@
 		7D454BDF1A2909CA0008D47E /* SquaredLogoC-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD31A2909CA0008D47E /* SquaredLogoC-Small.png */; };
 		7D454BE01A2909CA0008D47E /* SquaredLogoC-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD41A2909CA0008D47E /* SquaredLogoC-Small@2x.png */; };
 		7D454BE11A2909CA0008D47E /* SquaredLogoC-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD51A2909CA0008D47E /* SquaredLogoC-Small@3x.png */; };
+		7D977A801A50F9C600F13024 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
 		7DC27B621A203D4B0050E157 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C51A10F997001849FF /* Images.xcassets */; };
 		7DC52CB41A15746C00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
 		7DC52CB51A1592DF00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
@@ -89,6 +91,9 @@
 
 /* Begin PBXFileReference section */
 		7D09C95B1A4CD63200F1C5EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		7D16EF561A50D5FC00A86A6F /* UserDefaultsUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserDefaultsUtils.h; path = Squared/UserDefaultsUtils.h; sourceTree = "<group>"; };
+		7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserDefaultsUtils.m; path = Squared/UserDefaultsUtils.m; sourceTree = "<group>"; };
+		7D16EF5A1A50DB9B00A86A6F /* SquaredDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SquaredDefines.h; path = Squared/SquaredDefines.h; sourceTree = "<group>"; };
 		7D26E2B51A10F997001849FF /* Squared.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Squared.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D26E2B91A10F997001849FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D26E2BA1A10F997001849FF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -123,6 +128,8 @@
 		7D454BD31A2909CA0008D47E /* SquaredLogoC-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-Small.png"; sourceTree = "<group>"; };
 		7D454BD41A2909CA0008D47E /* SquaredLogoC-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-Small@2x.png"; sourceTree = "<group>"; };
 		7D454BD51A2909CA0008D47E /* SquaredLogoC-Small@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-Small@3x.png"; sourceTree = "<group>"; };
+		7DBF6D441A50D357008FD7F6 /* Squared.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Squared.entitlements; sourceTree = "<group>"; };
+		7DBF6D451A50D3C5008FD7F6 /* Squared Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Squared Extension.entitlements"; sourceTree = "<group>"; };
 		7DC27B581A1FDD150050E157 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
 		7DC27B591A1FDD150050E157 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		7DC27B5A1A1FDD960050E157 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
@@ -175,10 +182,13 @@
 		7D26E2AC1A10F997001849FF = {
 			isa = PBXGroup;
 			children = (
+				7D16EF5A1A50DB9B00A86A6F /* SquaredDefines.h */,
 				7DC52CB21A15746C00947F5B /* SeamCarveBridge.h */,
 				7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */,
 				7D26E2F81A11086D001849FF /* SeamCarve.h */,
 				7D26E2F71A11086D001849FF /* SeamCarve.c */,
+				7D16EF561A50D5FC00A86A6F /* UserDefaultsUtils.h */,
+				7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */,
 				7D09C95B1A4CD63200F1C5EA /* Settings.bundle */,
 				7D26E2B71A10F997001849FF /* Squared */,
 				7D26E2D11A10F997001849FF /* SquaredTests */,
@@ -201,6 +211,7 @@
 		7D26E2B71A10F997001849FF /* Squared */ = {
 			isa = PBXGroup;
 			children = (
+				7DBF6D441A50D357008FD7F6 /* Squared.entitlements */,
 				7D26E2BC1A10F997001849FF /* AppDelegate.h */,
 				7D26E2BD1A10F997001849FF /* AppDelegate.m */,
 				7D26E2BF1A10F997001849FF /* ViewController.h */,
@@ -253,6 +264,7 @@
 		7D26E2E81A10FC7C001849FF /* Squared Extension */ = {
 			isa = PBXGroup;
 			children = (
+				7DBF6D451A50D3C5008FD7F6 /* Squared Extension.entitlements */,
 				7D26E2EB1A10FC7C001849FF /* PhotoEditingViewController.h */,
 				7D26E2EC1A10FC7C001849FF /* PhotoEditingViewController.m */,
 				7D26E2EE1A10FC7C001849FF /* MainInterface.storyboard */,
@@ -372,6 +384,11 @@
 					7D26E2B41A10F997001849FF = {
 						CreatedOnToolsVersion = 6.1;
 						DevelopmentTeam = SKWNJR3SRG;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					7D26E2CD1A10F997001849FF = {
 						CreatedOnToolsVersion = 6.1;
@@ -380,6 +397,11 @@
 					7D26E2E11A10FC7C001849FF = {
 						CreatedOnToolsVersion = 6.1;
 						DevelopmentTeam = SKWNJR3SRG;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -455,7 +477,7 @@
 				7DD3C4081A1FB221003A7A81 /* Freeze-44.png in Resources */,
 				7DD3C40C1A1FB221003A7A81 /* Thaw-66.png in Resources */,
 				7DD3C40E1A1FB221003A7A81 /* Freeze.png in Resources */,
-				7D09C95D1A4CD63200F1C5EA /* Settings.bundle in Resources */,
+				7D977A801A50F9C600F13024 /* Settings.bundle in Resources */,
 				7DD3C4061A1FB221003A7A81 /* Thaw-44.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -469,6 +491,7 @@
 			files = (
 				7DC52CB41A15746C00947F5B /* SeamCarveBridge.m in Sources */,
 				7D26E2C11A10F997001849FF /* ViewController.m in Sources */,
+				7D16EF581A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */,
 				7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */,
 				7D26E2BB1A10F997001849FF /* main.m in Sources */,
 				7D26E2F91A11086D001849FF /* SeamCarve.c in Sources */,
@@ -489,6 +512,7 @@
 			files = (
 				7DC52CB51A1592DF00947F5B /* SeamCarveBridge.m in Sources */,
 				7DC52CB61A1592E800947F5B /* SeamCarve.c in Sources */,
+				7D16EF591A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */,
 				7D26E2ED1A10FC7C001849FF /* PhotoEditingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -621,11 +645,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = Squared/Squared.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Squared/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -634,11 +661,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = Squared/Squared.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Squared/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -679,7 +709,9 @@
 		7D26E2F41A10FC7C001849FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Squared Extension/Squared Extension.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -688,6 +720,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -695,11 +728,14 @@
 		7D26E2F51A10FC7C001849FF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Squared Extension/Squared Extension.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Squared Extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
