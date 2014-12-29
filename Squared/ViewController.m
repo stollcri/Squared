@@ -8,6 +8,7 @@
 
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "ViewController.h"
+#import "SquaredDefines.h"
 #import "SeamCarveBridge.h"
 
 @interface ViewController ()

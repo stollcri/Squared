@@ -10,6 +10,7 @@
 #import <CoreImage/CoreImage.h>
 #import <QuartzCore/QuartzCore.h>
 #import "SeamCarveBridge.h"
+#import "SquaredDefines.h"
 #import "SeamCarve.h"
 
 @implementation SeamCarveBridge

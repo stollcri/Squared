@@ -9,6 +9,7 @@
 #import "PhotoEditingViewController.h"
 #import <Photos/Photos.h>
 #import <PhotosUI/PhotosUI.h>
+#import "SquaredDefines.h"
 #import "SeamCarveBridge.h"
 
 

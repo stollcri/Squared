@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "SquaredDefines.h"
 
 @interface AppDelegate ()
 
