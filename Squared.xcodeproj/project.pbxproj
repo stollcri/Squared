@@ -134,6 +134,10 @@
 		7D32FEA31A51F56800B2B072 /* Gear-22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear-22.png"; sourceTree = "<group>"; };
 		7D32FEA41A51F56800B2B072 /* Gear-44.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear-44.png"; sourceTree = "<group>"; };
 		7D32FEA51A51F56800B2B072 /* Gear-66.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear-66.png"; sourceTree = "<group>"; };
+		7D32FEA91A522B4A00B2B072 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Main.strings; sourceTree = "<group>"; };
+		7D32FEAA1A522B4A00B2B072 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		7D32FEAB1A522B8B00B2B072 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Main.strings; sourceTree = "<group>"; };
+		7D32FEAC1A522B8B00B2B072 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		7D454BCA1A2909CA0008D47E /* SquaredLogoC-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60.png"; sourceTree = "<group>"; };
 		7D454BCB1A2909CA0008D47E /* SquaredLogoC-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60@2x.png"; sourceTree = "<group>"; };
 		7D454BCC1A2909CA0008D47E /* SquaredLogoC-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-60@3x.png"; sourceTree = "<group>"; };
@@ -572,6 +576,8 @@
 				7D32FE9D1A51D77C00B2B072 /* ko */,
 				7D32FE9F1A51D78100B2B072 /* pt */,
 				7D32FEA11A51D81A00B2B072 /* ar-001 */,
+				7D32FEA91A522B4A00B2B072 /* ar */,
+				7D32FEAB1A522B8B00B2B072 /* hi */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -591,6 +597,8 @@
 				7D32FE9E1A51D77C00B2B072 /* ko */,
 				7D32FEA01A51D78100B2B072 /* pt */,
 				7D32FEA21A51D81A00B2B072 /* ar-001 */,
+				7D32FEAA1A522B4A00B2B072 /* ar */,
+				7D32FEAC1A522B8B00B2B072 /* hi */,
 			);
 			name = LaunchScreen.xib;
 			sourceTree = "<group>";
