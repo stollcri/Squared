@@ -290,7 +290,21 @@
             self.currentImageStage += 1;
             [self.imageStages addObject:[notification object]];
         }
-        
+        //
+        // TODO: for free version with paid removal of mark
+        //  fix image alpha and size (across resolutions)
+        //  make it part of the exported image!
+        //  add to photo editing extension
+        //
+        /*
+        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+        [tmpImgVw setImage:[UIImage imageNamed:@"SquaredLogoC-alpha-36"]];
+        [tmpImgVw setContentMode:UIViewContentModeBottomLeft];
+        [tmpImgVw setAlpha:1.0];
+        self.paintImageView = tmpImgVw;
+        [self.imageView addSubview:self.paintImageView];
+        */
         [self enableUIelements];
     });
 }
