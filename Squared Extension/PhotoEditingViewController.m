@@ -40,15 +40,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //
-    // TODO: This is not working at all
-    //
-    /*
+    
     NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
     NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
-    [[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
-    [[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
-    */
+    //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
+    //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     self.wasRotated = NO;
     self.paintMode = PaintModeNone;
     self.currentImageStage = -1;
@@ -127,19 +126,25 @@
 - (void)loadImage:(UIImage *)img {
     // TODO: move to bridge class
     if (img) {
+        NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+        int maximumSize = MAXIMUM_SIZE_DEFAULT;
+        if ([squaredDefaults integerForKey:@"maximumSize"]) {
+            maximumSize = (int)([squaredDefaults integerForKey:@"maximumSize"] * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
+        }
+        
         CGSize newSize;
-        if ((img.size.height > MAXIMUM_SIZE_DEFAULT) || (img.size.width > MAXIMUM_SIZE_DEFAULT)) {
+        if ((img.size.height > maximumSize) || (img.size.width > maximumSize)) {
             int temp = 0.0;
             float newWidth = 0;
             float newHeight = 0;
             
             if (img.size.height > img.size.width) {
-                temp = img.size.width * MAXIMUM_SIZE_DEFAULT / img.size.height;
+                temp = img.size.width * maximumSize / img.size.height;
                 newWidth = temp;
-                newHeight = MAXIMUM_SIZE_DEFAULT;
+                newHeight = maximumSize;
             } else {
-                temp = img.size.height * MAXIMUM_SIZE_DEFAULT / img.size.width;
-                newWidth = MAXIMUM_SIZE_DEFAULT;
+                temp = img.size.height * maximumSize / img.size.width;
+                newWidth = maximumSize;
                 newHeight = temp;
             }
             
@@ -257,10 +262,18 @@
     });
     [self disableUIelements];
     
+    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+    int padMode = 0;
+    if ([squaredDefaults integerForKey:@"padSquareColor"]) {
+        padMode = (int)[squaredDefaults integerForKey:@"padSquareColor"];
+    }
+    
     // preapre squaring stages array
     self.imageStages = [[NSMutableArray alloc] init];
     self.currentImageStage = 0;
-    [self.imageStages addObject:self.imageView.image];
+    if (!padMode) {
+        [self.imageStages addObject:self.imageView.image];
+    }
 }
 
 - (void)squareImageUpdate:(NSNotification *)notification {
@@ -482,7 +495,7 @@
 }
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)sender {
-    /*
+    
     //
     // TODO: This is not working at all
     //
@@ -505,7 +518,7 @@
     
     // reset scale
     sender.scale = 1;
-    */
+    
 }
 
 @end

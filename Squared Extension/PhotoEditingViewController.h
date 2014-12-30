@@ -14,7 +14,7 @@ typedef NS_ENUM(NSUInteger, PaintMode) {
     PaintModeUnFreeze
 };
 
-@interface PhotoEditingViewController : UIViewController
+@interface PhotoEditingViewController : UIViewController <UIImagePickerControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *squareButton;
