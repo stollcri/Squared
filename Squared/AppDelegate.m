@@ -20,12 +20,15 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
-    NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
-    //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
-    //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+    if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
+        NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
+        NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
+        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
+        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
     
     return YES;
 }

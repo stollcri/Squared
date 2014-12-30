@@ -10,6 +10,7 @@
 		7D09C95C1A4CD63200F1C5EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
 		7D16EF581A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */; };
 		7D16EF591A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */; };
+		7D1BFF7E1A52E8FD0016000B /* SquaredLogoC-alpha-36.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D1BFF7D1A52E8FD0016000B /* SquaredLogoC-alpha-36.png */; };
 		7D26E2BB1A10F997001849FF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2BA1A10F997001849FF /* main.m */; };
 		7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2BD1A10F997001849FF /* AppDelegate.m */; };
 		7D26E2C11A10F997001849FF /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2C01A10F997001849FF /* ViewController.m */; };
@@ -97,6 +98,7 @@
 		7D16EF561A50D5FC00A86A6F /* UserDefaultsUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserDefaultsUtils.h; path = Squared/UserDefaultsUtils.h; sourceTree = "<group>"; };
 		7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserDefaultsUtils.m; path = Squared/UserDefaultsUtils.m; sourceTree = "<group>"; };
 		7D16EF5A1A50DB9B00A86A6F /* SquaredDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SquaredDefines.h; path = Squared/SquaredDefines.h; sourceTree = "<group>"; };
+		7D1BFF7D1A52E8FD0016000B /* SquaredLogoC-alpha-36.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-alpha-36.png"; sourceTree = "<group>"; };
 		7D26E2B51A10F997001849FF /* Squared.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Squared.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D26E2B91A10F997001849FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D26E2BA1A10F997001849FF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -306,6 +308,7 @@
 		7D454BC91A2909CA0008D47E /* SquaredLogoC */ = {
 			isa = PBXGroup;
 			children = (
+				7D1BFF7D1A52E8FD0016000B /* SquaredLogoC-alpha-36.png */,
 				7D454BCA1A2909CA0008D47E /* SquaredLogoC-60.png */,
 				7D454BCB1A2909CA0008D47E /* SquaredLogoC-60@2x.png */,
 				7D454BCC1A2909CA0008D47E /* SquaredLogoC-60@3x.png */,
@@ -481,6 +484,7 @@
 				7D26E2C91A10F997001849FF /* LaunchScreen.xib in Resources */,
 				7D454BD61A2909CA0008D47E /* SquaredLogoC-60.png in Resources */,
 				7D454BD91A2909CA0008D47E /* SquaredLogoC-76.png in Resources */,
+				7D1BFF7E1A52E8FD0016000B /* SquaredLogoC-alpha-36.png in Resources */,
 				7D26E2C61A10F997001849FF /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

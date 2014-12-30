@@ -231,7 +231,11 @@
                     if (newContext) {
                         CGImageRef newImgRef = CGBitmapContextCreateImage(newContext);
                         UIImage *newImage = [UIImage imageWithCGImage:newImgRef];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squareupdate" object:newImage];
+                        if (i >= 0) {
+                            [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squareupdate" object:newImage];
+                        } else {
+                            [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.squaretransition" object:newImage];
+                        }
                         CGContextRelease(newContext);
                         CGImageRelease(newImgRef);
                     }

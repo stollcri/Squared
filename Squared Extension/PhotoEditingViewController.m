@@ -31,6 +31,8 @@
 @property CGFloat paintColorB;
 @property UIImageView *paintImageView;
 
+@property NSInteger padMode;
+
 @property NSMutableArray *imageStages;
 @property NSInteger currentImageStage;
 
@@ -41,12 +43,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
-    NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
-    //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
-    //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+    if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
+        NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
+        NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
+        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
+        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
     
     self.wasRotated = NO;
     self.paintMode = PaintModeNone;
@@ -56,6 +61,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageBorderTransition:) name:@"org.christopherstoll.squared.squaretransition" object:nil];
 }
 
 - (void)dealloc {
@@ -260,20 +266,59 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [SeamCarveBridge squareImage:orientedImage withMask:orientedMask];
     });
-    [self disableUIelements];
     
     NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
-    int padMode = 0;
+    self.padMode = 0;
     if ([squaredDefaults integerForKey:@"padSquareColor"]) {
-        padMode = (int)[squaredDefaults integerForKey:@"padSquareColor"];
+        self.padMode = (int)[squaredDefaults integerForKey:@"padSquareColor"];
     }
+    
+    [self disableUIelements];
     
     // preapre squaring stages array
     self.imageStages = [[NSMutableArray alloc] init];
     self.currentImageStage = 0;
-    if (!padMode) {
+    if (!self.padMode) {
         [self.imageStages addObject:self.imageView.image];
     }
+}
+
+- (void)squareImageBorderTransition:(NSNotification *)notification {
+    // receive updates from the background thread
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // update present display
+        if (self.wasRotated) {
+            UIImage *tmpImage = [notification object];
+            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            self.imageView.image = orientedImage;
+            
+            NSValue *animationDurationValue = @0.4;
+            NSTimeInterval animationDuration;
+            [animationDurationValue getValue:&animationDuration];
+            [UIView beginAnimations:nil context:NULL];
+            [UIView setAnimationDuration:animationDuration];
+            self.imageView.alpha = 0.5;
+            [UIView commitAnimations];
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:orientedImage];
+        } else {
+            self.imageView.image = [notification object];
+            
+            NSValue *animationDurationValue = @0.4;
+            NSTimeInterval animationDuration;
+            [animationDurationValue getValue:&animationDuration];
+            [UIView beginAnimations:nil context:NULL];
+            [UIView setAnimationDuration:animationDuration];
+            self.imageView.alpha = 0.5;
+            [UIView commitAnimations];
+            
+            // add to the stages array
+            self.currentImageStage += 1;
+            [self.imageStages addObject:[notification object]];
+        }
+    });
 }
 
 - (void)squareImageUpdate:(NSNotification *)notification {
@@ -340,7 +385,11 @@
     [animationDurationValue getValue:&animationDuration];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:animationDuration];
-    self.imageView.alpha = 0.5;
+    if (self.padMode) {
+        self.imageView.alpha = 0.0;
+    } else {
+        self.imageView.alpha = 0.5;
+    }
     self.paintImageView.alpha = 0.0;
     self.activityIndicator.alpha = 1.0;
     [UIView commitAnimations];
@@ -495,10 +544,6 @@
 }
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)sender {
-    
-    //
-    // TODO: This is not working at all
-    //
     // must have an image loaded and squared
     if (self.currentImageStage >= 0) {
         // zoom out (un-square)
@@ -518,7 +563,6 @@
     
     // reset scale
     sender.scale = 1;
-    
 }
 
 @end
