@@ -34,11 +34,12 @@
 			<key>Key</key>
 			<string>padSquareColor</string>
 			<key>DefaultValue</key>
-			<integer>1</integer>
+			<integer>2</integer>
 			<key>Titles</key>
 			<array>
 				<string>None</string>
 				<string>Color</string>
+				<string>Colors</string>
 				<string>Clear</string>
 				<string>Mirror</string>
 				<string>Smear</string>
@@ -54,6 +55,7 @@
 				<integer>4</integer>
 				<integer>5</integer>
 				<string>6</string>
+				<string>7</string>
 			</array>
 		</dict>
 		<dict>

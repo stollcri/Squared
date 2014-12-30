@@ -46,18 +46,20 @@
         padWithColor = (int)[squaredDefaults integerForKey:@"padSquareColor"];
         
         if (padWithColor) {
-            if (padWithColor == 1) { // white
+            if (padWithColor == 1) { // single color average
                 padMode = PAD_MODE_COLOR;
-            } else if (padWithColor == 2) { // transparent
+            } else if (padWithColor == 2) { // double color average
+                padMode = PAD_MODE_COLORS;
+            } else if (padWithColor == 3) { // transparent
                 padMode = PAD_MODE_CLEAR;
-            } else if (padWithColor == 3) { // mirror
+            } else if (padWithColor == 4) { // mirror
                 padMode = PAD_MODE_MIRROR;
-            } else if (padWithColor == 4) { // smear
+            } else if (padWithColor == 5) { // smear
                 padMode = PAD_MODE_SMEAR;
-            } else if (padWithColor == 5) { // black
+            } else if (padWithColor == 6) { // black
                 padMode = PAD_MODE_BLACK;
                 padWithColorA = 255;
-            } else if (padWithColor == 6) { // white
+            } else if (padWithColor == 7) { // white
                 padMode = PAD_MODE_WHITE;
                 padWithColorR = 255;
                 padWithColorG = 255;
@@ -178,19 +180,37 @@
         }
     }
     
+    // if we are using padding then perform a pre-pass to get a border for the original image
+    int performPrePass = 0;
+    if (padWithColor) {
+        performPrePass = 1;
+    }
+    
     for (int i = 0; i < seamRemovalItterations; ++i) {
         if (i < (seamRemovalItterations - 1)) {
-            currentWidthT = currentWidthT - widthIncrement;
-            currentHeightT = currentHeightT - heightIncrement;
-            
             unsigned char *rawResultsTemp;
-            if (!padWithColor) {
-                rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
+            if (!performPrePass) {
+                currentWidthT = currentWidthT - widthIncrement;
+                currentHeightT = currentHeightT - heightIncrement;
+                
+                if (!padWithColor) {
+                    rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
+                } else {
+                    rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentWidthT * bytesPerPixel, sizeof(unsigned char));
+                }
+                
+                carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, seamCutsPerItteration, padMode, padWithColorR, padWithColorG, padWithColorB, padWithColorA);
+                
             } else {
+                //
+                // If the image has padding then we need to run a pre-pass to add a border to the unprocessed image
+                // not doing this causes a jarring UI when the images are unsquared using the pinch gesture
+                //
                 rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentWidthT * bytesPerPixel, sizeof(unsigned char));
+                carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, 0, padMode, padWithColorR, padWithColorG, padWithColorB, padWithColorA);
+                performPrePass = 0;
+                --i;
             }
-            
-            carveSeamsVertical(imagePixels, imgWidthInt, imgHeightInt, rawResultsTemp, currentWidthT, currentHeightT, pixelDepth, seamCutsPerItteration, padMode, padWithColorR, padWithColorG, padWithColorB, padWithColorA);
             
             if (!imageShowModulus || (i % imageShowModulus)) {
                 if (!imageShowModulusTwo || !(i % imageShowModulusTwo)) {

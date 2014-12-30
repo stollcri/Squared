@@ -233,10 +233,18 @@
     });
     [self disableUIelements];
     
+    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+    int padMode = 0;
+    if ([squaredDefaults integerForKey:@"padSquareColor"]) {
+        padMode = (int)[squaredDefaults integerForKey:@"padSquareColor"];
+    }
+    
     // preapre squaring stages array
     self.imageStages = [[NSMutableArray alloc] init];
     self.currentImageStage = 0;
-    [self.imageStages addObject:self.imageView.image];
+    if (!padMode) {
+        [self.imageStages addObject:self.imageView.image];
+    }
 }
 
 - (void)squareImageUpdate:(NSNotification *)notification {

@@ -427,26 +427,38 @@ static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight
 
 void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigned char *tImg, int tImgWidth, int tImgHeight, int pixelDepth, int carveCount, int padMode, int padR, int padG, int padB, int padA)
 {
-    // rand() is used in seam cutting, but only need to seed it once per thread
-    srand((int)time(0));
-    
-    fillSeamMatrixVertical(sImgPixels, sImgWidth, sImgHeight);
-    
-    int *minLocs = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
-    int *path = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
-    
-    for (int i = 0; i < carveCount; ++i) {
-        cutSeamVertical(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
+    if (carveCount) {
+        // rand() is used in seam cutting, but only need to seed it once per thread
+        srand((int)time(0));
+        
+        fillSeamMatrixVertical(sImgPixels, sImgWidth, sImgHeight);
+        
+        int *minLocs = (int*)calloc((unsigned long)sImgWidth, sizeof(int));
+        int *path = (int*)calloc((unsigned long)sImgHeight, sizeof(int));
+        
+        for (int i = 0; i < carveCount; ++i) {
+            cutSeamVertical(sImgPixels, sImgWidth, sImgHeight, minLocs, path);
+        }
+        
+        free(path);
+        free(minLocs);
     }
     
-    free(path);
-    free(minLocs);
+    int padColorR = padR;
+    int padColorG = padG;
+    int padColorB = padG;
+    int padColorA = padA;
+    int padColorRalt = padR;
+    int padColorGalt = padG;
+    int padColorBalt = padG;
+    int padColorAalt = padA;
     
     int outerLoop = 0;
     int padLinesTop = 0;
     int padLinesBottom = 0;
     int mirorForPadding = 0;
     int smearForPadding = 0;
+    int colorForPadding = 0;
     if (padMode) {
         outerLoop = tImgWidth;
         int padLines = tImgWidth - tImgHeight;
@@ -464,10 +476,44 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
                 avgG += sImgPixels[i].g;
                 avgB += sImgPixels[i].b;
             }
-            padR = (int)(avgR / (pixelCount / pixelSkip));
-            padG = (int)(avgG / (pixelCount / pixelSkip));
-            padB = (int)(avgB / (pixelCount / pixelSkip));
-            padA = 255;
+            padColorR = (int)(avgR / (pixelCount / pixelSkip));
+            padColorG = (int)(avgG / (pixelCount / pixelSkip));
+            padColorB = (int)(avgB / (pixelCount / pixelSkip));
+            padColorA = 255;
+        } else if (padMode == PAD_MODE_COLORS) {
+            double avgR = 0;
+            double avgG = 0;
+            double avgB = 0;
+            int pixelCount = (sImgWidth * 16);
+            int pixelSkip = 32;
+            int pixelEnd = (pixelCount - pixelSkip);
+            
+            for (int i = 0; i < pixelEnd; i += pixelSkip) {
+                avgR += sImgPixels[i].r;
+                avgG += sImgPixels[i].g;
+                avgB += sImgPixels[i].b;
+            }
+            padColorR = (int)(avgR / (pixelCount / pixelSkip));
+            padColorG = (int)(avgG / (pixelCount / pixelSkip));
+            padColorB = (int)(avgB / (pixelCount / pixelSkip));
+            padColorA = 255;
+            
+            avgR = 0;
+            avgG = 0;
+            avgB = 0;
+            int pixelStart = (sImgWidth * sImgHeight) - pixelCount;
+            pixelEnd = pixelStart + pixelCount - pixelSkip;
+            for (int i = pixelStart; i < pixelEnd; i += pixelSkip) {
+                avgR += sImgPixels[i].r;
+                avgG += sImgPixels[i].g;
+                avgB += sImgPixels[i].b;
+            }
+            padColorRalt = (int)(avgR / (pixelCount / pixelSkip));
+            padColorGalt = (int)(avgG / (pixelCount / pixelSkip));
+            padColorBalt = (int)(avgB / (pixelCount / pixelSkip));
+            padColorAalt = 255;
+            
+            colorForPadding = 1;
         } else if (padMode == PAD_MODE_MIRROR) {
             mirorForPadding = 1;
         } else if (padMode == PAD_MODE_SMEAR) {
@@ -508,13 +554,31 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
             }
             ++rowCounter;
         } else {
-            if (!mirorForPadding && !smearForPadding) {
+            if (!mirorForPadding && !smearForPadding && !colorForPadding) {
                 for (int i = 0; i < tImgWidth; ++i) {
                     tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
-                    tImg[tImgPixelLoc]   = padR;
-                    tImg[tImgPixelLoc+1] = padG;
-                    tImg[tImgPixelLoc+2] = padB;
-                    tImg[tImgPixelLoc+3] = padA;
+                    tImg[tImgPixelLoc]   = padColorR;
+                    tImg[tImgPixelLoc+1] = padColorG;
+                    tImg[tImgPixelLoc+2] = padColorB;
+                    tImg[tImgPixelLoc+3] = padColorA;
+                }
+            } else if (colorForPadding) {
+                if (j < padLinesTop) {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        tImg[tImgPixelLoc]   = padColorR;
+                        tImg[tImgPixelLoc+1] = padColorG;
+                        tImg[tImgPixelLoc+2] = padColorB;
+                        tImg[tImgPixelLoc+3] = padColorA;
+                    }
+                } else {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        tImg[tImgPixelLoc]   = padColorRalt;
+                        tImg[tImgPixelLoc+1] = padColorGalt;
+                        tImg[tImgPixelLoc+2] = padColorBalt;
+                        tImg[tImgPixelLoc+3] = padColorAalt;
+                    }
                 }
             } else if (mirorForPadding) {
                 if (j < padLinesTop) {
