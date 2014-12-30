@@ -325,17 +325,19 @@ static void fillSeamMatrixVertical(struct Pixel *image, int imageWidth, int imag
 static void cutSeamVertical(struct Pixel *image, int imageWidth, int imageHeight, int *minLocs, int *path)
 {
     int currentPixel = 0;
+    int currentValue = 0;
     int minsFound = 0;
     int minValue = INT_MAX;
 
     for (int i = 0; i < imageWidth; ++i) {
         currentPixel = ((imageHeight * imageWidth) - imageWidth) + i;
         if ((image[currentPixel].seamval > 0) && (image[currentPixel].seamval != INT_MAX)) {
+            currentValue = (int)image[currentPixel].seamval;
             // find all minimum values
-            if (image[currentPixel].seamval <= minValue) {
+            if (currentValue <= minValue) {
                 // this is a new minimum, so clear the min list and store just this minimum
                 if (image[currentPixel].seamval < minValue) {
-                    minValue = image[currentPixel].seamval;
+                    minValue = currentValue;
                     minLocs[0] = currentPixel;
                     minsFound = 1;
                     
