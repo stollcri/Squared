@@ -213,7 +213,7 @@
             }
             
             if (!imageShowModulus || (i % imageShowModulus)) {
-                if (!imageShowModulusTwo || !(i % imageShowModulusTwo)) {
+                if (!imageShowModulusTwo || !(i % imageShowModulusTwo) || (i < 0)) {
                     NSUInteger newBytesPerRow = bytesPerPixel * currentWidthT;
                     CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
                     CGContextRef newContext;
