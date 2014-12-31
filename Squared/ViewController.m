@@ -16,8 +16,8 @@
 @property BOOL wasRotated;
 @property BOOL hasMaskData;
 
-@property CGPoint lastPoint;
 @property BOOL mouseSwiped;
+@property CGPoint lastPoint;
 @property PaintMode paintMode;
 @property CGFloat paintColorR;
 @property CGFloat paintColorG;
@@ -25,9 +25,11 @@
 @property UIImageView *paintImageView;
 
 @property NSInteger padMode;
-
 @property NSMutableArray *imageStages;
 @property NSInteger currentImageStage;
+
+@property BOOL watermark;
+@property UIImageView *logoImageView;
 
 @end
 
@@ -43,6 +45,7 @@
     self.wasRotated = NO;
     self.paintMode = PaintModeNone;
     self.currentImageStage = -1;
+    self.watermark = YES;
     
     // Only iOS 8 and above supports the UIApplicationOpenSettingsURLString
     // used to launch the Settings app from your application.  If the
@@ -118,6 +121,10 @@
         self.wasRotated = NO;
         self.currentImageStage = -1;
         
+        if (self.logoImageView) {
+            [self.logoImageView removeFromSuperview];
+        }
+        
         // add subview for painting image masks
         // TODO: abstract this duplication (create paint subview)
         CGRect tmp = [self getImageDisplaySize:self.imageView];
@@ -152,7 +159,6 @@
     CGSize imageSize = imageView.image.size;
     CGSize frameSize = imageView.frame.size;
     //if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
-    //    NSLog(@"if");
     //    results.size = imageSize;
     //} else {
         CGFloat widthRatio = imageSize.width / frameSize.width;
@@ -333,21 +339,22 @@
             self.currentImageStage += 1;
             [self.imageStages addObject:[notification object]];
         }
+        
         //
         // TODO: for free version with paid removal of mark
         //  fix image alpha and size (across resolutions)
         //  make it part of the exported image!
         //  add to photo editing extension
         //
-        /*
-        CGRect tmp = [self getImageDisplaySize:self.imageView];
-        UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
-        [tmpImgVw setImage:[UIImage imageNamed:@"SquaredLogoC-alpha-36"]];
-        [tmpImgVw setContentMode:UIViewContentModeBottomLeft];
-        [tmpImgVw setAlpha:1.0];
-        self.paintImageView = tmpImgVw;
-        [self.imageView addSubview:self.paintImageView];
-        */
+        if (self.watermark) {
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+            [tmpImgVw setImage:[UIImage imageNamed:@"Banner"]];
+            [tmpImgVw setContentMode:UIViewContentModeBottomLeft];
+            self.logoImageView = tmpImgVw;
+            [self.imageView addSubview:self.logoImageView];
+        }
+        
         [self enableUIelements];
     });
 }
@@ -530,7 +537,21 @@
 }
 
 - (IBAction)doSaving:(id)sender {
-    UIImage *imagetoshare = self.imageView.image;
+    UIImage *imagetoshare;
+    if (self.watermark) {
+        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(tmp.size.width, tmp.size.height), YES, 0.0);
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        UIGraphicsPushContext(context);
+        [self.imageView.image drawInRect:CGRectMake(0, 0, tmp.size.width, tmp.size.height)];
+        [self.logoImageView.image drawInRect:CGRectMake(0, (tmp.size.height - self.logoImageView.image.size.height), self.logoImageView.image.size.width, self.logoImageView.image.size.height)];
+        UIGraphicsPopContext();
+        imagetoshare = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+    } else {
+        imagetoshare = self.imageView.image;
+    }
+    
     NSArray *activityItems = @[imagetoshare];
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     activityVC.excludedActivityTypes = @[UIActivityTypeAssignToContact, UIActivityTypePrint];

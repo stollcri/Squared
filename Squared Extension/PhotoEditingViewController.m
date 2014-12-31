@@ -23,8 +23,8 @@
 @property BOOL wasRotated;
 @property BOOL hasMaskData;
 
-@property CGPoint lastPoint;
 @property BOOL mouseSwiped;
+@property CGPoint lastPoint;
 @property PaintMode paintMode;
 @property CGFloat paintColorR;
 @property CGFloat paintColorG;
@@ -32,9 +32,11 @@
 @property UIImageView *paintImageView;
 
 @property NSInteger padMode;
-
 @property NSMutableArray *imageStages;
 @property NSInteger currentImageStage;
+
+@property BOOL watermark;
+@property UIImageView *logoImageView;
 
 @end
 
@@ -56,6 +58,7 @@
     self.wasRotated = NO;
     self.paintMode = PaintModeNone;
     self.currentImageStage = -1;
+    self.watermark = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
@@ -105,7 +108,23 @@
         
         PHAdjustmentData *adjustData = [[PHAdjustmentData alloc] initWithFormatIdentifier:@"org.christopherstoll.squared" formatVersion:@"0.1" data:nil];
         output.adjustmentData = adjustData;
-        NSData *imageData = UIImageJPEGRepresentation(self.imageView.image, 1.0f); // UIImagePNGRepresentation(self.imageView.image);
+        
+        UIImage *imagetoshare;
+        if (self.watermark) {
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            UIGraphicsBeginImageContextWithOptions(CGSizeMake(tmp.size.width, tmp.size.height), YES, 0.0);
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            UIGraphicsPushContext(context);
+            [self.imageView.image drawInRect:CGRectMake(0, 0, tmp.size.width, tmp.size.height)];
+            [self.logoImageView.image drawInRect:CGRectMake(0, (tmp.size.height - self.logoImageView.image.size.height), self.logoImageView.image.size.width, self.logoImageView.image.size.height)];
+            UIGraphicsPopContext();
+            imagetoshare = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+        } else {
+            imagetoshare = self.imageView.image;
+        }
+        
+        NSData *imageData = UIImageJPEGRepresentation(imagetoshare, 1.0f); // UIImagePNGRepresentation(self.imageView.image);
         [imageData writeToURL:output.renderedContentURL atomically:YES];
         
         // Call completion handler to commit edit to Photos.
@@ -169,6 +188,10 @@
         
         self.wasRotated = NO;
         self.currentImageStage = -1;
+        
+        if (self.logoImageView) {
+            [self.logoImageView removeFromSuperview];
+        }
         
         // TODO: abstract this duplication (create paint subview)
         CGRect tmp = [self getImageDisplaySize:self.imageView];
@@ -364,9 +387,17 @@
             [self.imageStages addObject:[notification object]];
         }
         
+        if (self.watermark) {
+            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
+            [tmpImgVw setImage:[UIImage imageNamed:@"Banner"]];
+            [tmpImgVw setContentMode:UIViewContentModeBottomLeft];
+            self.logoImageView = tmpImgVw;
+            [self.imageView addSubview:self.logoImageView];
+        }
+        
         self.squaringComplete = YES;
         [self enableUIelements];
-        
     });
 }
 

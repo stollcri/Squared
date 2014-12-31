@@ -39,6 +39,9 @@
 		7D454BDF1A2909CA0008D47E /* SquaredLogoC-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD31A2909CA0008D47E /* SquaredLogoC-Small.png */; };
 		7D454BE01A2909CA0008D47E /* SquaredLogoC-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD41A2909CA0008D47E /* SquaredLogoC-Small@2x.png */; };
 		7D454BE11A2909CA0008D47E /* SquaredLogoC-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD51A2909CA0008D47E /* SquaredLogoC-Small@3x.png */; };
+		7D667EE51A537ED000039A26 /* SquaredBanner-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D667EE21A537ED000039A26 /* SquaredBanner-44.png */; };
+		7D667EE61A537ED000039A26 /* SquaredBanner-88.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D667EE31A537ED000039A26 /* SquaredBanner-88.png */; };
+		7D667EE71A537ED000039A26 /* SquaredBanner-132.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D667EE41A537ED000039A26 /* SquaredBanner-132.png */; };
 		7D977A801A50F9C600F13024 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
 		7DC27B621A203D4B0050E157 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C51A10F997001849FF /* Images.xcassets */; };
 		7DC52CB41A15746C00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
@@ -98,7 +101,7 @@
 		7D16EF561A50D5FC00A86A6F /* UserDefaultsUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserDefaultsUtils.h; path = Squared/UserDefaultsUtils.h; sourceTree = "<group>"; };
 		7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserDefaultsUtils.m; path = Squared/UserDefaultsUtils.m; sourceTree = "<group>"; };
 		7D16EF5A1A50DB9B00A86A6F /* SquaredDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SquaredDefines.h; path = Squared/SquaredDefines.h; sourceTree = "<group>"; };
-		7D1BFF7D1A52E8FD0016000B /* SquaredLogoC-alpha-36.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-alpha-36.png"; sourceTree = "<group>"; };
+		7D1BFF7D1A52E8FD0016000B /* SquaredLogoC-alpha-36.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SquaredLogoC-alpha-36.png"; path = "SquaredLogoC/SquaredLogoC-alpha-36.png"; sourceTree = "<group>"; };
 		7D26E2B51A10F997001849FF /* Squared.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Squared.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D26E2B91A10F997001849FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D26E2BA1A10F997001849FF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -152,6 +155,9 @@
 		7D454BD31A2909CA0008D47E /* SquaredLogoC-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-Small.png"; sourceTree = "<group>"; };
 		7D454BD41A2909CA0008D47E /* SquaredLogoC-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-Small@2x.png"; sourceTree = "<group>"; };
 		7D454BD51A2909CA0008D47E /* SquaredLogoC-Small@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredLogoC-Small@3x.png"; sourceTree = "<group>"; };
+		7D667EE21A537ED000039A26 /* SquaredBanner-44.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredBanner-44.png"; sourceTree = "<group>"; };
+		7D667EE31A537ED000039A26 /* SquaredBanner-88.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredBanner-88.png"; sourceTree = "<group>"; };
+		7D667EE41A537ED000039A26 /* SquaredBanner-132.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredBanner-132.png"; sourceTree = "<group>"; };
 		7DBF6D441A50D357008FD7F6 /* Squared.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Squared.entitlements; sourceTree = "<group>"; };
 		7DBF6D451A50D3C5008FD7F6 /* Squared Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Squared Extension.entitlements"; sourceTree = "<group>"; };
 		7DC27B581A1FDD150050E157 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
@@ -251,6 +257,7 @@
 		7D26E2B81A10F997001849FF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				7D667ED51A5379E800039A26 /* Watermarks */,
 				7D454BC91A2909CA0008D47E /* SquaredLogoC */,
 				7DD3C3E61A1FAFA1003A7A81 /* Freeze-Thaw */,
 				7D26E2B91A10F997001849FF /* Info.plist */,
@@ -308,7 +315,6 @@
 		7D454BC91A2909CA0008D47E /* SquaredLogoC */ = {
 			isa = PBXGroup;
 			children = (
-				7D1BFF7D1A52E8FD0016000B /* SquaredLogoC-alpha-36.png */,
 				7D454BCA1A2909CA0008D47E /* SquaredLogoC-60.png */,
 				7D454BCB1A2909CA0008D47E /* SquaredLogoC-60@2x.png */,
 				7D454BCC1A2909CA0008D47E /* SquaredLogoC-60@3x.png */,
@@ -323,6 +329,17 @@
 				7D454BD51A2909CA0008D47E /* SquaredLogoC-Small@3x.png */,
 			);
 			path = SquaredLogoC;
+			sourceTree = "<group>";
+		};
+		7D667ED51A5379E800039A26 /* Watermarks */ = {
+			isa = PBXGroup;
+			children = (
+				7D667EE21A537ED000039A26 /* SquaredBanner-44.png */,
+				7D667EE31A537ED000039A26 /* SquaredBanner-88.png */,
+				7D667EE41A537ED000039A26 /* SquaredBanner-132.png */,
+				7D1BFF7D1A52E8FD0016000B /* SquaredLogoC-alpha-36.png */,
+			);
+			name = Watermarks;
 			sourceTree = "<group>";
 		};
 		7DD3C3E61A1FAFA1003A7A81 /* Freeze-Thaw */ = {
@@ -460,12 +477,14 @@
 			files = (
 				7D32FEA61A51F56800B2B072 /* Gear-22.png in Resources */,
 				7DD3C4031A1FB221003A7A81 /* Freeze-22.png in Resources */,
+				7D667EE51A537ED000039A26 /* SquaredBanner-44.png in Resources */,
 				7D32FEA71A51F56800B2B072 /* Gear-44.png in Resources */,
 				7D454BDE1A2909CA0008D47E /* SquaredLogoC-Small-40@2x.png in Resources */,
 				7DD3C4011A1FB221003A7A81 /* Thaw-22.png in Resources */,
 				7D454BE01A2909CA0008D47E /* SquaredLogoC-Small@2x.png in Resources */,
 				7D454BDD1A2909CA0008D47E /* SquaredLogoC-Small-40.png in Resources */,
 				7D26E2C41A10F997001849FF /* Main.storyboard in Resources */,
+				7D667EE61A537ED000039A26 /* SquaredBanner-88.png in Resources */,
 				7DD3C40D1A1FB221003A7A81 /* Freeze.png in Resources */,
 				7D454BD81A2909CA0008D47E /* SquaredLogoC-60@3x.png in Resources */,
 				7D32FEA81A51F56800B2B072 /* Gear-66.png in Resources */,
@@ -483,6 +502,7 @@
 				7D454BDB1A2909CA0008D47E /* SquaredLogoC-AppStore.png in Resources */,
 				7D26E2C91A10F997001849FF /* LaunchScreen.xib in Resources */,
 				7D454BD61A2909CA0008D47E /* SquaredLogoC-60.png in Resources */,
+				7D667EE71A537ED000039A26 /* SquaredBanner-132.png in Resources */,
 				7D454BD91A2909CA0008D47E /* SquaredLogoC-76.png in Resources */,
 				7D1BFF7E1A52E8FD0016000B /* SquaredLogoC-alpha-36.png in Resources */,
 				7D26E2C61A10F997001849FF /* Images.xcassets in Resources */,
