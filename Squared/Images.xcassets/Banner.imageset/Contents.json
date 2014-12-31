@@ -3,17 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "SquaredBanner-44.png"
+      "filename" : "SquaredWatermark-22.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "SquaredBanner-88.png"
+      "filename" : "SquaredWatermark-44.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "SquaredBanner-132.png"
+      "filename" : "SquaredWatermark-66.png"
     }
   ],
   "info" : {
