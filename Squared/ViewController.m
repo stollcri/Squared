@@ -151,16 +151,17 @@
     CGRect results = CGRectZero;
     CGSize imageSize = imageView.image.size;
     CGSize frameSize = imageView.frame.size;
-    if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
-        results.size = imageSize;
-    } else {
+    //if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
+    //    NSLog(@"if");
+    //    results.size = imageSize;
+    //} else {
         CGFloat widthRatio = imageSize.width / frameSize.width;
         CGFloat heightRatio = imageSize.height / frameSize.height;
         CGFloat maxRatio = MAX(widthRatio, heightRatio);
         
         results.size.width = roundf(imageSize.width / maxRatio);
         results.size.height = roundf(imageSize.height / maxRatio);
-    }
+    //}
     results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
     results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
     return results;
