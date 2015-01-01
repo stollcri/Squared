@@ -36,7 +36,7 @@
     UIImage *newImage;
     CGSize size = oldImage.size;
     UIGraphicsBeginImageContext(CGSizeMake(size.height, size.width));
-    [[UIImage imageWithCGImage:[oldImage CGImage] scale:1.0 orientation:orientation] drawInRect:CGRectMake(0, 0, size.height ,size.width)];
+    [[UIImage imageWithCGImage:[oldImage CGImage] scale:oldImage.scale orientation:orientation] drawInRect:CGRectMake(0, 0, size.height ,size.width)];
     newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;
