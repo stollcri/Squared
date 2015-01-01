@@ -469,9 +469,6 @@
 /*
 - (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
-    //
-    // TODO: This is not working at all
-    //
     if (motion == UIEventSubtypeMotionShake) {
         if (self.hasMaskData) {
             // TODO: abstract this duplication (create paint subview)
@@ -495,6 +492,7 @@
     if (self.paintImageView) {
         CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
         [self.paintImageView setFrame:tmp];
+        [self.logoImageView setFrame:tmp];
     }
     
 }

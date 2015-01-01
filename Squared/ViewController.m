@@ -457,13 +457,11 @@
     }
 }
 
-//
-// TODO: Rotate watermark too!!! (also in the photo editing extension)
-//
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
     if (self.paintImageView) {
         CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
         [self.paintImageView setFrame:tmp];
+        [self.logoImageView setFrame:tmp];
     }
 }
 
