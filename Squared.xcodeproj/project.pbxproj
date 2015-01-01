@@ -42,6 +42,8 @@
 		7DA7C0591A5498E20038AFE0 /* SquaredWatermark-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0561A5498E20038AFE0 /* SquaredWatermark-66.png */; };
 		7DA7C05A1A5498E20038AFE0 /* SquaredWatermark-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0571A5498E20038AFE0 /* SquaredWatermark-22.png */; };
 		7DA7C05B1A5498E20038AFE0 /* SquaredWatermark-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0581A5498E20038AFE0 /* SquaredWatermark-44.png */; };
+		7DA7C05E1A55A26F0038AFE0 /* ImageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7C05D1A55A26F0038AFE0 /* ImageUtils.m */; };
+		7DA7C05F1A55A26F0038AFE0 /* ImageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7C05D1A55A26F0038AFE0 /* ImageUtils.m */; };
 		7DC27B621A203D4B0050E157 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C51A10F997001849FF /* Images.xcassets */; };
 		7DC52CB41A15746C00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
 		7DC52CB51A1592DF00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
@@ -156,6 +158,8 @@
 		7DA7C0561A5498E20038AFE0 /* SquaredWatermark-66.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-66.png"; sourceTree = "<group>"; };
 		7DA7C0571A5498E20038AFE0 /* SquaredWatermark-22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-22.png"; sourceTree = "<group>"; };
 		7DA7C0581A5498E20038AFE0 /* SquaredWatermark-44.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-44.png"; sourceTree = "<group>"; };
+		7DA7C05C1A55A26F0038AFE0 /* ImageUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageUtils.h; path = Squared/ImageUtils.h; sourceTree = "<group>"; };
+		7DA7C05D1A55A26F0038AFE0 /* ImageUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageUtils.m; path = Squared/ImageUtils.m; sourceTree = "<group>"; };
 		7DBF6D441A50D357008FD7F6 /* Squared.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Squared.entitlements; sourceTree = "<group>"; };
 		7DBF6D451A50D3C5008FD7F6 /* Squared Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Squared Extension.entitlements"; sourceTree = "<group>"; };
 		7DC27B581A1FDD150050E157 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Main.strings; sourceTree = "<group>"; };
@@ -215,6 +219,8 @@
 				7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */,
 				7D26E2F81A11086D001849FF /* SeamCarve.h */,
 				7D26E2F71A11086D001849FF /* SeamCarve.c */,
+				7DA7C05C1A55A26F0038AFE0 /* ImageUtils.h */,
+				7DA7C05D1A55A26F0038AFE0 /* ImageUtils.m */,
 				7D16EF561A50D5FC00A86A6F /* UserDefaultsUtils.h */,
 				7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */,
 				7D09C95B1A4CD63200F1C5EA /* Settings.bundle */,
@@ -543,6 +549,7 @@
 				7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */,
 				7D26E2BB1A10F997001849FF /* main.m in Sources */,
 				7D26E2F91A11086D001849FF /* SeamCarve.c in Sources */,
+				7DA7C05E1A55A26F0038AFE0 /* ImageUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -561,6 +568,7 @@
 				7DC52CB51A1592DF00947F5B /* SeamCarveBridge.m in Sources */,
 				7DC52CB61A1592E800947F5B /* SeamCarve.c in Sources */,
 				7D16EF591A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */,
+				7DA7C05F1A55A26F0038AFE0 /* ImageUtils.m in Sources */,
 				7D26E2ED1A10FC7C001849FF /* PhotoEditingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

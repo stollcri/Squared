@@ -9,6 +9,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "ViewController.h"
 #import "SquaredDefines.h"
+#import "ImageUtils.h"
 #import "SeamCarveBridge.h"
 
 @interface ViewController ()
@@ -127,7 +128,7 @@
         
         // add subview for painting image masks
         // TODO: abstract this duplication (create paint subview)
-        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
         [self.paintImageView removeFromSuperview];
         UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
         [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
@@ -148,58 +149,6 @@
     }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
-}
-
-#pragma mark - Utilities
-
-// calculate the size of an image set to aspect-fit
-- (CGRect)getImageDisplaySize:(UIImageView *)imageView
-{
-    CGRect results = CGRectZero;
-    CGSize imageSize = imageView.image.size;
-    CGSize frameSize = imageView.frame.size;
-    //if ((imageSize.width < frameSize.width) && (imageSize.height < frameSize.height)) {
-    //    results.size = imageSize;
-    //} else {
-        CGFloat widthRatio = imageSize.width / frameSize.width;
-        CGFloat heightRatio = imageSize.height / frameSize.height;
-        CGFloat maxRatio = MAX(widthRatio, heightRatio);
-        
-        results.size.width = roundf(imageSize.width / maxRatio);
-        results.size.height = roundf(imageSize.height / maxRatio);
-    //}
-    results.origin.x = roundf(imageView.center.x - (results.size.width / 2));
-    results.origin.y = roundf(imageView.center.y - (results.size.height / 2));
-    return results;
-}
-
-- (UIImage *)imageRotatedByDegrees:(UIImage*)oldImage deg:(CGFloat)degrees{
-    // calculate the size of the rotated view's containing box for our drawing space
-    UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0, 0, oldImage.size.width, oldImage.size.height)];
-    CGAffineTransform t = CGAffineTransformMakeRotation(degrees * M_PI / 180);
-    rotatedViewBox.transform = t;
-    CGSize rotatedSize = rotatedViewBox.frame.size;
-    // Create the bitmap context
-    UIGraphicsBeginImageContext(rotatedSize);
-    CGContextRef bitmap = UIGraphicsGetCurrentContext();
-    
-    if (bitmap) {
-        // Move the origin to the middle of the image so we will rotate and scale around the center.
-        CGContextTranslateCTM(bitmap, rotatedSize.width/2, (rotatedSize.height/2)+1);
-        
-        // Rotate the image context
-        CGContextRotateCTM(bitmap, (degrees * M_PI / 180));
-        
-        // Now, draw the rotated/scaled image into the context
-        CGContextScaleCTM(bitmap, 1.0, -1.0);
-        CGContextDrawImage(bitmap, CGRectMake(-oldImage.size.width / 2, -oldImage.size.height / 2, oldImage.size.width, oldImage.size.height), [oldImage CGImage]);
-        
-        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        return newImage;
-    } else {
-        return oldImage;
-    }
 }
 
 #pragma mark - Squaring methods
@@ -224,10 +173,10 @@
     UIImage *orientedImage;
     UIImage *orientedMask;
     if (self.imageView.image.size.height > self.imageView.image.size.width) {
-        orientedImage = [self imageRotatedByDegrees:self.imageView.image deg:-90];
+        orientedImage = [ImageUtils imageRotatedByOrientation:self.imageView.image orientation:UIImageOrientationRight];
         // don't bother rotating an empty painting sub view, just pass the nil
         if (self.paintImageView.image) {
-            orientedMask = [self imageRotatedByDegrees:self.paintImageView.image deg:-90];
+            orientedMask = [ImageUtils imageRotatedByOrientation:self.paintImageView.image orientation:UIImageOrientationRight];
         } else {
             orientedMask = self.paintImageView.image;
         }
@@ -264,7 +213,7 @@
         // update present display
         if (self.wasRotated) {
             UIImage *tmpImage = [notification object];
-            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            UIImage *orientedImage = [ImageUtils imageRotatedByOrientation:tmpImage orientation:UIImageOrientationLeft];
             self.imageView.image = orientedImage;
             
             NSValue *animationDurationValue = @0.4;
@@ -302,7 +251,7 @@
         // update present display
         if (self.wasRotated) {
             UIImage *tmpImage = [notification object];
-            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            UIImage *orientedImage = [ImageUtils imageRotatedByOrientation:tmpImage orientation:UIImageOrientationLeft];
             self.imageView.image = orientedImage;
             
             // add to the stages array
@@ -326,7 +275,7 @@
         // update present display
         if (self.wasRotated) {
             UIImage *tmpImage = [notification object];
-            UIImage *orientedImage = [self imageRotatedByDegrees:tmpImage deg:90];
+            UIImage *orientedImage = [ImageUtils imageRotatedByOrientation:tmpImage orientation:UIImageOrientationLeft];
             self.imageView.image = orientedImage;
             
             // add to the stages array
@@ -347,7 +296,7 @@
         //  add to photo editing extension
         //
         if (self.watermark) {
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setImage:[UIImage imageNamed:@"Banner"]];
             [tmpImgVw setContentMode:UIViewContentModeBottomLeft];
@@ -496,7 +445,7 @@
     if (motion == UIEventSubtypeMotionShake) {
         if (self.hasMaskData) {
             // TODO: abstract this duplication (create paint subview)
-            CGRect tmp = [self getImageDisplaySize:self.imageView];
+            CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
             [self.paintImageView removeFromSuperview];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
@@ -508,9 +457,12 @@
     }
 }
 
+//
+// TODO: Rotate watermark too!!! (also in the photo editing extension)
+//
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
     if (self.paintImageView) {
-        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
         [self.paintImageView setFrame:tmp];
     }
 }
@@ -539,7 +491,7 @@
 - (IBAction)doSaving:(id)sender {
     UIImage *imagetoshare;
     if (self.watermark) {
-        CGRect tmp = [self getImageDisplaySize:self.imageView];
+        CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(tmp.size.width, tmp.size.height), YES, 0.0);
         CGContextRef context = UIGraphicsGetCurrentContext();
         UIGraphicsPushContext(context);
