@@ -9,7 +9,17 @@
 #ifndef Squared_SquaredDefines_h
 #define Squared_SquaredDefines_h
 
+#ifdef DEBUG
+#define APP_STORE_VERIFY_URL @"https://sandbox.itunes.apple.com/verifyReceipt"
+#else
+#define APP_STORE_VERIFY_URL @"https://buy.itunes.apple.com/verifyReceipt"
+#endif
+
 #define APP_GROUP_SUITE_NAME @"group.org.christopherstoll.Squared"
+
+#define DEFAULT_MAXIMUM_SIZE 6
+#define DEFAULT_PAD_SQUARE_COLOR 2
+#define DEFAULT_CUTS_PER_ITTERATION 8
 
 #define MAXIMUM_SIZE_DEFAULT 1120
 #define MAXIMUM_SIZE_BASEVALUE 160

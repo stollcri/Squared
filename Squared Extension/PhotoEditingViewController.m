@@ -14,8 +14,13 @@
 #import "ImageUtils.h"
 #import "SeamCarveBridge.h"
 
-
 @interface PhotoEditingViewController () <PHContentEditingController>
+
+@property BOOL useSharedDefaults;
+@property NSInteger cutsPerItteration;
+@property NSInteger padSquareColor;
+@property NSInteger maximumSize;
+@property BOOL IAP_NoLogo;
 
 @property (strong) PHContentEditingInput *input;
 @property NSURL *currentImageURL;
@@ -32,11 +37,10 @@
 @property CGFloat paintColorB;
 @property UIImageView *paintImageView;
 
-@property NSInteger padMode;
 @property NSMutableArray *imageStages;
 @property NSInteger currentImageStage;
 
-@property BOOL watermark;
+@property BOOL showWatermark;
 @property UIImageView *logoImageView;
 
 @end
@@ -46,20 +50,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
-    if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
-        NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
-        NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
-        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
-        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
-        [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+    // Shared user defaults set here for the photo editing extension
+    self.useSharedDefaults = YES;
+    [UserDefaultsUtils loadDefaults:self.useSharedDefaults];
+    self.cutsPerItteration = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"cutsPerItteration"];
+    self.padSquareColor = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"padSquareColor"];
+    self.maximumSize = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"maximumSize"];
+    self.IAP_NoLogo = [UserDefaultsUtils getBoolDefault:YES forKey:@"IAP_NoLogo"]; // always from shared
+    
+    // show logo if removal has not been purchased
+    if (self.IAP_NoLogo) {
+        self.showWatermark = NO;
+    } else {
+        self.showWatermark = YES;
     }
     
     self.wasRotated = NO;
     self.paintMode = PaintModeNone;
     self.currentImageStage = -1;
-    self.watermark = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
@@ -111,7 +119,7 @@
         output.adjustmentData = adjustData;
         
         UIImage *imagetoshare;
-        if (self.watermark) {
+        if (self.showWatermark) {
             CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
             UIGraphicsBeginImageContextWithOptions(CGSizeMake(tmp.size.width, tmp.size.height), YES, 0.0);
             CGContextRef context = UIGraphicsGetCurrentContext();
@@ -152,10 +160,9 @@
 - (void)loadImage:(UIImage *)img {
     // TODO: move to bridge class
     if (img) {
-        NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
         int maximumSize = MAXIMUM_SIZE_DEFAULT;
-        if ([squaredDefaults integerForKey:@"maximumSize"]) {
-            maximumSize = (int)([squaredDefaults integerForKey:@"maximumSize"] * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
+        if (self.maximumSize) {
+            maximumSize = (int)(self.maximumSize * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
         }
         
         CGSize newSize;
@@ -239,18 +246,12 @@
         [SeamCarveBridge squareImage:orientedImage withMask:orientedMask];
     });
     
-    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
-    self.padMode = 0;
-    if ([squaredDefaults integerForKey:@"padSquareColor"]) {
-        self.padMode = (int)[squaredDefaults integerForKey:@"padSquareColor"];
-    }
-    
     [self disableUIelements];
     
-    // preapre squaring stages array
+    // prepare squaring stages array
     self.imageStages = [[NSMutableArray alloc] init];
     self.currentImageStage = 0;
-    if (!self.padMode) {
+    if (!self.padSquareColor) {
         [self.imageStages addObject:self.imageView.image];
     }
 }
@@ -336,7 +337,7 @@
             [self.imageStages addObject:[notification object]];
         }
         
-        if (self.watermark) {
+        if (self.showWatermark) {
             CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setImage:[UIImage imageNamed:@"Banner"]];
@@ -365,7 +366,7 @@
     [animationDurationValue getValue:&animationDuration];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:animationDuration];
-    if (self.padMode) {
+    if (self.padSquareColor) {
         self.imageView.alpha = 0.0;
     } else {
         self.imageView.alpha = 0.5;

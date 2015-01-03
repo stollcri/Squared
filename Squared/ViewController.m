@@ -7,12 +7,20 @@
 //
 
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <StoreKit/StoreKit.h>
 #import "ViewController.h"
 #import "SquaredDefines.h"
+#import "UserDefaultsUtils.h"
 #import "ImageUtils.h"
 #import "SeamCarveBridge.h"
 
 @interface ViewController ()
+
+@property BOOL useSharedDefaults;
+@property NSInteger cutsPerItteration;
+@property NSInteger padSquareColor;
+@property NSInteger maximumSize;
+@property BOOL IAP_NoLogo;
 
 @property BOOL wasRotated;
 @property BOOL hasMaskData;
@@ -25,12 +33,15 @@
 @property CGFloat paintColorB;
 @property UIImageView *paintImageView;
 
-@property NSInteger padMode;
 @property NSMutableArray *imageStages;
 @property NSInteger currentImageStage;
 
-@property BOOL watermark;
 @property UIImageView *logoImageView;
+@property BOOL showWatermark; // YES by default, NO when purchsed (watermark will not show)
+@property BOOL showPurchaseButton; // YES by default, NO when purchase is in progress (buy button will not show)
+// The reason for two different booleans above is that
+//  the first only gets turned off when the watermark removal is purchased
+//  the second can be turned off at any time, when a purchase cannot be made or when one is in progress
 
 @end
 
@@ -42,11 +53,35 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+        
+    // Shared user defaults set here for the photo editing extension
+    self.useSharedDefaults = NO;
+    [UserDefaultsUtils loadDefaults:self.useSharedDefaults];
+    self.cutsPerItteration = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"cutsPerItteration"];
+    self.padSquareColor = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"padSquareColor"];
+    self.maximumSize = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"maximumSize"];
+    self.IAP_NoLogo = [UserDefaultsUtils getBoolDefault:YES forKey:@"IAP_NoLogo"]; // always from shared
+    
+    //
+    // I'm not crazy about this, but it seems to be the best way to try and keep settings for
+    // the app and the photo editing extension in sync. The app can read directly from the
+    // settings bundle, but the photo editing extension cannot, so we have to help it out
+    //
+    // update shared defaults based upon the settings bundle defaults
+    [UserDefaultsUtils setSharedFromStandard];
+    
+    // show logo and purchase button if removal has not been purchased
+    if (self.IAP_NoLogo) {
+        self.showWatermark = NO;
+        self.showPurchaseButton = NO;
+    } else {
+        self.showWatermark = YES;
+        self.showPurchaseButton = YES;
+    }
     
     self.wasRotated = NO;
     self.paintMode = PaintModeNone;
     self.currentImageStage = -1;
-    self.watermark = YES;
     
     // Only iOS 8 and above supports the UIApplicationOpenSettingsURLString
     // used to launch the Settings app from your application.  If the
@@ -60,12 +95,17 @@
     [self.unFreezeButton setEnabled:NO];
     [self.squareButton setEnabled:NO];
     [self.saveButton setEnabled:NO];
+    [self.removeLogoButton setHidden:YES];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageBorderTransition:) name:@"org.christopherstoll.squared.squaretransition" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(purchaseStarted:) name:@"org.christopherstoll.squared.purchasepending" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(purchaseFailed:) name:@"org.christopherstoll.squared.purchasefailed" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(purchaseCompleted:) name:@"org.christopherstoll.squared.purchased" object:nil];
 }
 
 - (void)dealloc {
@@ -82,10 +122,9 @@
     
     // TODO: move to bridge class
     if (img) {
-        NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
         int maximumSize = MAXIMUM_SIZE_DEFAULT;
-        if ([squaredDefaults integerForKey:@"maximumSize"]) {
-            maximumSize = (int)([squaredDefaults integerForKey:@"maximumSize"] * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
+        if (self.maximumSize) {
+            maximumSize = (int)(self.maximumSize * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
         }
         
         // make sure choosen image is less than maximum size
@@ -136,6 +175,8 @@
         [self.imageView addSubview:self.paintImageView];
         self.hasMaskData = NO;
         
+        [self.removeLogoButton setHidden:YES];
+        
         // do not enable mask or squaring buttons if the image is already square
         if (img.size.width != img.size.height) {
             [self.freezeButton setEnabled:YES];
@@ -153,7 +194,8 @@
 
 #pragma mark - Squaring methods
 
-- (void)squareImageBegin {
+- (void)squareImageBegin
+{
     //
     // ** Reasoning for orientation change **
     //
@@ -191,23 +233,18 @@
         [SeamCarveBridge squareImage:orientedImage withMask:orientedMask];
     });
     
-    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
-    self.padMode = 0;
-    if ([squaredDefaults integerForKey:@"padSquareColor"]) {
-        self.padMode = (int)[squaredDefaults integerForKey:@"padSquareColor"];
-    }
-    
     [self disableUIelements];
     
-    // preapre squaring stages array
+    // prepare squaring stages array
     self.imageStages = [[NSMutableArray alloc] init];
     self.currentImageStage = 0;
-    if (!self.padMode) {
+    if (!self.padSquareColor) {
         [self.imageStages addObject:self.imageView.image];
     }
 }
 
-- (void)squareImageBorderTransition:(NSNotification *)notification {
+- (void)squareImageBorderTransition:(NSNotification *)notification
+{
     // receive updates from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
         // update present display
@@ -245,7 +282,8 @@
     });
 }
 
-- (void)squareImageUpdate:(NSNotification *)notification {
+- (void)squareImageUpdate:(NSNotification *)notification
+{
     // receive updates from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
         // update present display
@@ -267,7 +305,8 @@
     });
 }
 
-- (void)squareImageComplete:(NSNotification *)notification {
+- (void)squareImageComplete:(NSNotification *)notification
+{
     // return from the background thread
     dispatch_async(dispatch_get_main_queue(), ^{
         // remove (invisible) paint window
@@ -295,7 +334,7 @@
         //  make it part of the exported image!
         //  add to photo editing extension
         //
-        if (self.watermark) {
+        if (self.showWatermark) {
             CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setImage:[UIImage imageNamed:@"Banner"]];
@@ -308,9 +347,33 @@
     });
 }
 
+#pragma mark - Notification handlers
+
+- (void)purchaseStarted:(NSNotification *)notification
+{
+    self.showPurchaseButton = NO;
+}
+
+- (void)purchaseFailed:(NSNotification *)notification
+{
+    self.showPurchaseButton = YES;
+}
+
+- (void)purchaseCompleted:(NSNotification *)notification
+{
+    self.showPurchaseButton = NO;
+    self.showWatermark = NO;
+    
+    [self.removeLogoButton setHidden:YES];
+    [self.logoImageView removeFromSuperview];
+}
+
 #pragma mark - UI Updates
 
-- (void)disableUIelements {
+- (void)disableUIelements
+{
+    [self.removeLogoButton setHidden:YES];
+    
     [self.openButton setEnabled:NO];
     [self.settingsButton setEnabled:NO];
     [self.freezeButton setEnabled:NO];
@@ -330,7 +393,7 @@
     [animationDurationValue getValue:&animationDuration];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:animationDuration];
-    if (self.padMode) {
+    if (self.padSquareColor) {
         self.imageView.alpha = 0.0;
     } else {
         self.imageView.alpha = 0.5;
@@ -340,7 +403,8 @@
     [UIView commitAnimations];
 }
 
-- (void)enableUIelements {
+- (void)enableUIelements
+{
     [self.activityIndicator stopAnimating];
     
     //
@@ -364,9 +428,18 @@
     //[self.unFreezeButton setEnabled:YES];
     //[self.squareButton setEnabled:YES];
     [self.saveButton setEnabled:YES];
+    
+    if (self.showWatermark && self.showPurchaseButton) {
+        // TODO: Double check this section works
+        // only show the purchase button if they can purchase
+        if ([SKPaymentQueue canMakePayments]) {
+            [self.removeLogoButton setHidden:NO];
+        }
+    }
 }
 
-- (void)updatePatintUI {
+- (void)updatePaintUI
+{
     if (self.paintMode == PaintModeFreeze) {
         [self.freezeButton setTintColor:[UIColor whiteColor]];
         [self.unFreezeButton setTintColor:self.view.tintColor];
@@ -387,7 +460,8 @@
 
 #pragma mark - UI Responders
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
     if (self.paintMode) {
         self.mouseSwiped = NO;
         self.hasMaskData = YES;
@@ -457,7 +531,8 @@
     }
 }
 
-- (void)deviceOrientationDidChange:(NSNotification *)notification {
+- (void)deviceOrientationDidChange:(NSNotification *)notification
+{
     if (self.paintImageView) {
         CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
         [self.paintImageView setFrame:tmp];
@@ -488,7 +563,7 @@
 
 - (IBAction)doSaving:(id)sender {
     UIImage *imagetoshare;
-    if (self.watermark) {
+    if (self.showWatermark) {
         CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(tmp.size.width, tmp.size.height), YES, 0.0);
         CGContextRef context = UIGraphicsGetCurrentContext();
@@ -515,7 +590,7 @@
     } else {
         self.paintMode = PaintModeFreeze;
     }
-    [self updatePatintUI];
+    [self updatePaintUI];
 }
 
 - (IBAction)doUnFreezing:(id)sender {
@@ -524,7 +599,7 @@
     } else {
         self.paintMode = PaintModeUnFreeze;
     }
-    [self updatePatintUI];
+    [self updatePaintUI];
 }
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)sender {

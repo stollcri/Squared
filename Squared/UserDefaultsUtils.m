@@ -7,8 +7,159 @@
 //
 
 #import "UserDefaultsUtils.h"
+#import "SquaredDefines.h"
 
 @implementation UserDefaultsUtils
+
++ (NSInteger)deviceSpecificCutsPerItteration
+{
+    NSInteger result = DEFAULT_CUTS_PER_ITTERATION;
+    if ([[UIScreen mainScreen] respondsToSelector: @selector(scale)]) {
+        CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+        CGFloat screenScale = [UIScreen mainScreen].scale;
+        screenSize = CGSizeMake(screenSize.width * screenScale, screenSize.height * screenScale);
+        
+        if (screenSize.height <= 960) {
+            result -= 4;
+        } else if (screenSize.height <= 1136) {
+            result -= 2;
+        }
+    }
+    if (result <= 0) {
+        result = 1;
+    }
+    return result;
+}
+
++ (NSInteger)deviceSpecificMaximumSize
+{
+    NSInteger result = DEFAULT_MAXIMUM_SIZE;
+    if ([[UIScreen mainScreen] respondsToSelector: @selector(scale)]) {
+        CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+        CGFloat screenScale = [UIScreen mainScreen].scale;
+        screenSize = CGSizeMake(screenSize.width * screenScale, screenSize.height * screenScale);
+        
+        if (screenSize.height <= 960) {
+            result -= 2;
+        } else if (screenSize.height <= 1136) {
+            result -= 1;
+        }
+    }
+    if (result <= 0) {
+        result = 1;
+    }
+    return result;
+}
+
++ (void)loadDefaults:(BOOL)shared
+{
+    if (shared) {
+        // Shared user defaults set here for the photo editing extension
+        NSUserDefaults *squaredDefaultsShared = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
+        if (![squaredDefaultsShared integerForKey:@"cutsPerItteration"] && ![squaredDefaultsShared integerForKey:@"padSquareColor"] && ![squaredDefaultsShared integerForKey:@"maximumSize"] && ![squaredDefaultsShared integerForKey:@"IAP_NoLogo"]) {
+            
+            // load up the same defaults as for the settings bundle
+            NSURL *settingsBundleURLshared = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
+            NSDictionary *appDefaultsShared = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURLshared];
+            
+            [squaredDefaultsShared setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+            [squaredDefaultsShared setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+            
+            [squaredDefaultsShared registerDefaults:appDefaultsShared];
+            [squaredDefaultsShared synchronize];
+        }
+        
+        if (![squaredDefaultsShared integerForKey:@"cutsPerItteration"]) {
+            [squaredDefaultsShared setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+        }
+        if (![squaredDefaultsShared integerForKey:@"padSquareColor"]) {
+            [squaredDefaultsShared setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
+        }
+        if (![squaredDefaultsShared integerForKey:@"maximumSize"]) {
+            [squaredDefaultsShared setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+        }
+        [squaredDefaultsShared synchronize];
+    } else {
+        // User defaults from the settings bundle (only for the Squared app)
+        NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+        if (![squaredDefaults integerForKey:@"cutsPerItteration"] && ![squaredDefaults integerForKey:@"padSquareColor"] && ![squaredDefaults integerForKey:@"maximumSize"] && ![squaredDefaults integerForKey:@"IAP_NoLogo"]) {
+            
+            // load up the same defaults as for the settings bundle
+            NSURL *settingsBundleURLshared = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
+            NSDictionary *appDefaultsShared = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURLshared];
+            
+            [squaredDefaults setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+            [squaredDefaults setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+            
+            [squaredDefaults registerDefaults:appDefaultsShared];
+            [squaredDefaults synchronize];
+        }
+        
+        if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
+            [squaredDefaults setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+        }
+        if (![squaredDefaults integerForKey:@"padSquareColor"]) {
+            [squaredDefaults setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
+        }
+        if (![squaredDefaults integerForKey:@"maximumSize"]) {
+            [squaredDefaults setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+        }
+        [squaredDefaults synchronize];
+    }
+}
+
++ (BOOL)getBoolDefault:(BOOL)shared forKey:(NSString*)key
+{
+    NSUserDefaults *userDefaults;
+    if (shared) {
+        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
+    } else {
+        userDefaults = [NSUserDefaults standardUserDefaults];
+    }
+    
+    if ([userDefaults boolForKey:key]) {
+        return [userDefaults boolForKey:key];
+    } else {
+        return NO;
+    }
+}
+
++ (NSInteger)getIntegerDefault:(BOOL)shared forKey:(NSString*)key
+{
+    NSUserDefaults *userDefaults;
+    if (shared) {
+        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
+    } else {
+        userDefaults = [NSUserDefaults standardUserDefaults];
+    }
+    
+    if ([userDefaults boolForKey:key]) {
+        return [userDefaults integerForKey:key];
+    } else {
+        return 0;
+    }
+}
+
++ (void)setBool:(BOOL)shared value:(BOOL)value forKey:(NSString*)key
+{
+    NSUserDefaults *userDefaults;
+    if (shared) {
+        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
+    } else {
+        userDefaults = [NSUserDefaults standardUserDefaults];
+    }
+    [userDefaults setBool:value forKey:key];
+    [userDefaults synchronize];
+}
+
++ (void)setSharedFromStandard
+{
+    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+    NSUserDefaults *squaredDefaultsShared = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
+    [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"cutsPerItteration"] forKey:@"cutsPerItteration"];
+    [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"padSquareColor"] forKey:@"padSquareColor"];
+    [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"maximumSize"] forKey:@"maximumSize"];
+}
 
 //| ----------------------------------------------------------------------------
 //! Helper function that parses a Settings page file, extracts each preference

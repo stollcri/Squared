@@ -88,6 +88,19 @@
                                     <constraint firstAttribute="width" constant="44" id="t4Y-xo-PL9"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zl6-8h-c50">
+                                <rect key="frame" x="16" y="506" width="128" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="128" id="RxY-y7-DvK"/>
+                                    <constraint firstAttribute="height" constant="32" id="mYl-iv-Z4o"/>
+                                </constraints>
+                                <state key="normal" title="Remove Logo">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="WuT-WV-rXc" kind="presentation" modalPresentationStyle="formSheet" id="WvP-2k-VLI"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <gestureRecognizers/>
@@ -99,12 +112,14 @@
                             <constraint firstItem="3gM-6g-6QR" firstAttribute="top" secondItem="KUi-BJ-qmt" secondAttribute="bottom" id="M7j-9U-YFT"/>
                             <constraint firstAttribute="centerY" secondItem="Tsq-id-MEi" secondAttribute="centerY" id="N3L-rX-3ff"/>
                             <constraint firstAttribute="centerX" secondItem="Tsq-id-MEi" secondAttribute="centerX" id="NqC-rw-xRo"/>
+                            <constraint firstItem="3gM-6g-6QR" firstAttribute="top" secondItem="zl6-8h-c50" secondAttribute="bottom" constant="18" id="O5H-ge-ddX"/>
                             <constraint firstAttribute="trailingMargin" secondItem="E1V-fs-Lyo" secondAttribute="trailing" constant="-16" id="P0w-FF-hhw"/>
                             <constraint firstAttribute="centerX" secondItem="Tsq-id-MEi" secondAttribute="centerX" id="RJk-CH-WVu"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="KUi-BJ-qmt" secondAttribute="bottom" constant="46" id="bqz-af-6d7"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="3gM-6g-6QR" secondAttribute="bottom" id="deR-5J-Img"/>
                             <constraint firstItem="3gM-6g-6QR" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="lZz-PF-b5q"/>
                             <constraint firstAttribute="centerY" secondItem="Tsq-id-MEi" secondAttribute="centerY" id="pmS-Dt-Wit"/>
+                            <constraint firstItem="zl6-8h-c50" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="pwd-v1-JZc"/>
                             <constraint firstItem="KUi-BJ-qmt" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="sg2-To-pUj"/>
                             <constraint firstAttribute="trailingMargin" secondItem="3gM-6g-6QR" secondAttribute="trailing" constant="-16" id="t3w-Jl-m2m"/>
                             <constraint firstAttribute="trailingMargin" secondItem="KUi-BJ-qmt" secondAttribute="trailing" constant="-16" id="yNV-dS-2T7"/>
@@ -138,6 +153,7 @@
                         <outlet property="imageView" destination="KUi-BJ-qmt" id="V9t-5a-yye"/>
                         <outlet property="openButton" destination="5lc-Ml-EHP" id="0uh-81-RO2"/>
                         <outlet property="popoverAnchor" destination="E1V-fs-Lyo" id="PCK-4H-BX7"/>
+                        <outlet property="removeLogoButton" destination="zl6-8h-c50" id="NHZ-Rj-LeW"/>
                         <outlet property="saveButton" destination="JJw-jc-lwB" id="e5s-SK-oQh"/>
                         <outlet property="settingsButton" destination="1Tl-o7-CKf" id="Q4w-AP-xsf"/>
                         <outlet property="squareButton" destination="gpD-Ni-K8q" id="VMa-HO-8nP"/>
@@ -152,6 +168,87 @@
                 </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="438" y="373"/>
+        </scene>
+        <!--Purchase View Controller-->
+        <scene sceneID="AdN-ZH-ra3">
+            <objects>
+                <viewController id="WuT-WV-rXc" customClass="PurchaseViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Gpb-oC-TOe"/>
+                        <viewControllerLayoutGuide type="bottom" id="axW-HF-sFY"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="dYz-1R-Uuf">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ab6-if-ms0">
+                                <rect key="frame" x="236" y="550" width="128" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="Zj5-J9-hQZ"/>
+                                    <constraint firstAttribute="width" constant="128" id="hDV-9B-mwk"/>
+                                </constraints>
+                                <state key="normal" title="Done">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="doCancel:" destination="WuT-WV-rXc" eventType="touchUpInside" id="PuC-cc-q8v"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remove the Squared Pics logo from finished pictures and support future improvements to the app by making a purchase" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="568" translatesAutoresizingMaskIntoConstraints="NO" id="aXO-Ng-pYI">
+                                <rect key="frame" x="16" y="20" width="568" height="105"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="105" id="2pW-Qe-Nwf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M9j-qc-f0F">
+                                <rect key="frame" x="172" y="133" width="256" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="S0m-Wf-15A"/>
+                                    <constraint firstAttribute="width" constant="256" id="Z6v-lr-yoX"/>
+                                </constraints>
+                                <state key="normal" title="Buy Now">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="doBuy:" destination="WuT-WV-rXc" eventType="touchUpInside" id="LIW-Fc-XEQ"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Thank you for your purchase!" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="568" translatesAutoresizingMaskIntoConstraints="NO" id="0h8-Rk-8OW">
+                                <rect key="frame" x="16" y="171" width="568" height="64"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="64" id="KGF-Ue-tUy"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="centerX" secondItem="M9j-qc-f0F" secondAttribute="centerX" id="C1t-GL-q43"/>
+                            <constraint firstItem="aXO-Ng-pYI" firstAttribute="trailing" secondItem="dYz-1R-Uuf" secondAttribute="trailingMargin" id="FlG-zu-cjj"/>
+                            <constraint firstItem="M9j-qc-f0F" firstAttribute="top" secondItem="aXO-Ng-pYI" secondAttribute="bottom" constant="8" id="HBW-ls-bHY"/>
+                            <constraint firstItem="axW-HF-sFY" firstAttribute="top" secondItem="ab6-if-ms0" secondAttribute="bottom" constant="20" id="J1l-8j-RL1"/>
+                            <constraint firstItem="0h8-Rk-8OW" firstAttribute="trailing" secondItem="dYz-1R-Uuf" secondAttribute="trailingMargin" id="T0a-z5-ut6"/>
+                            <constraint firstItem="aXO-Ng-pYI" firstAttribute="top" secondItem="Gpb-oC-TOe" secondAttribute="bottom" constant="20" id="Xwe-yg-Lhi"/>
+                            <constraint firstItem="aXO-Ng-pYI" firstAttribute="leading" secondItem="dYz-1R-Uuf" secondAttribute="leadingMargin" id="a8h-hD-KaN"/>
+                            <constraint firstItem="0h8-Rk-8OW" firstAttribute="leading" secondItem="dYz-1R-Uuf" secondAttribute="leadingMargin" id="hnM-uL-JYF"/>
+                            <constraint firstItem="0h8-Rk-8OW" firstAttribute="top" secondItem="M9j-qc-f0F" secondAttribute="bottom" constant="8" id="vHw-rI-eVF"/>
+                            <constraint firstAttribute="centerX" secondItem="ab6-if-ms0" secondAttribute="centerX" id="w2N-nM-LY6"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="buyButton" destination="M9j-qc-f0F" id="E41-l8-7Fz"/>
+                        <outlet property="mainText" destination="aXO-Ng-pYI" id="qpP-3q-cSD"/>
+                        <outlet property="thanksText" destination="0h8-Rk-8OW" id="8UU-eW-Ccq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eM7-hG-daH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1128" y="373"/>
         </scene>
     </scenes>
     <resources>

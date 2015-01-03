@@ -11,6 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "SeamCarveBridge.h"
 #import "SquaredDefines.h"
+#import "UserDefaultsUtils.h"
 #import "SeamCarve.h"
 
 @implementation SeamCarveBridge
@@ -27,12 +28,13 @@
 }
 
 + (void)squareImage:(UIImage *)sourceImage withMask:(UIImage *)sourceImageMask {
-    //NSUserDefaults *squaredDefaults = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
-    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL useSharedDefaults = NO;
+    NSInteger cutsPerItteration = [UserDefaultsUtils getIntegerDefault:useSharedDefaults forKey:@"cutsPerItteration"];
+    NSInteger padSquareColor = [UserDefaultsUtils getIntegerDefault:useSharedDefaults forKey:@"padSquareColor"];
     
     int seamCutsPerItteration = CUTS_PER_ITTERATION_DEFAULT;
-    if ([squaredDefaults integerForKey:@"cutsPerItteration"]) {
-        seamCutsPerItteration = (int)((CUTS_PER_ITTERATION_BASEVALUE - (int)[squaredDefaults integerForKey:@"cutsPerItteration"]) * CUTS_PER_ITTERATION_MULTIPLIER);
+    if (cutsPerItteration) {
+        seamCutsPerItteration = (int)((CUTS_PER_ITTERATION_BASEVALUE - (int)cutsPerItteration) * CUTS_PER_ITTERATION_MULTIPLIER);
     }
     
     int padMode = 0;
@@ -41,8 +43,8 @@
     int padWithColorG = 0;
     int padWithColorB = 0;
     int padWithColorA = 0;
-    if ([squaredDefaults integerForKey:@"padSquareColor"]) {
-        padWithColor = (int)[squaredDefaults integerForKey:@"padSquareColor"];
+    if (padSquareColor) {
+        padWithColor = (int)padSquareColor;
         
         if (padWithColor) {
             if (padWithColor == 1) { // single color average

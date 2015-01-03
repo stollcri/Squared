@@ -9,9 +9,10 @@
 #import "AppDelegate.h"
 #import "SquaredDefines.h"
 #import "UserDefaultsUtils.h"
+#import "TransactionQueueObserver.h"
 
 @interface AppDelegate ()
-
+@property TransactionQueueObserver *transactionObserver;
 @end
 
 @implementation AppDelegate
@@ -20,15 +21,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
-    if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
-        NSURL *settingsBundleURL = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
-        NSDictionary *appDefaults = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURL];
-        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] registerDefaults:appDefaults];
-        //[[[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME] synchronize];
-        [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
+    // Set up a Store Kit Transaction Queue Observer
+    self.transactionObserver = [[TransactionQueueObserver alloc] init];
     
     return YES;
 }

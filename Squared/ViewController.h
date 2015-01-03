@@ -25,6 +25,7 @@ typedef NS_ENUM(NSUInteger, PaintMode) {
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *unFreezeButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (weak, nonatomic) IBOutlet UIView *popoverAnchor;
+@property (weak, nonatomic) IBOutlet UIButton *removeLogoButton;
 
 - (IBAction)doOpen:(id)sender;
 - (IBAction)doSettings:(id)sender;
