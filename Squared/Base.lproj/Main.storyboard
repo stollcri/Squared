@@ -89,14 +89,23 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zl6-8h-c50">
-                                <rect key="frame" x="16" y="506" width="128" height="32"/>
+                                <rect key="frame" x="236" y="500" width="128" height="32"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="2QE-8C-TME"/>
+                                    <constraint firstAttribute="width" constant="128" id="3Wu-oc-QHz"/>
                                     <constraint firstAttribute="width" constant="128" id="RxY-y7-DvK"/>
                                     <constraint firstAttribute="height" constant="32" id="mYl-iv-Z4o"/>
                                 </constraints>
+                                <color key="tintColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 <state key="normal" title="Remove Logo">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="RxY-y7-DvK"/>
+                                        <exclude reference="mYl-iv-Z4o"/>
+                                    </mask>
+                                </variation>
                                 <connections>
                                     <segue destination="WuT-WV-rXc" kind="presentation" modalPresentationStyle="formSheet" id="WvP-2k-VLI"/>
                                 </connections>
@@ -105,6 +114,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                         <gestureRecognizers/>
                         <constraints>
+                            <constraint firstItem="3gM-6g-6QR" firstAttribute="top" secondItem="zl6-8h-c50" secondAttribute="bottom" constant="24" id="5zd-oH-h0F"/>
                             <constraint firstItem="KUi-BJ-qmt" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="Ca8-We-mw7"/>
                             <constraint firstAttribute="trailingMargin" secondItem="KUi-BJ-qmt" secondAttribute="trailing" constant="16" id="EL7-Hf-Qp1"/>
                             <constraint firstAttribute="centerX" secondItem="Tsq-id-MEi" secondAttribute="centerX" id="Fim-RG-ww3"/>
@@ -117,6 +127,7 @@
                             <constraint firstAttribute="centerX" secondItem="Tsq-id-MEi" secondAttribute="centerX" id="RJk-CH-WVu"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="KUi-BJ-qmt" secondAttribute="bottom" constant="46" id="bqz-af-6d7"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="3gM-6g-6QR" secondAttribute="bottom" id="deR-5J-Img"/>
+                            <constraint firstAttribute="centerX" secondItem="zl6-8h-c50" secondAttribute="centerX" id="jCE-cy-yZm"/>
                             <constraint firstItem="3gM-6g-6QR" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="lZz-PF-b5q"/>
                             <constraint firstAttribute="centerY" secondItem="Tsq-id-MEi" secondAttribute="centerY" id="pmS-Dt-Wit"/>
                             <constraint firstItem="zl6-8h-c50" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="pwd-v1-JZc"/>
@@ -134,6 +145,8 @@
                                 <exclude reference="NqC-rw-xRo"/>
                                 <exclude reference="RJk-CH-WVu"/>
                                 <exclude reference="pmS-Dt-Wit"/>
+                                <exclude reference="pwd-v1-JZc"/>
+                                <exclude reference="O5H-ge-ddX"/>
                                 <exclude reference="bqz-af-6d7"/>
                             </mask>
                         </variation>
