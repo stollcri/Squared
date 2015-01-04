@@ -98,9 +98,10 @@
         if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
             [squaredDefaults setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
         }
-        if (![squaredDefaults integerForKey:@"padSquareColor"]) {
-            [squaredDefaults setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
-        }
+        // zero is a liegitimate choice for pad square color
+        //if (![squaredDefaults integerForKey:@"padSquareColor"]) {
+        //    [squaredDefaults setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
+        //}
         if (![squaredDefaults integerForKey:@"maximumSize"]) {
             [squaredDefaults setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
         }
