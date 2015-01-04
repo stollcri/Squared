@@ -613,12 +613,22 @@
             if (self.currentImageStage < (self.imageStages.count - 1)) {
                 self.currentImageStage += 1;
                 self.imageView.image = self.imageStages[self.currentImageStage];
+                
+                if (self.showWatermark && !self.padSquareColor) {
+                    CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
+                    [self.logoImageView setFrame:tmp];
+                }
             }
         // soom in (re-square)
         } else if (sender.scale > 1) {
             if (self.currentImageStage > 0) {
                 self.currentImageStage -= 1;
                 self.imageView.image = self.imageStages[self.currentImageStage];
+                
+                if (self.showWatermark && !self.padSquareColor) {
+                    CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
+                    [self.logoImageView setFrame:tmp];
+                }
             }
         }
     }
