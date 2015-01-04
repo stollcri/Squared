@@ -55,7 +55,7 @@
                 break;
             default:
                 // For debugging
-                NSLog(@"Unexpected transaction state %@", @(transaction.transactionState));
+                //NSLog(@"Unexpected transaction state %@", @(transaction.transactionState));
                 break;
         }
     }
@@ -63,42 +63,45 @@
 
 - (void)showTransactionAsInProgress:(SKPaymentTransaction *)transaction deferred:(BOOL)deferrred
 {
-    NSLog(@"showTransactionAsInProgress");
+    //NSLog(@"showTransactionAsInProgress");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchasepending" object:nil];
 }
 
 - (void)failedTransaction:(SKPaymentTransaction *)transaction
 {
-    NSLog(@"failedTransaction");
+    //NSLog(@"failedTransaction");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchasefailed" object:nil];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
 }
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction
 {
-    NSLog(@"completeTransaction");
+    //NSLog(@"completeTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     [PurchaseUtils validateReceipt];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction
 {
-    NSLog(@"restoreTransaction");
+    //NSLog(@"restoreTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     [PurchaseUtils validateReceipt];
 }
 
-- (void)failedVerification:(SKPaymentTransaction *)transaction
+- (void)failedVerification:(NSNotification *)notification
 {
-    NSLog(@"failedVerification");
+    //NSLog(@"failedVerification");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchasefailed" object:nil];
 }
 
-- (void)completeVerification:(SKPaymentTransaction *)transaction
+- (void)completeVerification:(NSNotification *)notification
 {
-    NSLog(@"completeVerification");
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
-    [UserDefaultsUtils setBool:self.useSharedDefaults value:YES forKey:@"IAP_NoLogo"];
+    //NSLog(@"completeVerification");
+    NSDictionary *receiptIAPsection = [notification userInfo];
+    if (receiptIAPsection) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+        [UserDefaultsUtils setBool:self.useSharedDefaults value:YES forKey:@"IAP_NoLogo"];
+    }
 }
 
 @end

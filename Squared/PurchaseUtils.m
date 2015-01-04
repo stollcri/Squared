@@ -44,22 +44,34 @@
             [NSURLConnection sendAsynchronousRequest:storeRequest queue:queue
                                    completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                                        BOOL didSucceed = NO;
+                                       NSDictionary *jsonReceiptIAP;
                                        
                                        if (connectionError) {
+                                           didSucceed = NO;
                                            /* ... Handle error ... */
                                        } else {
                                            NSError *error;
                                            NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
                                            if (!jsonResponse) {
+                                               didSucceed = NO;
                                                /* ... Handle error ...*/
                                            } else {
-                                               didSucceed = YES;
+                                               NSDictionary *jsonReceipt = jsonResponse[@"receipt"];
+                                               NSString* bundleIDreturn = jsonReceipt[@"bundle_id"];
+                                               NSString* bundleIDactual = [[NSBundle mainBundle] bundleIdentifier];
+                                               
+                                               if ([bundleIDreturn isEqualToString:bundleIDactual]) {
+                                                   jsonReceiptIAP = jsonReceipt[@"in_app"];
+                                                   didSucceed = YES;
+                                               } else {
+                                                   didSucceed = NO;
+                                               }
                                            }
                                        }
                                        
                                        if (didSucceed) {
                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                               [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.verified" object:nil];
+                                               [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.verified" object:nil userInfo:jsonReceiptIAP];
                                            });
                                        } else {
                                            dispatch_async(dispatch_get_main_queue(), ^{
