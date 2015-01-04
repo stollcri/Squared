@@ -9,6 +9,10 @@
 #ifndef Squared_SquaredDefines_h
 #define Squared_SquaredDefines_h
 
+#define ALGORITHM_SETTINGS_HASH @"b39494b0bdc1a52814db30e0b129acc4"
+#define ALGORITHM_SETTINGS_HOLD @"b39494b0bdc1a52814bd30e0b129acc4"
+#define ALGORITHM_SETTINGS_HNEW @"b39494b0dbc1a52814bd30e0b129acc4"
+
 #ifdef DEBUG
 #define APP_STORE_VERIFY_URL @"https://sandbox.itunes.apple.com/verifyReceipt"
 #else

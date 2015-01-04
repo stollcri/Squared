@@ -152,6 +152,18 @@
     [userDefaults synchronize];
 }
 
++ (void)setString:(BOOL)shared value:(NSString *)value forKey:(NSString*)key
+{
+    NSUserDefaults *userDefaults;
+    if (shared) {
+        userDefaults = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
+    } else {
+        userDefaults = [NSUserDefaults standardUserDefaults];
+    }
+    [userDefaults setValue:value forKey:key];
+    [userDefaults synchronize];
+}
+
 + (void)setSharedFromStandard
 {
     NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
@@ -159,6 +171,19 @@
     [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"cutsPerItteration"] forKey:@"cutsPerItteration"];
     [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"padSquareColor"] forKey:@"padSquareColor"];
     [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"maximumSize"] forKey:@"maximumSize"];
+    
+    // make sure algorithm settings are valid
+    if (![squaredDefaultsShared stringForKey:@"algorithmSettings"]) {
+        [squaredDefaultsShared setValue:ALGORITHM_SETTINGS_HASH forKey:@"algorithmSettings"];
+    } else {
+        if ([squaredDefaultsShared integerForKey:@"IAP_NoLogo"]) {
+            NSString *algorithmSettings = [squaredDefaultsShared stringForKey:@"algorithmSettings"];
+            if ([algorithmSettings isEqualToString:ALGORITHM_SETTINGS_HASH]) {
+                [squaredDefaultsShared setBool:NO forKey:@"IAP_NoLogo"];
+            }
+        }
+    }
+    [squaredDefaultsShared synchronize];
 }
 
 //| ----------------------------------------------------------------------------

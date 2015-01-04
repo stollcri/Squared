@@ -16,6 +16,7 @@
 + (NSInteger)getIntegerDefault:(BOOL)shared forKey:(NSString*)key;
 
 + (void)setBool:(BOOL)shared value:(BOOL)value forKey:(NSString*)key;
++ (void)setString:(BOOL)shared value:(NSString *)value forKey:(NSString*)key;
 
 + (void)setSharedFromStandard;
 

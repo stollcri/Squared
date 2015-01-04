@@ -366,6 +366,9 @@
     
     [self.removeLogoButton setHidden:YES];
     [self.logoImageView removeFromSuperview];
+    
+    NSString *newSettings = ALGORITHM_SETTINGS_HNEW;
+    [UserDefaultsUtils setString:YES value:newSettings forKey:@"algorithmSettings"];
 }
 
 #pragma mark - UI Updates
