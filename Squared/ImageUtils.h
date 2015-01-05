@@ -10,7 +10,7 @@
 
 @interface ImageUtils : NSObject
 
-+ (CGRect)getImageDisplaySize:(UIImageView *)imageView;
-+ (UIImage *)imageRotatedByOrientation:(UIImage*)oldImage orientation:(UIImageOrientation)orientation;
++ (CGRect)getDisplaySizeOfImageView:(UIImageView *)imageView;
++ (UIImage *)rotateImage:(UIImage*)image byOrientation:(UIImageOrientation)orientation;
 
 @end

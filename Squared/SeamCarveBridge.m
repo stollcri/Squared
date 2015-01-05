@@ -20,7 +20,7 @@
 //
 // REF: http://maniacdev.com/2011/11/tutorial-easy-face-detection-with-core-image-in-ios-5
 //
-+ (NSArray *)findFaces:(UIImage *)sourceImage {
++ (NSArray *)findFacesInImage:(UIImage *)sourceImage {
     CIImage *image = [CIImage imageWithCGImage:sourceImage.CGImage];
     CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace
                                               context:nil options:[NSDictionary dictionaryWithObject:CIDetectorAccuracyHigh forKey:CIDetectorAccuracy]];
@@ -116,7 +116,7 @@
     }
     
     // check if the image contains any faces
-    NSArray *faceBounds = [SeamCarveBridge findFaces:sourceImage];
+    NSArray *faceBounds = [SeamCarveBridge findFacesInImage:sourceImage];
     int faceCount = (int)faceBounds.count;
     int *faceCoordinates = (int*)calloc((faceBounds.count * 4), sizeof(int));
     

@@ -10,7 +10,7 @@
 
 @interface UserDefaultsUtils : NSObject
 
-+ (void)loadDefaults:(BOOL)shared;
++ (void)loadDefaultsShared:(BOOL)shared;
 
 + (BOOL)getBoolDefault:(BOOL)shared forKey:(NSString*)key;
 + (NSInteger)getIntegerDefault:(BOOL)shared forKey:(NSString*)key;

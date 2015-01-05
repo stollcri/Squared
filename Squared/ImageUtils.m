@@ -11,7 +11,7 @@
 @implementation ImageUtils
 
 // calculate the size of an image set to aspect-fit
-+ (CGRect)getImageDisplaySize:(UIImageView *)imageView
++ (CGRect)getDisplaySizeOfImageView:(UIImageView *)imageView
 {
     CGRect results = CGRectZero;
     CGSize imageSize = imageView.image.size;
@@ -31,12 +31,12 @@
     return results;
 }
 
-+ (UIImage *)imageRotatedByOrientation:(UIImage*)oldImage orientation:(UIImageOrientation)orientation
++ (UIImage *)rotateImage:(UIImage*)image byOrientation:(UIImageOrientation)orientation
 {
     UIImage *newImage;
-    CGSize size = oldImage.size;
+    CGSize size = image.size;
     UIGraphicsBeginImageContext(CGSizeMake(size.height, size.width));
-    [[UIImage imageWithCGImage:[oldImage CGImage] scale:oldImage.scale orientation:orientation] drawInRect:CGRectMake(0, 0, size.height ,size.width)];
+    [[UIImage imageWithCGImage:[image CGImage] scale:image.scale orientation:orientation] drawInRect:CGRectMake(0, 0, size.height ,size.width)];
     newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return newImage;

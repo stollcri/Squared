@@ -36,10 +36,10 @@
         switch (transaction.transactionState) {
                 // Call the appropriate custom method for the transaction state.
             case SKPaymentTransactionStatePurchasing:
-                [self showTransactionAsInProgress:transaction deferred:NO];
+                [self inProgressTransaction:transaction deferred:NO];
                 break;
             case SKPaymentTransactionStateDeferred:
-                [self showTransactionAsInProgress:transaction deferred:YES];
+                [self inProgressTransaction:transaction deferred:YES];
                 break;
             case SKPaymentTransactionStateFailed:
                 [self failedTransaction:transaction];
@@ -58,7 +58,7 @@
     }
 }
 
-- (void)showTransactionAsInProgress:(SKPaymentTransaction *)transaction deferred:(BOOL)deferrred
+- (void)inProgressTransaction:(SKPaymentTransaction *)transaction deferred:(BOOL)deferrred
 {
     //NSLog(@"showTransactionAsInProgress");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchasepending" object:nil];

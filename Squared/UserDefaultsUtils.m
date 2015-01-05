@@ -11,7 +11,7 @@
 
 @implementation UserDefaultsUtils
 
-+ (NSInteger)deviceSpecificCutsPerItteration
++ (NSInteger)getDeviceSpecificCutsPerItteration
 {
     NSInteger result = DEFAULT_CUTS_PER_ITTERATION;
     if ([[UIScreen mainScreen] respondsToSelector: @selector(scale)]) {
@@ -31,7 +31,7 @@
     return result;
 }
 
-+ (NSInteger)deviceSpecificMaximumSize
++ (NSInteger)getDeviceSpecificMaximumSize
 {
     NSInteger result = DEFAULT_MAXIMUM_SIZE;
     if ([[UIScreen mainScreen] respondsToSelector: @selector(scale)]) {
@@ -51,7 +51,7 @@
     return result;
 }
 
-+ (void)loadDefaults:(BOOL)shared
++ (void)loadDefaultsShared:(BOOL)shared
 {
     if (shared) {
         // Shared user defaults set here for the photo editing extension
@@ -62,22 +62,22 @@
             NSURL *settingsBundleURLshared = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
             NSDictionary *appDefaultsShared = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURLshared];
             
-            [squaredDefaultsShared setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
-            [squaredDefaultsShared setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+            [squaredDefaultsShared setInteger:[self getDeviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+            [squaredDefaultsShared setInteger:[self getDeviceSpecificMaximumSize] forKey:@"maximumSize"];
             
             [squaredDefaultsShared registerDefaults:appDefaultsShared];
             [squaredDefaultsShared synchronize];
         }
         
         if (![squaredDefaultsShared integerForKey:@"cutsPerItteration"]) {
-            [squaredDefaultsShared setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+            [squaredDefaultsShared setInteger:[self getDeviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
         }
         // zero is a liegitimate choice for pad square color
         //if (![squaredDefaultsShared integerForKey:@"padSquareColor"]) {
         //    [squaredDefaultsShared setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
         //}
         if (![squaredDefaultsShared integerForKey:@"maximumSize"]) {
-            [squaredDefaultsShared setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+            [squaredDefaultsShared setInteger:[self getDeviceSpecificMaximumSize] forKey:@"maximumSize"];
         }
         [squaredDefaultsShared synchronize];
     } else {
@@ -89,22 +89,22 @@
             NSURL *settingsBundleURLshared = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
             NSDictionary *appDefaultsShared = [UserDefaultsUtils loadDefaultsFromSettingsPage:@"Root.plist" inSettingsBundleAtURL:settingsBundleURLshared];
             
-            [squaredDefaults setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
-            [squaredDefaults setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+            [squaredDefaults setInteger:[self getDeviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+            [squaredDefaults setInteger:[self getDeviceSpecificMaximumSize] forKey:@"maximumSize"];
             
             [squaredDefaults registerDefaults:appDefaultsShared];
             [squaredDefaults synchronize];
         }
         
         if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
-            [squaredDefaults setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
+            [squaredDefaults setInteger:[self getDeviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
         }
         // zero is a liegitimate choice for pad square color
         //if (![squaredDefaults integerForKey:@"padSquareColor"]) {
         //    [squaredDefaults setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
         //}
         if (![squaredDefaults integerForKey:@"maximumSize"]) {
-            [squaredDefaults setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
+            [squaredDefaults setInteger:[self getDeviceSpecificMaximumSize] forKey:@"maximumSize"];
         }
         [squaredDefaults synchronize];
     }
