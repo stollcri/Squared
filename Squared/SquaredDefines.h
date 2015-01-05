@@ -9,17 +9,20 @@
 #ifndef Squared_SquaredDefines_h
 #define Squared_SquaredDefines_h
 
+#define APP_BUNDLE_IDENTIFIER @"org.christopherstoll.Squared"
+#define APP_GROUP_SUITE_NAME @"group.org.christopherstoll.Squared"
+
 #define ALGORITHM_SETTINGS_HASH @"b39494b0bdc1a52814db30e0b129acc4"
 #define ALGORITHM_SETTINGS_HOLD @"b39494b0bdc1a52814bd30e0b129acc4"
 #define ALGORITHM_SETTINGS_HNEW @"b39494b0dbc1a52814bd30e0b129acc4"
 
 #ifdef DEBUG
+#define DEVELOPMENT_CHECKS 1
 #define APP_STORE_VERIFY_URL @"https://sandbox.itunes.apple.com/verifyReceipt"
 #else
+#define DEVELOPMENT_CHECKS 0
 #define APP_STORE_VERIFY_URL @"https://buy.itunes.apple.com/verifyReceipt"
 #endif
-
-#define APP_GROUP_SUITE_NAME @"group.org.christopherstoll.Squared"
 
 #define DEFAULT_MAXIMUM_SIZE 6
 #define DEFAULT_PAD_SQUARE_COLOR 2

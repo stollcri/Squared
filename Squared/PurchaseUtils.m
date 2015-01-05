@@ -56,15 +56,15 @@
                                                didSucceed = NO;
                                                /* ... Handle error ...*/
                                            } else {
-                                               NSDictionary *jsonReceipt = jsonResponse[@"receipt"];
-                                               NSString* bundleIDreturn = jsonReceipt[@"bundle_id"];
                                                NSString* bundleIDactual = [[NSBundle mainBundle] bundleIdentifier];
                                                
-                                               if ([bundleIDreturn isEqualToString:bundleIDactual]) {
-                                                   jsonReceiptIAP = jsonReceipt[@"in_app"];
-                                                   didSucceed = YES;
-                                               } else {
-                                                   didSucceed = NO;
+                                               if ([bundleIDactual isEqualToString:APP_BUNDLE_IDENTIFIER]) {
+                                                   jsonReceipt = jsonResponse[@"receipt"];
+                                                   NSString* bundleIDreturn = jsonReceipt[@"bundle_id"];
+                                                   
+                                                   if ([bundleIDreturn isEqualToString:bundleIDactual]) {
+                                                       didSucceed = YES;
+                                                   }
                                                }
                                            }
                                        }

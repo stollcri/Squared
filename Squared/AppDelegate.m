@@ -21,6 +21,16 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    //
+    // Check some of the defines to make sure they are valid
+    //
+    if (DEVELOPMENT_CHECKS) {
+        NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
+        if (![bundleID isEqualToString:APP_BUNDLE_IDENTIFIER]) {
+            NSLog(@"\n!!!!!\n!!!!! APP_BUNDLE_IDENTIFIER improperly set \n!!!!!\n");
+        }
+    }
+    
     // Set up a Store Kit Transaction Queue Observer
     self.transactionObserver = [[TransactionQueueObserver alloc] init];
     
