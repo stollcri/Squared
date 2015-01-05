@@ -18,7 +18,7 @@
     return productIdentifiers;
 }
 
-+ (BOOL)validateReceipt
++ (void)validateReceiptWithAppStore
 {
     bool result = NO;
     
@@ -44,7 +44,7 @@
             [NSURLConnection sendAsynchronousRequest:storeRequest queue:queue
                                    completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                                        BOOL didSucceed = NO;
-                                       NSDictionary *jsonReceiptIAP;
+                                       NSDictionary *jsonReceipt;
                                        
                                        if (connectionError) {
                                            didSucceed = NO;
@@ -71,11 +71,11 @@
                                        
                                        if (didSucceed) {
                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                               [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.verified" object:nil userInfo:jsonReceiptIAP];
+                                               [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.validated" object:nil userInfo:jsonReceipt];
                                            });
                                        } else {
                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                               [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.verificationfailed" object:nil];
+                                               [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.validationfailed" object:nil];
                                             });
                                        }
                                        

@@ -23,8 +23,8 @@
         self.useSharedDefaults = YES;
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(failedVerification:) name:@"org.christopherstoll.squared.verificationfailed" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(completeVerification:) name:@"org.christopherstoll.squared.verified" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(failedValidation:) name:@"org.christopherstoll.squared.validationfailed" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(completeValidation:) name:@"org.christopherstoll.squared.validated" object:nil];
     }
     return self;
 }
@@ -78,29 +78,34 @@
 {
     //NSLog(@"completeTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [PurchaseUtils validateReceipt];
+    [PurchaseUtils validateReceiptWithAppStore];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction
 {
     //NSLog(@"restoreTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [PurchaseUtils validateReceipt];
+    [PurchaseUtils validateReceiptWithAppStore];
 }
 
-- (void)failedVerification:(NSNotification *)notification
+- (void)failedValidation:(NSNotification *)notification
 {
     //NSLog(@"failedVerification");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchasefailed" object:nil];
 }
 
-- (void)completeVerification:(NSNotification *)notification
+- (void)completeValidation:(NSNotification *)notification
 {
     //NSLog(@"completeVerification");
-    NSDictionary *receiptIAPsection = [notification userInfo];
-    if (receiptIAPsection) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+    NSDictionary *jsonReceipt = [notification userInfo];
+    
+    NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+    NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
+    
+    if (jsonReceipt && receiptData) {
+        
         [UserDefaultsUtils setBool:self.useSharedDefaults value:YES forKey:@"IAP_NoLogo"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
     }
 }
 
