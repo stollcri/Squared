@@ -20,8 +20,6 @@
 
 + (void)validateReceiptWithAppStore
 {
-    bool result = NO;
-    
     // check that a receipt exists
     NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
     NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
@@ -47,13 +45,11 @@
                                        NSDictionary *jsonReceipt;
                                        
                                        if (connectionError) {
-                                           didSucceed = NO;
                                            /* ... Handle error ... */
                                        } else {
                                            NSError *error;
                                            NSDictionary *jsonResponse = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
                                            if (!jsonResponse) {
-                                               didSucceed = NO;
                                                /* ... Handle error ...*/
                                            } else {
                                                NSString* bundleIDactual = [[NSBundle mainBundle] bundleIdentifier];
@@ -82,8 +78,6 @@
                                    }];
         }
     }
-    
-    return result;
 }
 
 @end
