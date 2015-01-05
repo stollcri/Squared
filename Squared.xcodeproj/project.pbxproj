@@ -39,6 +39,7 @@
 		7D454BE11A2909CA0008D47E /* SquaredLogoC-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD51A2909CA0008D47E /* SquaredLogoC-Small@3x.png */; };
 		7D6F4A181A576B36004FDB05 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C71A10F997001849FF /* LaunchScreen.xib */; };
 		7D6F4A191A576B40004FDB05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C21A10F997001849FF /* Main.storyboard */; };
+		7D87B79D1A5B12B900133AF5 /* CryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D87B79C1A5B12B900133AF5 /* CryptoUtils.m */; };
 		7D977A801A50F9C600F13024 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
 		7DA7C0591A5498E20038AFE0 /* SquaredWatermark-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0561A5498E20038AFE0 /* SquaredWatermark-66.png */; };
 		7DA7C05A1A5498E20038AFE0 /* SquaredWatermark-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0571A5498E20038AFE0 /* SquaredWatermark-22.png */; };
@@ -156,6 +157,8 @@
 		7D6F4A1E1A577133004FDB05 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		7D6F4A1F1A57713B004FDB05 /* ar-001 */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ar-001"; path = "ar-001.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		7D6F4A201A577141004FDB05 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		7D87B79B1A5B12B900133AF5 /* CryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoUtils.h; sourceTree = "<group>"; };
+		7D87B79C1A5B12B900133AF5 /* CryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CryptoUtils.m; sourceTree = "<group>"; };
 		7DA7C0561A5498E20038AFE0 /* SquaredWatermark-66.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-66.png"; sourceTree = "<group>"; };
 		7DA7C0571A5498E20038AFE0 /* SquaredWatermark-22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-22.png"; sourceTree = "<group>"; };
 		7DA7C0581A5498E20038AFE0 /* SquaredWatermark-44.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-44.png"; sourceTree = "<group>"; };
@@ -237,6 +240,8 @@
 				7DA7C05D1A55A26F0038AFE0 /* ImageUtils.m */,
 				7D16EF561A50D5FC00A86A6F /* UserDefaultsUtils.h */,
 				7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */,
+				7D87B79B1A5B12B900133AF5 /* CryptoUtils.h */,
+				7D87B79C1A5B12B900133AF5 /* CryptoUtils.m */,
 				7D09C95B1A4CD63200F1C5EA /* Settings.bundle */,
 				7D26E2B71A10F997001849FF /* Squared */,
 				7D26E2D11A10F997001849FF /* SquaredTests */,
@@ -594,6 +599,7 @@
 				7D26E2C11A10F997001849FF /* ViewController.m in Sources */,
 				7D16EF581A50D5FC00A86A6F /* UserDefaultsUtils.m in Sources */,
 				7D26E2BE1A10F997001849FF /* AppDelegate.m in Sources */,
+				7D87B79D1A5B12B900133AF5 /* CryptoUtils.m in Sources */,
 				7DA7C06D1A5646B00038AFE0 /* TransactionQueueObserver.m in Sources */,
 				7D26E2BB1A10F997001849FF /* main.m in Sources */,
 				7DA7C0641A55EE100038AFE0 /* PurchaseViewController.m in Sources */,
