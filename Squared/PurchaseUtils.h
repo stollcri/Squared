@@ -11,6 +11,5 @@
 @interface PurchaseUtils : NSObject
 
 + (NSArray *)listProductIdentifiers;
-+ (void)validateReceiptWithAppStore;
 
 @end

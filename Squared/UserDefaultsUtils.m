@@ -72,9 +72,10 @@
         if (![squaredDefaultsShared integerForKey:@"cutsPerItteration"]) {
             [squaredDefaultsShared setInteger:[self deviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
         }
-        if (![squaredDefaultsShared integerForKey:@"padSquareColor"]) {
-            [squaredDefaultsShared setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
-        }
+        // zero is a liegitimate choice for pad square color
+        //if (![squaredDefaultsShared integerForKey:@"padSquareColor"]) {
+        //    [squaredDefaultsShared setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
+        //}
         if (![squaredDefaultsShared integerForKey:@"maximumSize"]) {
             [squaredDefaultsShared setInteger:[self deviceSpecificMaximumSize] forKey:@"maximumSize"];
         }
@@ -172,18 +173,6 @@
     [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"cutsPerItteration"] forKey:@"cutsPerItteration"];
     [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"padSquareColor"] forKey:@"padSquareColor"];
     [squaredDefaultsShared setValue:[squaredDefaults valueForKey:@"maximumSize"] forKey:@"maximumSize"];
-    
-    // make sure algorithm settings are valid
-    if (![squaredDefaultsShared stringForKey:@"algorithmSettings"]) {
-        [squaredDefaultsShared setValue:ALGORITHM_SETTINGS_HEX forKey:@"algorithmSettings"];
-    } else {
-        if ([squaredDefaultsShared integerForKey:@"IAP_NoLogo"]) {
-            NSString *algorithmSettings = [squaredDefaultsShared stringForKey:@"algorithmSettings"];
-            if ([algorithmSettings isEqualToString:ALGORITHM_SETTINGS_HEX]) {
-                [squaredDefaultsShared setBool:NO forKey:@"IAP_NoLogo"];
-            }
-        }
-    }
     [squaredDefaultsShared synchronize];
 }
 

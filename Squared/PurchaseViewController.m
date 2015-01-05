@@ -128,12 +128,7 @@
 }
 
 - (IBAction)deTest:(id)sender {
-    /*
-    NSUserDefaults *squaredDefaultsShared = [[NSUserDefaults alloc] initWithSuiteName:APP_GROUP_SUITE_NAME];
-    [squaredDefaultsShared setBool:YES forKey:@"IAP_NoLogo"];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
-    */
+    //
 }
 
 @end
