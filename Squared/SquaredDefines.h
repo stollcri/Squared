@@ -12,9 +12,9 @@
 #define APP_BUNDLE_IDENTIFIER @"org.christopherstoll.Squared"
 #define APP_GROUP_SUITE_NAME @"group.org.christopherstoll.Squared"
 
-#define ALGORITHM_SETTINGS_HASH @"b39494b0bdc1a52814db30e0b129acc4"
-#define ALGORITHM_SETTINGS_HOLD @"b39494b0bdc1a52814bd30e0b129acc4"
-#define ALGORITHM_SETTINGS_HNEW @"b39494b0dbc1a52814bd30e0b129acc4"
+#define ALGORITHM_SETTINGS_HEX @"b39494b0bdc1a52814db30e0b129acc4"
+#define ALGORITHM_SETTINGS_OLD @"b39494b0bdc1a52814bd30e0b129acc4"
+#define ALGORITHM_SETTINGS_NEW @"b39494b0dbc1a52814bd30e0b129acc4"
 
 #ifdef DEBUG
 #define DEVELOPMENT_CHECKS 1

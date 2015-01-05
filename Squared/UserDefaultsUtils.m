@@ -175,11 +175,11 @@
     
     // make sure algorithm settings are valid
     if (![squaredDefaultsShared stringForKey:@"algorithmSettings"]) {
-        [squaredDefaultsShared setValue:ALGORITHM_SETTINGS_HASH forKey:@"algorithmSettings"];
+        [squaredDefaultsShared setValue:ALGORITHM_SETTINGS_HEX forKey:@"algorithmSettings"];
     } else {
         if ([squaredDefaultsShared integerForKey:@"IAP_NoLogo"]) {
             NSString *algorithmSettings = [squaredDefaultsShared stringForKey:@"algorithmSettings"];
-            if ([algorithmSettings isEqualToString:ALGORITHM_SETTINGS_HASH]) {
+            if ([algorithmSettings isEqualToString:ALGORITHM_SETTINGS_HEX]) {
                 [squaredDefaultsShared setBool:NO forKey:@"IAP_NoLogo"];
             }
         }
