@@ -52,7 +52,7 @@
     
     // Shared user defaults set here for the photo editing extension
     self.useSharedDefaults = YES;
-    [UserDefaultsUtils loadDefaults:self.useSharedDefaults];
+    [UserDefaultsUtils loadDefaultsShared:self.useSharedDefaults];
     self.cutsPerItteration = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"cutsPerItteration"];
     self.padSquareColor = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"padSquareColor"];
     self.maximumSize = [UserDefaultsUtils getIntegerDefault:self.useSharedDefaults forKey:@"maximumSize"];
@@ -120,7 +120,7 @@
         
         UIImage *imagetoshare;
         if (self.showWatermark) {
-            CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
+            CGRect tmp = [ImageUtils getDisplaySizeOfImageView:self.imageView];
             UIGraphicsBeginImageContextWithOptions(CGSizeMake(tmp.size.width, tmp.size.height), YES, 0.0);
             CGContextRef context = UIGraphicsGetCurrentContext();
             UIGraphicsPushContext(context);
@@ -202,7 +202,7 @@
         }
         
         // TODO: abstract this duplication (create paint subview)
-        CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
+        CGRect tmp = [ImageUtils getDisplaySizeOfImageView:self.imageView];
         [self.paintImageView removeFromSuperview];
         UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
         [tmpImgVw setAlpha:PAINT_BRUSH_ALPHA];
@@ -228,10 +228,10 @@
     UIImage *orientedImage;
     UIImage *orientedMask;
     if (self.imageView.image.size.height > self.imageView.image.size.width) {
-        orientedImage = [ImageUtils imageRotatedByOrientation:self.imageView.image orientation:UIImageOrientationRight];
+        orientedImage = [ImageUtils rotateImage:self.imageView.image byOrientation:UIImageOrientationRight];
         // don't bother rotating an empty painting sub view, just pass the nil
         if (self.paintImageView.image) {
-            orientedMask = [ImageUtils imageRotatedByOrientation:self.paintImageView.image orientation:UIImageOrientationRight];
+            orientedMask = [ImageUtils rotateImage:self.paintImageView.image byOrientation:UIImageOrientationRight];
         } else {
             orientedMask = self.paintImageView.image;
         }
@@ -262,7 +262,7 @@
         // update present display
         if (self.wasRotated) {
             UIImage *tmpImage = [notification object];
-            UIImage *orientedImage = [ImageUtils imageRotatedByOrientation:tmpImage orientation:UIImageOrientationLeft];
+            UIImage *orientedImage = [ImageUtils rotateImage:tmpImage byOrientation:UIImageOrientationLeft];
             self.imageView.image = orientedImage;
             
             NSValue *animationDurationValue = @0.4;
@@ -300,7 +300,7 @@
         // update present display
         if (self.wasRotated) {
             UIImage *tmpImage = [notification object];
-            UIImage *orientedImage = [ImageUtils imageRotatedByOrientation:tmpImage orientation:UIImageOrientationLeft];
+            UIImage *orientedImage = [ImageUtils rotateImage:tmpImage byOrientation:UIImageOrientationLeft];
             self.imageView.image = orientedImage;
             
             // add to the stages array
@@ -323,7 +323,7 @@
         // update present display
         if (self.wasRotated) {
             UIImage *tmpImage = [notification object];
-            UIImage *orientedImage = [ImageUtils imageRotatedByOrientation:tmpImage orientation:UIImageOrientationLeft];
+            UIImage *orientedImage = [ImageUtils rotateImage:tmpImage byOrientation:UIImageOrientationLeft];
             self.imageView.image = orientedImage;
             
             // add to the stages array
@@ -338,7 +338,7 @@
         }
         
         if (self.showWatermark) {
-            CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
+            CGRect tmp = [ImageUtils getDisplaySizeOfImageView:self.imageView];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];
             [tmpImgVw setImage:[UIImage imageNamed:@"Banner"]];
             [tmpImgVw setContentMode:UIViewContentModeBottomLeft];
@@ -491,7 +491,7 @@
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification {
     if (self.paintImageView) {
-        CGRect tmp = [ImageUtils getImageDisplaySize:self.imageView];
+        CGRect tmp = [ImageUtils getDisplaySizeOfImageView:self.imageView];
         [self.paintImageView setFrame:tmp];
         [self.logoImageView setFrame:tmp];
     }
