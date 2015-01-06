@@ -12,4 +12,6 @@
 
 + (NSArray *)listProductIdentifiers;
 
+- (NSString *)getRootCertificateMD5;
+
 @end

@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "SquaredDefines.h"
+#import "PurchaseUtils.h"
 #import "UserDefaultsUtils.h"
 #import "TransactionQueueObserver.h"
 
@@ -28,6 +29,12 @@
         NSString *bundleID = [[NSBundle mainBundle] bundleIdentifier];
         if (![bundleID isEqualToString:APP_BUNDLE_IDENTIFIER]) {
             NSLog(@"\n!!!!!\n!!!!! APP_BUNDLE_IDENTIFIER improperly set \n!!!!!\n");
+        }
+        
+        PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
+        NSString *rootCertHash = [purchase getRootCertificateMD5];
+        if (![rootCertHash isEqualToString:APPLE_ROOT_CERT_MD5]) {
+            NSLog(@"\n!!!!!\n!!!!! APPLE_ROOT_CERT_MD5 improperly set \n!!!!!\n");
         }
     }
     

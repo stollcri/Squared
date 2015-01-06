@@ -41,6 +41,7 @@
 		7D6F4A191A576B40004FDB05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C21A10F997001849FF /* Main.storyboard */; };
 		7D87B7EF1A5B32C200133AF5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D87B7ED1A5B32C200133AF5 /* libcrypto.a */; };
 		7D87B7F01A5B32C200133AF5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D87B7EE1A5B32C200133AF5 /* libssl.a */; };
+		7D87B7F21A5B8BB300133AF5 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 7D87B7F11A5B7C0C00133AF5 /* AppleIncRootCertificate.cer */; };
 		7D977A801A50F9C600F13024 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
 		7DA7C0591A5498E20038AFE0 /* SquaredWatermark-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0561A5498E20038AFE0 /* SquaredWatermark-66.png */; };
 		7DA7C05A1A5498E20038AFE0 /* SquaredWatermark-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0571A5498E20038AFE0 /* SquaredWatermark-22.png */; };
@@ -738,6 +739,7 @@
 				7D454BDC1A2909CA0008D47E /* SquaredLogoC-AppStore@2x.png in Resources */,
 				7DD3C40B1A1FB221003A7A81 /* Thaw-66.png in Resources */,
 				7DD3C4091A1FB221003A7A81 /* Freeze-66.png in Resources */,
+				7D87B7F21A5B8BB300133AF5 /* AppleIncRootCertificate.cer in Resources */,
 				7D454BD71A2909CA0008D47E /* SquaredLogoC-60@2x.png in Resources */,
 				7D09C95C1A4CD63200F1C5EA /* Settings.bundle in Resources */,
 				7DD3C40F1A1FB221003A7A81 /* Thaw.png in Resources */,
