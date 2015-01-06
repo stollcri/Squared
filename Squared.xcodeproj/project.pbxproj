@@ -235,6 +235,7 @@
 		7D87B7EB1A5B32C200133AF5 /* x509v3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x509v3.h; sourceTree = "<group>"; };
 		7D87B7ED1A5B32C200133AF5 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcrypto.a; sourceTree = "<group>"; };
 		7D87B7EE1A5B32C200133AF5 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
+		7D87B7F11A5B7C0C00133AF5 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
 		7DA7C0561A5498E20038AFE0 /* SquaredWatermark-66.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-66.png"; sourceTree = "<group>"; };
 		7DA7C0571A5498E20038AFE0 /* SquaredWatermark-22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-22.png"; sourceTree = "<group>"; };
 		7DA7C0581A5498E20038AFE0 /* SquaredWatermark-44.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SquaredWatermark-44.png"; sourceTree = "<group>"; };
@@ -554,6 +555,7 @@
 			isa = PBXGroup;
 			children = (
 				7D87B79E1A5B284700133AF5 /* OpenSSL */,
+				7D87B7F11A5B7C0C00133AF5 /* AppleIncRootCertificate.cer */,
 				7DA7C0661A55FC9B0038AFE0 /* Products.plist */,
 				7D2BAC891A57337000468D07 /* PurchaseUtils.h */,
 				7D2BAC8A1A57337000468D07 /* PurchaseUtils.m */,
