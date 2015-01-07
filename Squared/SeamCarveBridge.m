@@ -38,35 +38,20 @@
     }
     
     int padMode = 0;
-    int padWithColor = 0;
     int padWithColorR = 0;
     int padWithColorG = 0;
     int padWithColorB = 0;
     int padWithColorA = 0;
     if (padSquareColor) {
-        padWithColor = (int)padSquareColor;
+        padMode = (int)padSquareColor;
         
-        if (padWithColor) {
-            if (padWithColor == 1) { // single color average
-                padMode = PAD_MODE_COLOR;
-            } else if (padWithColor == 2) { // double color average
-                padMode = PAD_MODE_COLORS;
-            } else if (padWithColor == 3) { // transparent
-                padMode = PAD_MODE_CLEAR;
-            } else if (padWithColor == 4) { // mirror
-                padMode = PAD_MODE_MIRROR;
-            } else if (padWithColor == 5) { // smear
-                padMode = PAD_MODE_SMEAR;
-            } else if (padWithColor == 6) { // black
-                padMode = PAD_MODE_BLACK;
-                padWithColorA = 255;
-            } else if (padWithColor == 7) { // white
-                padMode = PAD_MODE_WHITE;
-                padWithColorR = 255;
-                padWithColorG = 255;
-                padWithColorB = 255;
-                padWithColorA = 255;
-            }
+        if (padMode == PAD_MODE_BLACK) { // black
+            padWithColorA = 255;
+        } else if (padMode == PAD_MODE_WHITE) { // white
+            padWithColorR = 255;
+            padWithColorG = 255;
+            padWithColorB = 255;
+            padWithColorA = 255;
         }
     }
     
@@ -183,7 +168,7 @@
     
     // if we are using padding then perform a pre-pass to get a border for the original image
     int performPrePass = 0;
-    if (padWithColor) {
+    if (padMode >= PAD_MODE_BORDERED_BEGIN) {
         performPrePass = 1;
     }
     
@@ -194,7 +179,7 @@
                 currentWidthT = currentWidthT - widthIncrement;
                 currentHeightT = currentHeightT - heightIncrement;
                 
-                if (!padWithColor) {
+                if (padMode < PAD_MODE_BORDERED_BEGIN) {
                     rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentHeightT * bytesPerPixel, sizeof(unsigned char));
                 } else {
                     rawResultsTemp = (unsigned char*)calloc(currentWidthT * currentWidthT * bytesPerPixel, sizeof(unsigned char));
@@ -218,7 +203,7 @@
                     NSUInteger newBytesPerRow = bytesPerPixel * currentWidthT;
                     CGColorSpaceRef newColorSpace = CGColorSpaceCreateDeviceRGB();
                     CGContextRef newContext;
-                    if (!padWithColor) {
+                    if (padMode < PAD_MODE_BORDERED_BEGIN) {
                         newContext = CGBitmapContextCreate(rawResultsTemp, currentWidthT, currentHeightT,
                                                            bitsPerComponent, newBytesPerRow, newColorSpace,
                                                            kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);

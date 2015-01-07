@@ -54,7 +54,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-        
+    
     // Shared user defaults set here for the photo editing extension
     self.useSharedDefaults = NO;
     [UserDefaultsUtils loadDefaultsShared:self.useSharedDefaults];
@@ -262,7 +262,7 @@
     // prepare squaring stages array
     self.imageStages = [[NSMutableArray alloc] init];
     self.currentImageStage = 0;
-    if (!self.padSquareColor) {
+    if (self.padSquareColor < PAD_MODE_BORDERED_BEGIN) {
         [self.imageStages addObject:self.imageView.image];
     }
 }
@@ -419,7 +419,7 @@
     [animationDurationValue getValue:&animationDuration];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:animationDuration];
-    if (self.padSquareColor) {
+    if (self.padSquareColor >= PAD_MODE_BORDERED_BEGIN) {
         self.imageView.alpha = 0.0;
     } else {
         self.imageView.alpha = 0.5;
@@ -637,7 +637,7 @@
                 self.currentImageStage += 1;
                 self.imageView.image = self.imageStages[self.currentImageStage];
                 
-                if (self.showWatermark && !self.padSquareColor) {
+                if (self.showWatermark && (self.padSquareColor < PAD_MODE_BORDERED_BEGIN)) {
                     CGRect tmp = [ImageUtils getDisplaySizeOfImageView:self.imageView];
                     [self.logoImageView setFrame:tmp];
                 }
@@ -648,7 +648,7 @@
                 self.currentImageStage -= 1;
                 self.imageView.image = self.imageStages[self.currentImageStage];
                 
-                if (self.showWatermark && !self.padSquareColor) {
+                if (self.showWatermark && (self.padSquareColor < PAD_MODE_BORDERED_BEGIN)) {
                     CGRect tmp = [ImageUtils getDisplaySizeOfImageView:self.imageView];
                     [self.logoImageView setFrame:tmp];
                 }

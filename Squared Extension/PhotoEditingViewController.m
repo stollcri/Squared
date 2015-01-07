@@ -251,7 +251,7 @@
     // prepare squaring stages array
     self.imageStages = [[NSMutableArray alloc] init];
     self.currentImageStage = 0;
-    if (!self.padSquareColor) {
+    if (self.padSquareColor < PAD_MODE_BORDERED_BEGIN) {
         [self.imageStages addObject:self.imageView.image];
     }
 }
@@ -366,7 +366,7 @@
     [animationDurationValue getValue:&animationDuration];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:animationDuration];
-    if (self.padSquareColor) {
+    if (self.padSquareColor >= PAD_MODE_BORDERED_BEGIN) {
         self.imageView.alpha = 0.0;
     } else {
         self.imageView.alpha = 0.5;

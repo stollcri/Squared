@@ -461,7 +461,7 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
     int mirorForPadding = 0;
     int smearForPadding = 0;
     int colorForPadding = 0;
-    if (padMode) {
+    if (padMode >= PAD_MODE_BORDERED_BEGIN) {
         outerLoop = tImgWidth;
         int padLines = tImgWidth - tImgHeight;
         padLinesTop = (int)(padLines / 2);

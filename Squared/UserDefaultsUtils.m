@@ -72,10 +72,9 @@
         if (![squaredDefaultsShared integerForKey:@"cutsPerItteration"]) {
             [squaredDefaultsShared setInteger:[self getDeviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
         }
-        // zero is a liegitimate choice for pad square color
-        //if (![squaredDefaultsShared integerForKey:@"padSquareColor"]) {
-        //    [squaredDefaultsShared setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
-        //}
+        if (![squaredDefaultsShared integerForKey:@"padSquareColor"]) {
+            [squaredDefaultsShared setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
+        }
         if (![squaredDefaultsShared integerForKey:@"maximumSize"]) {
             [squaredDefaultsShared setInteger:[self getDeviceSpecificMaximumSize] forKey:@"maximumSize"];
         }
@@ -99,10 +98,9 @@
         if (![squaredDefaults integerForKey:@"cutsPerItteration"]) {
             [squaredDefaults setInteger:[self getDeviceSpecificCutsPerItteration] forKey:@"cutsPerItteration"];
         }
-        // zero is a liegitimate choice for pad square color
-        //if (![squaredDefaults integerForKey:@"padSquareColor"]) {
-        //    [squaredDefaults setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
-        //}
+        if (![squaredDefaults integerForKey:@"padSquareColor"]) {
+            [squaredDefaults setInteger:DEFAULT_PAD_SQUARE_COLOR forKey:@"padSquareColor"];
+        }
         if (![squaredDefaults integerForKey:@"maximumSize"]) {
             [squaredDefaults setInteger:[self getDeviceSpecificMaximumSize] forKey:@"maximumSize"];
         }
