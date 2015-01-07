@@ -130,13 +130,24 @@
 
 - (void)validatePurchase
 {
+    // Shared settings indicate a purchase, but let's validate the receipt
     PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
     if ([purchase validateMainBundleReceipt]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
     } else {
+        // Problems validating the receipt may be due to missing receipt, request a fresh copy
         SKReceiptRefreshRequest *receiptRefresh = [[SKReceiptRefreshRequest alloc] init];
         [receiptRefresh setDelegate:self];
         [receiptRefresh start];
+    }
+}
+
+- (void)requestDidFinish:(SKRequest *)request
+{
+    // The purchase receipt was refreshed, let's validate it
+    PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
+    if ([purchase validateMainBundleReceipt]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
     }
 }
 
