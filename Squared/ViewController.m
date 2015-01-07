@@ -55,7 +55,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Shared user defaults set here for the photo editing extension
+    // Get user defaults from settings bundle
     self.useSharedDefaults = NO;
     [UserDefaultsUtils loadDefaultsShared:self.useSharedDefaults];
     [self getDefaults];
@@ -96,16 +96,17 @@
     [self.saveButton setEnabled:NO];
     [self.removeLogoButton setHidden:YES];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(defaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    NSNotificationCenter *defaultNotifCenter = [NSNotificationCenter defaultCenter];
+    [defaultNotifCenter addObserver:self selector:@selector(defaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
+    [defaultNotifCenter addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(squareImageBorderTransition:) name:@"org.christopherstoll.squared.squaretransition" object:nil];
+    [defaultNotifCenter addObserver:self selector:@selector(squareImageUpdate:) name:@"org.christopherstoll.squared.squareupdate" object:nil];
+    [defaultNotifCenter addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
+    [defaultNotifCenter addObserver:self selector:@selector(squareImageBorderTransition:) name:@"org.christopherstoll.squared.squaretransition" object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(purchaseStarted:) name:@"org.christopherstoll.squared.purchasepending" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(purchaseFailed:) name:@"org.christopherstoll.squared.purchasefailed" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(purchaseCompleted:) name:@"org.christopherstoll.squared.purchased" object:nil];
+    [defaultNotifCenter addObserver:self selector:@selector(purchaseStarted:) name:@"org.christopherstoll.squared.purchasepending" object:nil];
+    [defaultNotifCenter addObserver:self selector:@selector(purchaseFailed:) name:@"org.christopherstoll.squared.purchasefailed" object:nil];
+    [defaultNotifCenter addObserver:self selector:@selector(purchaseCompleted:) name:@"org.christopherstoll.squared.purchased" object:nil];
 }
 
 - (void)dealloc {
@@ -363,12 +364,6 @@
             [self.imageStages addObject:[notification object]];
         }
         
-        //
-        // TODO: for free version with paid removal of mark
-        //  fix image alpha and size (across resolutions)
-        //  make it part of the exported image!
-        //  add to photo editing extension
-        //
         if (self.showWatermark) {
             CGRect tmp = [ImageUtils getDisplaySizeOfImageView:self.imageView];
             UIImageView *tmpImgVw = [[UIImageView alloc] initWithFrame:tmp];

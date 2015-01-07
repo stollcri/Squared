@@ -556,7 +556,7 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
             }
             ++rowCounter;
         } else {
-            if (!mirorForPadding && !smearForPadding && !colorForPadding) {
+            if (!colorForPadding && !mirorForPadding && !smearForPadding) {
                 for (int i = 0; i < tImgWidth; ++i) {
                     tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
                     tImg[tImgPixelLoc]   = padColorR;
