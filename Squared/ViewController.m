@@ -11,6 +11,7 @@
 #import "ViewController.h"
 #import "SquaredDefines.h"
 #import "UserDefaultsUtils.h"
+#import "PurchaseUtils.h"
 #import "ImageUtils.h"
 #import "SeamCarveBridge.h"
 
@@ -67,13 +68,14 @@
     // update shared defaults based upon the settings bundle defaults
     [UserDefaultsUtils setSharedFromStandard];
     
-    // show logo and purchase button if removal has not been purchased
+    self.showWatermark = YES;
+    self.showPurchaseButton = YES;
+    // the shared user setting may claim that we shouldn't display the watermark, but it
+    // could have been changed outside of the program, so we will validate the purchase.
+    // Once the validation process is complete the purchase notficiation will post which
+    // will remove the watermark (like when a new purchase is made)
     if (self.IAP_NoLogo) {
-        self.showWatermark = NO;
-        self.showPurchaseButton = NO;
-    } else {
-        self.showWatermark = YES;
-        self.showPurchaseButton = YES;
+        [self validatePurchase];
     }
     
     self.wasRotated = NO;
@@ -124,6 +126,18 @@
 
 - (void)defaultsChanged:(NSNotification *)notification {
     [self getDefaults];
+}
+
+- (void)validatePurchase
+{
+    PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
+    if ([purchase validateMainBundleReceipt]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+    } else {
+        SKReceiptRefreshRequest *receiptRefresh = [[SKReceiptRefreshRequest alloc] init];
+        [receiptRefresh setDelegate:self];
+        [receiptRefresh start];
+    }
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -376,6 +390,8 @@
     
     [self.removeLogoButton setHidden:YES];
     [self.logoImageView removeFromSuperview];
+    
+    [UserDefaultsUtils setBool:self.useSharedDefaults value:YES forKey:@"IAP_NoLogo"];
 }
 
 #pragma mark - UI Updates

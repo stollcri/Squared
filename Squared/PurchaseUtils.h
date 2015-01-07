@@ -7,11 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface PurchaseUtils : NSObject
 
 + (NSArray *)listProductIdentifiers;
 
 - (NSString *)getRootCertificateMD5;
+- (BOOL)validateMainBundleReceipt;
 
 @end

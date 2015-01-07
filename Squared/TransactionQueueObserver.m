@@ -79,20 +79,18 @@
 {
     //NSLog(@"completeTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    //[PurchaseUtils validateReceiptWithAppStore];
-    
-    //[UserDefaultsUtils setBool:self.useSharedDefaults value:YES forKey:@"IAP_NoLogo"];
-    //[[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+    if ([self.purchase validateMainBundleReceipt]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+    }
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction
 {
     //NSLog(@"restoreTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    //[PurchaseUtils validateReceiptWithAppStore];
-    
-    //[UserDefaultsUtils setBool:self.useSharedDefaults value:YES forKey:@"IAP_NoLogo"];
-    //[[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+    if ([self.purchase validateMainBundleReceipt]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+    }
 }
 
 @end

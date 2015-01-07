@@ -83,7 +83,7 @@
     } else {
         // User defaults from the settings bundle (only for the Squared app)
         NSUserDefaults *squaredDefaults = [NSUserDefaults standardUserDefaults];
-        if (![squaredDefaults integerForKey:@"cutsPerItteration"] && ![squaredDefaults integerForKey:@"padSquareColor"] && ![squaredDefaults integerForKey:@"maximumSize"] && ![squaredDefaults integerForKey:@"IAP_NoLogo"]) {
+        if (![squaredDefaults integerForKey:@"cutsPerItteration"] && ![squaredDefaults integerForKey:@"padSquareColor"] && ![squaredDefaults integerForKey:@"maximumSize"]) {
             
             // load up the same defaults as for the settings bundle
             NSURL *settingsBundleURLshared = [[NSBundle mainBundle] URLForResource:@"Settings" withExtension:@"bundle"];
