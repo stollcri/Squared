@@ -134,7 +134,7 @@
     // Shared settings indicate a purchase, but let's validate the receipt
     PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
     if ([purchase validateMainBundleReceipt]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+        [self purchaseCompleted:nil];
     } else {
         // Problems validating the receipt may be due to missing receipt, request a fresh copy
         SKReceiptRefreshRequest *receiptRefresh = [[SKReceiptRefreshRequest alloc] init];
@@ -148,7 +148,7 @@
     // The purchase receipt was refreshed, let's validate it
     PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
     if ([purchase validateMainBundleReceipt]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
+        [self purchaseCompleted:nil];
     }
 }
 
@@ -397,7 +397,7 @@
     [self.removeLogoButton setHidden:YES];
     [self.logoImageView removeFromSuperview];
     
-    [UserDefaultsUtils setBool:self.useSharedDefaults value:YES forKey:@"IAP_NoLogo"];
+    [UserDefaultsUtils setBool:YES value:YES forKey:@"IAP_NoLogo"];
 }
 
 #pragma mark - UI Updates
