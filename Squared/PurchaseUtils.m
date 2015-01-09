@@ -25,7 +25,7 @@
 
 @property NSString *receiptBundleID;
 @property NSString *receiptBundleVersion;
-
+@property NSString *receiptIAPProductID;
 @property BOOL mainBundleReceiptIsValid;
 
 @end
@@ -110,6 +110,17 @@
     return rootCertificateDataIsValid;
 }
 
+- (BOOL)validateIAPProductID:(NSString *)productID
+{
+    BOOL inAppPurchaseProductIdIsValid = NO;
+    
+    if ([productID isEqualToString:APP_IAP_PRODUCT_ID]) {
+        inAppPurchaseProductIdIsValid = YES;
+    }
+    
+    return inAppPurchaseProductIdIsValid;
+}
+
 - (BOOL)validateMainBundleReceipt
 {
     BOOL mainBundleReceiptIsValid = NO;
@@ -120,23 +131,30 @@
     BOOL receiptSignatureIsValid = NO;
     NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
     NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
-    if (loadedValidRootCert && self.appleRootCertificate) {
+    if (loadedValidRootCert) {
         receiptSignatureIsValid = [self validateSignatureOfReceiptData:receiptData withCertificate:self.appleRootCertificate];
     }
     
     BOOL receiptBelongsToDevice = NO;
-    if (receiptSignatureIsValid && self.asn1OctetString) {
+    if (receiptSignatureIsValid) {
         NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
         receiptBelongsToDevice = [self verifyReceipt:self.asn1OctetString forBundle:APP_BUNDLE_IDENTIFIER matchesDevice:deviceID];
     }
     
     BOOL bundleIdentifierIsValid = NO;
-    if (receiptBelongsToDevice && self.receiptBundleID) {
+    if (receiptBelongsToDevice) {
         bundleIdentifierIsValid = [self validateBundleIdentifier:self.receiptBundleID];
+        if (bundleIdentifierIsValid) {
+            self.mainBundleReceiptIsValid = YES;
+        }
     }
     
-    if (receiptSignatureIsValid && receiptBelongsToDevice && bundleIdentifierIsValid) {
-        self.mainBundleReceiptIsValid = YES;
+    BOOL inAppPurchaseProductIDIsValid = NO;
+    if ([self validateIAPProductID:self.receiptIAPProductID]) {
+        inAppPurchaseProductIDIsValid = YES;
+    }
+    
+    if (receiptSignatureIsValid && receiptBelongsToDevice && bundleIdentifierIsValid && inAppPurchaseProductIDIsValid) {
         mainBundleReceiptIsValid = YES;
     }
     
@@ -205,6 +223,7 @@
 - (BOOL)verifyReceipt:(ASN1_OCTET_STRING *)receipt forBundle:(NSString *)bundle matchesDevice:(NSUUID *)device
 {
     BOOL receiptBelongsToDevice = NO;
+    BOOL inAppPurchaseDataIsValid = NO;
     
     if (!receipt) {
         return receiptBelongsToDevice;
@@ -215,6 +234,7 @@
     NSData *receiptBundleId;
     NSData *receiptOpaqueValue;
     NSData *receiptHashValue;
+    NSData *tempInAppData;
     //unsigned int receiptOpaqueValueSize;
     //unsigned int receiptHashValueSize;
     
@@ -299,6 +319,8 @@
                         }
                         case 17: // In-App Purchase
                         {
+                            tempInAppData = [NSData dataWithBytes:p length:(NSUInteger)length];
+                            inAppPurchaseDataIsValid = [self validateInAppPurchasesData:tempInAppData];
                             // 1701: Quantity
                             // 1702: Product ID
                             // 1703: Transaction ID
@@ -326,8 +348,10 @@
         }
     }
     
-    self.receiptBundleID = receiptBundleIdString;
-    self.receiptBundleVersion = receiptBundleVersionString;
+    if (inAppPurchaseDataIsValid) {
+        self.receiptBundleID = receiptBundleIdString;
+        self.receiptBundleVersion = receiptBundleVersionString;
+    }
     
     //
     // All the data is gathered, now verify the hash
@@ -349,6 +373,90 @@
     }
     
     return receiptBelongsToDevice;
+}
+
+- (BOOL)validateInAppPurchasesData:(NSData *)inappData
+{
+    BOOL inAppPurchaseDataIsValid = NO;
+    
+    const unsigned char *p = [inappData bytes];
+    long length = 0;
+    int type = 0;
+    int xclass = 0;
+    const unsigned char *end = p + (unsigned int)[inappData length];
+    
+    while (p < end) {
+        ASN1_get_object(&p, &length, &type, &xclass, end - p);
+        
+        if(type != V_ASN1_SET) {
+            break;
+        }
+        
+        const unsigned char *set_end = p + length;
+        while (p < set_end) {
+            ASN1_get_object(&p, &length, &type, &xclass, set_end - p);
+            
+            if (type != V_ASN1_SEQUENCE) {
+                break;
+            }
+            
+            const unsigned char *seq_end = p + length;
+            int attr_type = 0;
+            int attr_version = 0;
+            
+            ASN1_get_object(&p, &length, &type, &xclass, seq_end - p); // type
+            if (type == V_ASN1_INTEGER) {
+                if(length == 1) {
+                    attr_type = p[0];
+                } else if(length == 2) {
+                    attr_type = p[0] * 0x100 + p[1];
+                }
+            }
+            p += length;
+            
+            ASN1_get_object(&p, &length, &type, &xclass, seq_end - p); // version
+            if ((type == V_ASN1_INTEGER) && (length == 1)) {
+                attr_version = p[0];
+            }
+            p += length;
+            
+            if ((attr_type >= 1700 && attr_type <= 1708) || (attr_type == 1711) || (attr_type == 1712)) {
+                ASN1_get_object(&p, &length, &type, &xclass, seq_end - p);
+                if (type == V_ASN1_OCTET_STRING) {
+                    
+                    if (attr_type == 1702) {
+                        int str_type = 0;
+                        long str_length = 0;
+                        const unsigned char *str_p = p;
+                        
+                        ASN1_get_object(&str_p, &str_length, &str_type, &xclass, seq_end - str_p);
+                        if (str_type == V_ASN1_UTF8STRING) {
+                            if (attr_type == 1702) {
+                                self.receiptIAPProductID = [[NSString alloc] initWithBytes:str_p length:str_length encoding:NSUTF8StringEncoding];
+                                inAppPurchaseDataIsValid = YES;
+                            }
+                        }
+                    }
+                    
+                }
+                p += length;
+            }
+            
+            // Skip any remaining fields in this SEQUENCE
+            while (p < seq_end) {
+                ASN1_get_object(&p, &length, &type, &xclass, seq_end - p);
+                p += length;
+            }
+        }
+        
+        // Skip any remaining fields in this SET
+        while (p < set_end) {
+            ASN1_get_object(&p, &length, &type, &xclass, set_end - p);
+            p += length;
+        }
+    }
+    
+    return inAppPurchaseDataIsValid;
 }
 
 @end

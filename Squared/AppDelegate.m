@@ -22,6 +22,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    #ifdef DEBUG
     //
     // Check some of the defines to make sure they are valid
     //
@@ -31,12 +32,19 @@
             NSLog(@"\n!!!!!\n!!!!! APP_BUNDLE_IDENTIFIER improperly set \n!!!!!\n");
         }
         
+        NSArray *productIdentifiers = [PurchaseUtils listProductIdentifiers];
+        NSString *IAPID = [productIdentifiers firstObject];
+        if (![IAPID isEqualToString:APP_IAP_PRODUCT_ID]) {
+            NSLog(@"\n!!!!!\n!!!!! APP_IAP_PRODUCT_ID improperly set \n!!!!!\n");
+        }
+        
         PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
         NSString *rootCertHash = [purchase getRootCertificateMD5];
         if (![rootCertHash isEqualToString:APPLE_ROOT_CERT_MD5]) {
             NSLog(@"\n!!!!!\n!!!!! APPLE_ROOT_CERT_MD5 improperly set \n!!!!!\n");
         }
     }
+    #endif
     
     // Set up a Store Kit Transaction Queue Observer
     self.transactionObserver = [[TransactionQueueObserver alloc] init];

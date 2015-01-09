@@ -11,6 +11,7 @@
 
 #define APP_BUNDLE_IDENTIFIER @"org.christopherstoll.Squared"
 #define APP_GROUP_SUITE_NAME @"group.org.christopherstoll.Squared"
+#define APP_IAP_PRODUCT_ID @"org.christopherstoll.Squared.IAP_NoLogo"
 
 #define APPLE_ROOT_CERT_MD5 @"7e611e0f7ba31b51986f413b41383ef0"
 
