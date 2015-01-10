@@ -8,6 +8,14 @@
 // Ref: https://github.com/rmaddy/VerifyStoreReceiptiOS/blob/master/VerifyStoreReceipt.m
 // Ref: https://github.com/AlanQuatermain/mac-app-store-validation-sample/blob/master/main.m
 //
+// There may be (should be) some very bad code smells (BAD SMELL) and anti-patterns in this code,
+// This is security (well, security of income) code, so we didn't want it's operation to be obvious.
+// A crack is always possible, we arere just tring to increase the amount of time required to find one.
+// It always took way more time to debug code written by non-CS programmers, so I tried to emulate them.
+// Also, we are using Objective-C methods, which are visible, instead of C functions to mislead crackers.
+// All code smell traps should alert if they are tripped in the development, debug, environment.
+// -- stollcri, 2015-01-09
+//
 
 #import "PurchaseUtils.h"
 #import "SquaredDefines.h"
@@ -26,6 +34,7 @@
 @property NSString *receiptBundleID;
 @property NSString *receiptBundleVersion;
 @property NSString *receiptIAPProductID;
+@property NSInteger currentValidationStage;
 @property BOOL mainBundleReceiptIsValid;
 
 @end
@@ -39,7 +48,8 @@
     return productIdentifiers;
 }
 
-- (NSString*)MD5fromData:(NSData *)data
+//- (NSString*)MD5fromData:(NSData *)data
+- (NSString*)VigenereFromData:(NSData *)data
 {
     // Create byte array of unsigned chars
     unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
@@ -60,7 +70,7 @@
 {
     self = [super init];
     if (self) {
-        //
+        self.currentValidationStage = 0;
     }
     return self;
 }
@@ -79,12 +89,13 @@
     return rootCertificateLoaded;
 }
 
-- (NSString *)getRootCertificateMD5
+//- (NSString *)getRootCertificateMD5
+- (NSString *)getRootCertificateVigenere
 {
     if (!self.appleRootCertificate) {
         [self loadAppleRootCertificate];
     }
-    return [self MD5fromData:self.appleRootCertificate];
+    return [self VigenereFromData:self.appleRootCertificate];
 }
 
 - (BOOL)validateBundleIdentifier:(NSString *)identifier
@@ -102,7 +113,7 @@
 {
     BOOL rootCertificateDataIsValid = NO;
     
-    NSString *rootCertHash = [self MD5fromData:data];
+    NSString *rootCertHash = [self VigenereFromData:data];
     if ([rootCertHash isEqualToString:APPLE_ROOT_CERT_MD5]) {
         rootCertificateDataIsValid = YES;
     }
@@ -121,12 +132,19 @@
     return inAppPurchaseProductIdIsValid;
 }
 
+- (NSInteger)getCurrentValidationStage
+{
+    //return self.currentValidationStage = 0;
+    return (NSInteger)self.mainBundleReceiptIsValid;
+}
+
 - (BOOL)validateMainBundleReceipt
 {
     BOOL mainBundleReceiptIsValid = NO;
     
     BOOL loadedValidRootCert = NO;
     loadedValidRootCert = [self loadAppleRootCertificate];
+    self.currentValidationStage += 1;
     
     BOOL receiptSignatureIsValid = NO;
     NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
@@ -134,12 +152,14 @@
     if (loadedValidRootCert) {
         receiptSignatureIsValid = [self validateSignatureOfReceiptData:receiptData withCertificate:self.appleRootCertificate];
     }
+    self.currentValidationStage += 1;
     
     BOOL receiptBelongsToDevice = NO;
     if (receiptSignatureIsValid) {
         NSUUID *deviceID = [[UIDevice currentDevice] identifierForVendor];
         receiptBelongsToDevice = [self verifyReceipt:self.asn1OctetString forBundle:APP_BUNDLE_IDENTIFIER matchesDevice:deviceID];
     }
+    self.currentValidationStage += 1;
     
     BOOL bundleIdentifierIsValid = NO;
     if (receiptBelongsToDevice) {
@@ -148,11 +168,15 @@
             self.mainBundleReceiptIsValid = YES;
         }
     }
+    self.currentValidationStage += 1;
     
     BOOL inAppPurchaseProductIDIsValid = NO;
     if ([self validateIAPProductID:self.receiptIAPProductID]) {
         inAppPurchaseProductIDIsValid = YES;
+    } else {
+        self.mainBundleReceiptIsValid = NO;
     }
+    self.currentValidationStage += 1;
     
     if (receiptSignatureIsValid && receiptBelongsToDevice && bundleIdentifierIsValid && inAppPurchaseProductIDIsValid) {
         mainBundleReceiptIsValid = YES;
@@ -244,13 +268,29 @@
     int xclass = 0;
     const unsigned char *end = p + receipt->length;
     
+    // BAD SMELL VARIABLES
+    NSUUID *tmpDeviceID = [[UIDevice currentDevice] identifierForVendor];
+    BOOL deviceIsDeviceID = YES;
+    BOOL bundleIsBundleID = YES;
+    srand((int)time(0));
+    
     ASN1_get_object(&p, &length, &type, &xclass, (end - p)); // Top-level (Receipt)
     if (type == V_ASN1_SET) {
         while (p < end) {
             ASN1_get_object(&p, &length, &type, &xclass, (end - p)); // Attribute
             
-            if (type != V_ASN1_SEQUENCE) {
-                break;
+            // BAD SMELL CHECKS (in addition to a legitimate check)
+            if (!deviceIsDeviceID || !bundleIsBundleID || (type != V_ASN1_SEQUENCE)) {
+                if (type != V_ASN1_SEQUENCE) {
+                    break;
+                } else {
+                    // if parameters are not as expected there's
+                    // a 1 in 3 chance of breaking on each loop
+                    int skipBreak = rand() % 3;
+                    if (!skipBreak) {
+                        break;
+                    }
+                }
             }
             
             const unsigned char *seq_end = p + length;
@@ -337,8 +377,36 @@
                         default:
                             break;
                     }
+                    
+                    // BAD SMELL
+                    // Bundle param should allways be APP_BUNDLE_IDENTIFIER,
+                    // if it is not then someone is doing something bad.
+                    // We don't need the bundle identifier at all,
+                    // but let's keep people honest.
+                    if (![bundle isEqual:APP_BUNDLE_IDENTIFIER]) {
+                        bundleIsBundleID = NO;
+                        #ifdef DEBUG
+                        if (DEVELOPMENT_CHECKS) {
+                            NSLog(@"\n!!!!!\n!!!!! PROBLEM: PurchaseUtils - verifyReceipt (A) \n!!!!!\n");
+                        }
+                        #endif
+                    }
                 }
                 p += length;
+                
+                // BAD SMELL
+                // Device param should allways be identifierForVendor,
+                // if it is not then someone is doing something bad.
+                // We don't need the device paramameter until later,
+                // but let's check here to be a little unpredictable.
+                if (![device isEqual:tmpDeviceID]) {
+                    deviceIsDeviceID = NO;
+                    #ifdef DEBUG
+                    if (DEVELOPMENT_CHECKS) {
+                        NSLog(@"\n!!!!!\n!!!!! PROBLEM: PurchaseUtils - verifyReceipt (B) \n!!!!!\n");
+                    }
+                    #endif
+                }
             }
             
             while (p < seq_end) {
@@ -357,19 +425,21 @@
     // All the data is gathered, now verify the hash
     //
     
-    unsigned char uuidBytes[16];
-    [device getUUIDBytes:uuidBytes];
-    
-    NSMutableData *input = [NSMutableData data];
-    [input appendBytes:uuidBytes length:sizeof(uuidBytes)];
-    [input appendData:receiptOpaqueValue];
-    [input appendData:receiptBundleId];
-    
-    NSMutableData *hash = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
-    SHA1([input bytes], [input length], [hash mutableBytes]);
-    
-    if ([hash isEqualToData:receiptHashValue]) {
-        receiptBelongsToDevice = YES;
+    if (receiptOpaqueValue && receiptBundleId) {
+        unsigned char uuidBytes[16];
+        [device getUUIDBytes:uuidBytes];
+        
+        NSMutableData *input = [NSMutableData data];
+        [input appendBytes:uuidBytes length:sizeof(uuidBytes)];
+        [input appendData:receiptOpaqueValue];
+        [input appendData:receiptBundleId];
+        
+        NSMutableData *hash = [NSMutableData dataWithLength:SHA_DIGEST_LENGTH];
+        SHA1([input bytes], [input length], [hash mutableBytes]);
+        
+        if ([hash isEqualToData:receiptHashValue]) {
+            receiptBelongsToDevice = YES;
+        }
     }
     
     return receiptBelongsToDevice;
@@ -385,10 +455,17 @@
     int xclass = 0;
     const unsigned char *end = p + (unsigned int)[inappData length];
     
+    // BAD SMELL VARIABLES
+    NSLog(@"%ld", (long)self.currentValidationStage);
+    NSInteger currentStage = self.currentValidationStage;
+    BOOL stageCountIsValid = YES;
+    int expectedStageCount = 4;
+    
     while (p < end) {
         ASN1_get_object(&p, &length, &type, &xclass, end - p);
         
-        if(type != V_ASN1_SET) {
+        // BAD SMELL CHECKS (in addition to a legit check)
+        if(!stageCountIsValid || (type != V_ASN1_SET)) {
             break;
         }
         
@@ -396,8 +473,23 @@
         while (p < set_end) {
             ASN1_get_object(&p, &length, &type, &xclass, set_end - p);
             
-            if (type != V_ASN1_SEQUENCE) {
+            // BAD SMELL CHECKS (in addition to a legit check)
+            if (!stageCountIsValid || (type != V_ASN1_SEQUENCE)) {
                 break;
+            }
+            
+            // BAD SMELL
+            // Current stage should always match
+            // what it was at development, so if
+            // it doesn't, then it was changed
+            // after development. (code path)
+            if (currentStage != expectedStageCount) {
+                stageCountIsValid = NO;
+                #ifdef DEBUG
+                if (DEVELOPMENT_CHECKS) {
+                    NSLog(@"\n!!!!!\n!!!!! PROBLEM: PurchaseUtils - validateInAppPurchasesData \n!!!!!\n");
+                }
+                #endif
             }
             
             const unsigned char *seq_end = p + length;
@@ -417,6 +509,7 @@
             ASN1_get_object(&p, &length, &type, &xclass, seq_end - p); // version
             if ((type == V_ASN1_INTEGER) && (length == 1)) {
                 attr_version = p[0];
+                attr_version = attr_version;
             }
             p += length;
             

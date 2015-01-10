@@ -39,7 +39,7 @@
         }
         
         PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
-        NSString *rootCertHash = [purchase getRootCertificateMD5];
+        NSString *rootCertHash = [purchase getRootCertificateVigenere];
         if (![rootCertHash isEqualToString:APPLE_ROOT_CERT_MD5]) {
             NSLog(@"\n!!!!!\n!!!!! APPLE_ROOT_CERT_MD5 improperly set \n!!!!!\n");
         }

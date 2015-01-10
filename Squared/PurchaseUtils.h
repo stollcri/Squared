@@ -13,7 +13,9 @@
 
 + (NSArray *)listProductIdentifiers;
 
-- (NSString *)getRootCertificateMD5;
+- (NSString *)getRootCertificateVigenere;
+
+- (NSInteger)getCurrentValidationStage;
 - (BOOL)validateMainBundleReceipt;
 
 @end
