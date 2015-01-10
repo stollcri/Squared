@@ -145,7 +145,7 @@
 }
 
 - (BOOL)validateMainBundleReceipt
-{
+{    
     BOOL mainBundleReceiptIsValid = NO;
     
     BOOL loadedValidRootCert = NO;
@@ -462,10 +462,9 @@
     const unsigned char *end = p + (unsigned int)[inappData length];
     
     // BAD SMELL VARIABLES
-    NSLog(@"%ld", (long)self.currentValidationStage);
     NSInteger currentStage = self.currentValidationStage;
     BOOL stageCountIsValid = YES;
-    int expectedStageCount = 4;
+    int expectedStageCount = 2;
     
     while (p < end) {
         ASN1_get_object(&p, &length, &type, &xclass, end - p);
