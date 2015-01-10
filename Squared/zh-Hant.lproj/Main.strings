@@ -1,0 +1,15 @@
+
+/* Class = "IBUILabel"; text = "Thank you for your purchase!"; ObjectID = "0h8-Rk-8OW"; */
+"0h8-Rk-8OW.text" = "感謝您的購買";
+
+/* Class = "IBUIButton"; normalTitle = "Buy Now"; ObjectID = "M9j-qc-f0F"; */
+"M9j-qc-f0F.normalTitle" = "購買";
+
+/* Class = "IBUILabel"; text = "Remove the Squared Pics logo from finished pictures and support future improvements to the app by making a purchase"; ObjectID = "aXO-Ng-pYI"; */
+"aXO-Ng-pYI.text" = "從成品圖片刪除圖片平方標識和支持應用程序未來的改進通過購買";
+
+/* Class = "IBUIButton"; normalTitle = "Done"; ObjectID = "ab6-if-ms0"; */
+"ab6-if-ms0.normalTitle" = "完成";
+
+/* Class = "IBUIButton"; normalTitle = "Remove Logo"; ObjectID = "zl6-8h-c50"; */
+"zl6-8h-c50.normalTitle" = "刪除標誌";
