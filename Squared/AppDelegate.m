@@ -44,6 +44,7 @@
             NSLog(@"\n!!!!!\n!!!!! APPLE_ROOT_CERT_MD5 improperly set \n!!!!!\n");
         }
         
+        // !!!!! (Build Settings > Packaging > Compress PNG Files) must be OFF !!!!!
         NSString *wm22Path = [[NSBundle mainBundle] pathForResource:WATERMARK_22_FILENAME ofType:WATERMARK_FILETYPE];
         NSString *wm22Hash = [purchase vigenereFromFile:wm22Path];
         if (![wm22Hash isEqualToString:WATERMARK_22_PNG_MD5]) {
