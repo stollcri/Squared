@@ -134,7 +134,21 @@
     // Shared settings indicate a purchase, but let's validate the receipt
     PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
     if ([purchase validateMainBundleReceipt]) {
-        [self purchaseCompleted:nil];
+        //
+        // Duplicate Code, on purpose (ID: removeWatermarkUI)
+        // Don't want a "naked" method to remove IAP UI elements
+        //
+        // remove any currently visible purchase hints
+        [self.removeLogoButton setHidden:YES];
+        [self.logoImageView removeFromSuperview];
+        // in case validateMainBundleReceipt was faked
+        if (purchase.getCurrentValidationStage > 0) {
+            // prevent future display of purchase hints
+            self.showPurchaseButton = NO;
+            self.showWatermark = NO;
+        }
+        // prevent display of purchase hints in photo editing app
+        [UserDefaultsUtils setBool:YES value:YES forKey:@"IAP_NoLogo"];
     } else {
         // Problems validating the receipt may be due to missing receipt, request a fresh copy
         SKReceiptRefreshRequest *receiptRefresh = [[SKReceiptRefreshRequest alloc] init];
@@ -148,7 +162,23 @@
     // The purchase receipt was refreshed, let's validate it
     PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
     if ([purchase validateMainBundleReceipt]) {
-        [self purchaseCompleted:nil];
+        //
+        // Duplicate Code, on purpose (ID: removeWatermarkUI)
+        // Don't want a "naked" method to remove IAP UI elements
+        //
+        // remove any currently visible purchase hints
+        [self.removeLogoButton setHidden:YES];
+        [self.logoImageView removeFromSuperview];
+        // in case validateMainBundleReceipt was faked
+        if (purchase.getCurrentValidationStage > 0) {
+            // prevent future display of purchase hints
+            self.showPurchaseButton = NO;
+            self.showWatermark = NO;
+        }
+        // prevent display of purchase hints in photo editing app
+        [UserDefaultsUtils setBool:YES value:YES forKey:@"IAP_NoLogo"];
+    } else {
+        [UserDefaultsUtils setBool:YES value:NO forKey:@"IAP_NoLogo"];
     }
 }
 
@@ -391,13 +421,9 @@
 
 - (void)purchaseCompleted:(NSNotification *)notification
 {
-    self.showPurchaseButton = NO;
-    self.showWatermark = NO;
-    
-    [self.removeLogoButton setHidden:YES];
-    [self.logoImageView removeFromSuperview];
-    
-    [UserDefaultsUtils setBool:YES value:YES forKey:@"IAP_NoLogo"];
+    if (notification) {
+        [self validatePurchase];
+    }
 }
 
 #pragma mark - UI Updates

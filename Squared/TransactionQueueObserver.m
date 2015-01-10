@@ -8,13 +8,11 @@
 
 #import "TransactionQueueObserver.h"
 #import "SquaredDefines.h"
-#import "PurchaseUtils.h"
 #import "UserDefaultsUtils.h"
 
 @interface TransactionQueueObserver ()
 
 @property BOOL useSharedDefaults;
-@property PurchaseUtils *purchase;
 
 @end
 
@@ -24,7 +22,6 @@
     self = [super init];
     if (self) {
         self.useSharedDefaults = YES;
-        self.purchase = [[PurchaseUtils alloc] init];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     }
     return self;
@@ -79,18 +76,14 @@
 {
     //NSLog(@"completeTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    if ([self.purchase validateMainBundleReceipt]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction
 {
     //NSLog(@"restoreTransaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    if ([self.purchase validateMainBundleReceipt]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchased" object:nil];
 }
 
 @end
