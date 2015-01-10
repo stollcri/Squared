@@ -133,6 +133,8 @@
     self.IAP_NoLogo = [UserDefaultsUtils getBoolDefault:YES forKey:@"IAP_NoLogo"]; // always from shared
 }
 
+#pragma mark - Purchase
+
 - (void)defaultsChanged:(NSNotification *)notification {
     [self getDefaults];
 }
@@ -193,37 +195,13 @@
 - (void)validateNoPurchase
 {
     // Make sure the watermark files are not tampered with
-    PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
-    int imageCount = 3;
-    int missCount = imageCount;
-    
-    NSString *wm22Path = [[NSBundle mainBundle] pathForResource:WATERMARK_22_FILENAME ofType:WATERMARK_FILETYPE];
-    NSString *wm22Hash = [purchase vigenereFromFile:wm22Path];
-    if (![wm22Hash isEqualToString:WATERMARK_22_PNG_MD5]) {
-        self.watermarkImages = NO;
-        missCount -= 1;
-    }
-    
-    NSString *wm44Path = [[NSBundle mainBundle] pathForResource:WATERMARK_44_FILENAME ofType:WATERMARK_FILETYPE];
-    NSString *wm44Hash = [purchase vigenereFromFile:wm44Path];
-    if (![wm44Hash isEqualToString:WATERMARK_44_PNG_MD5]) {
-        self.watermarkImages = NO;
-        missCount -= 1;
-    }
-    
-    NSString *wm66Path = [[NSBundle mainBundle] pathForResource:WATERMARK_66_FILENAME ofType:WATERMARK_FILETYPE];
-    NSString *wm66Hash = [purchase vigenereFromFile:wm66Path];
-    if (![wm66Hash isEqualToString:WATERMARK_66_PNG_MD5]) {
-        self.watermarkImages = NO;
-        missCount -= 1;
-    }
-    
-    // setting watermarkImages should be enough,
-    // but we'll double down on this check
-    if (missCount != imageCount) {
-        self.maximumSize = 1;
+    // Not needed with images in Imaged.xcassets, I think
+    if (!self.watermarkImages) {
+        NSLog(@"Problem detected in validateNoPurchase");
     }
 }
+
+#pragma mark - image picker
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
@@ -236,6 +214,8 @@
             maximumSize = (int)(self.maximumSize * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
         }
         
+        // the app will continue to function with modified
+        // watermark files, but the resolution will be poor
         if (!self.watermarkImages) {
             maximumSize = MAXIMUM_SIZE_TAMPERED;
         }

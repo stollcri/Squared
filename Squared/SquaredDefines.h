@@ -13,15 +13,6 @@
 #define APP_GROUP_SUITE_NAME @"group.org.christopherstoll.Squared"
 #define APP_IAP_PRODUCT_ID @"org.christopherstoll.Squared.IAP_NoLogo"
 
-#define WATERMARK_FILETYPE @"png"
-#define WATERMARK_22_FILENAME @"SquaredWatermark-22"
-#define WATERMARK_44_FILENAME @"SquaredWatermark-44"
-#define WATERMARK_66_FILENAME @"SquaredWatermark-66"
-
-#define WATERMARK_22_PNG_MD5 @"c9f213f2c79bbde90b5af3093e5df2a0"
-#define WATERMARK_44_PNG_MD5 @"98f526dbbe6c52fd4c3225fdd4ccb97b"
-#define WATERMARK_66_PNG_MD5 @"449c0000f51f4a4f1f12fd2c27a21bd8"
-
 #define APPLE_ROOT_CERT_MD5 @"7e611e0f7ba31b51986f413b41383ef0"
 
 #ifdef DEBUG

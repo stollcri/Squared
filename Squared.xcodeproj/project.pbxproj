@@ -22,30 +22,12 @@
 		7D26E2F21A10FC7C001849FF /* Squared Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7D26E2E21A10FC7C001849FF /* Squared Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7D26E2F91A11086D001849FF /* SeamCarve.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2F71A11086D001849FF /* SeamCarve.c */; };
 		7D2BAC8B1A57337000468D07 /* PurchaseUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D2BAC8A1A57337000468D07 /* PurchaseUtils.m */; };
-		7D32FEA61A51F56800B2B072 /* Gear-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D32FEA31A51F56800B2B072 /* Gear-22.png */; };
-		7D32FEA71A51F56800B2B072 /* Gear-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D32FEA41A51F56800B2B072 /* Gear-44.png */; };
-		7D32FEA81A51F56800B2B072 /* Gear-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D32FEA51A51F56800B2B072 /* Gear-66.png */; };
-		7D454BD61A2909CA0008D47E /* SquaredLogoC-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCA1A2909CA0008D47E /* SquaredLogoC-60.png */; };
-		7D454BD71A2909CA0008D47E /* SquaredLogoC-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCB1A2909CA0008D47E /* SquaredLogoC-60@2x.png */; };
-		7D454BD81A2909CA0008D47E /* SquaredLogoC-60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCC1A2909CA0008D47E /* SquaredLogoC-60@3x.png */; };
-		7D454BD91A2909CA0008D47E /* SquaredLogoC-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCD1A2909CA0008D47E /* SquaredLogoC-76.png */; };
-		7D454BDA1A2909CA0008D47E /* SquaredLogoC-76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCE1A2909CA0008D47E /* SquaredLogoC-76@2x.png */; };
-		7D454BDB1A2909CA0008D47E /* SquaredLogoC-AppStore.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BCF1A2909CA0008D47E /* SquaredLogoC-AppStore.png */; };
-		7D454BDC1A2909CA0008D47E /* SquaredLogoC-AppStore@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD01A2909CA0008D47E /* SquaredLogoC-AppStore@2x.png */; };
-		7D454BDD1A2909CA0008D47E /* SquaredLogoC-Small-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD11A2909CA0008D47E /* SquaredLogoC-Small-40.png */; };
-		7D454BDE1A2909CA0008D47E /* SquaredLogoC-Small-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD21A2909CA0008D47E /* SquaredLogoC-Small-40@2x.png */; };
-		7D454BDF1A2909CA0008D47E /* SquaredLogoC-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD31A2909CA0008D47E /* SquaredLogoC-Small.png */; };
-		7D454BE01A2909CA0008D47E /* SquaredLogoC-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD41A2909CA0008D47E /* SquaredLogoC-Small@2x.png */; };
-		7D454BE11A2909CA0008D47E /* SquaredLogoC-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D454BD51A2909CA0008D47E /* SquaredLogoC-Small@3x.png */; };
 		7D6F4A181A576B36004FDB05 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C71A10F997001849FF /* LaunchScreen.xib */; };
 		7D6F4A191A576B40004FDB05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D26E2C21A10F997001849FF /* Main.storyboard */; };
 		7D87B7EF1A5B32C200133AF5 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D87B7ED1A5B32C200133AF5 /* libcrypto.a */; };
 		7D87B7F01A5B32C200133AF5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D87B7EE1A5B32C200133AF5 /* libssl.a */; };
 		7D87B7F21A5B8BB300133AF5 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 7D87B7F11A5B7C0C00133AF5 /* AppleIncRootCertificate.cer */; };
 		7D977A801A50F9C600F13024 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7D09C95B1A4CD63200F1C5EA /* Settings.bundle */; };
-		7DA7C0591A5498E20038AFE0 /* SquaredWatermark-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0561A5498E20038AFE0 /* SquaredWatermark-66.png */; };
-		7DA7C05A1A5498E20038AFE0 /* SquaredWatermark-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0571A5498E20038AFE0 /* SquaredWatermark-22.png */; };
-		7DA7C05B1A5498E20038AFE0 /* SquaredWatermark-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DA7C0581A5498E20038AFE0 /* SquaredWatermark-44.png */; };
 		7DA7C05E1A55A26F0038AFE0 /* ImageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7C05D1A55A26F0038AFE0 /* ImageUtils.m */; };
 		7DA7C05F1A55A26F0038AFE0 /* ImageUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DA7C05D1A55A26F0038AFE0 /* ImageUtils.m */; };
 		7DA7C0611A55DD990038AFE0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DA7C0601A55DD990038AFE0 /* StoreKit.framework */; };
@@ -56,21 +38,13 @@
 		7DC52CB41A15746C00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
 		7DC52CB51A1592DF00947F5B /* SeamCarveBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DC52CB31A15746C00947F5B /* SeamCarveBridge.m */; };
 		7DC52CB61A1592E800947F5B /* SeamCarve.c in Sources */ = {isa = PBXBuildFile; fileRef = 7D26E2F71A11086D001849FF /* SeamCarve.c */; };
-		7DD3C4011A1FB221003A7A81 /* Thaw-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3F91A1FB221003A7A81 /* Thaw-22.png */; };
 		7DD3C4021A1FB221003A7A81 /* Thaw-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3F91A1FB221003A7A81 /* Thaw-22.png */; };
-		7DD3C4031A1FB221003A7A81 /* Freeze-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FA1A1FB221003A7A81 /* Freeze-22.png */; };
 		7DD3C4041A1FB221003A7A81 /* Freeze-22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FA1A1FB221003A7A81 /* Freeze-22.png */; };
-		7DD3C4051A1FB221003A7A81 /* Thaw-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FB1A1FB221003A7A81 /* Thaw-44.png */; };
 		7DD3C4061A1FB221003A7A81 /* Thaw-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FB1A1FB221003A7A81 /* Thaw-44.png */; };
-		7DD3C4071A1FB221003A7A81 /* Freeze-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FC1A1FB221003A7A81 /* Freeze-44.png */; };
 		7DD3C4081A1FB221003A7A81 /* Freeze-44.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FC1A1FB221003A7A81 /* Freeze-44.png */; };
-		7DD3C4091A1FB221003A7A81 /* Freeze-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FD1A1FB221003A7A81 /* Freeze-66.png */; };
 		7DD3C40A1A1FB221003A7A81 /* Freeze-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FD1A1FB221003A7A81 /* Freeze-66.png */; };
-		7DD3C40B1A1FB221003A7A81 /* Thaw-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FE1A1FB221003A7A81 /* Thaw-66.png */; };
 		7DD3C40C1A1FB221003A7A81 /* Thaw-66.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FE1A1FB221003A7A81 /* Thaw-66.png */; };
-		7DD3C40D1A1FB221003A7A81 /* Freeze.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FF1A1FB221003A7A81 /* Freeze.png */; };
 		7DD3C40E1A1FB221003A7A81 /* Freeze.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C3FF1A1FB221003A7A81 /* Freeze.png */; };
-		7DD3C40F1A1FB221003A7A81 /* Thaw.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C4001A1FB221003A7A81 /* Thaw.png */; };
 		7DD3C4101A1FB221003A7A81 /* Thaw.png in Resources */ = {isa = PBXBuildFile; fileRef = 7DD3C4001A1FB221003A7A81 /* Thaw.png */; };
 /* End PBXBuildFile section */
 
@@ -719,35 +693,9 @@
 			files = (
 				7D6F4A191A576B40004FDB05 /* Main.storyboard in Resources */,
 				7D6F4A181A576B36004FDB05 /* LaunchScreen.xib in Resources */,
-				7D32FEA61A51F56800B2B072 /* Gear-22.png in Resources */,
-				7DD3C4031A1FB221003A7A81 /* Freeze-22.png in Resources */,
-				7D32FEA71A51F56800B2B072 /* Gear-44.png in Resources */,
-				7D454BDE1A2909CA0008D47E /* SquaredLogoC-Small-40@2x.png in Resources */,
-				7DA7C05A1A5498E20038AFE0 /* SquaredWatermark-22.png in Resources */,
-				7DD3C4011A1FB221003A7A81 /* Thaw-22.png in Resources */,
-				7D454BE01A2909CA0008D47E /* SquaredLogoC-Small@2x.png in Resources */,
-				7D454BDD1A2909CA0008D47E /* SquaredLogoC-Small-40.png in Resources */,
-				7DD3C40D1A1FB221003A7A81 /* Freeze.png in Resources */,
-				7D454BD81A2909CA0008D47E /* SquaredLogoC-60@3x.png in Resources */,
-				7D32FEA81A51F56800B2B072 /* Gear-66.png in Resources */,
-				7DD3C4071A1FB221003A7A81 /* Freeze-44.png in Resources */,
-				7DA7C05B1A5498E20038AFE0 /* SquaredWatermark-44.png in Resources */,
-				7D454BDA1A2909CA0008D47E /* SquaredLogoC-76@2x.png in Resources */,
 				7DA7C0671A55FC9B0038AFE0 /* Products.plist in Resources */,
-				7D454BE11A2909CA0008D47E /* SquaredLogoC-Small@3x.png in Resources */,
-				7D454BDF1A2909CA0008D47E /* SquaredLogoC-Small.png in Resources */,
-				7D454BDC1A2909CA0008D47E /* SquaredLogoC-AppStore@2x.png in Resources */,
-				7DD3C40B1A1FB221003A7A81 /* Thaw-66.png in Resources */,
-				7DD3C4091A1FB221003A7A81 /* Freeze-66.png in Resources */,
 				7D87B7F21A5B8BB300133AF5 /* AppleIncRootCertificate.cer in Resources */,
-				7D454BD71A2909CA0008D47E /* SquaredLogoC-60@2x.png in Resources */,
 				7D09C95C1A4CD63200F1C5EA /* Settings.bundle in Resources */,
-				7DD3C40F1A1FB221003A7A81 /* Thaw.png in Resources */,
-				7DD3C4051A1FB221003A7A81 /* Thaw-44.png in Resources */,
-				7D454BDB1A2909CA0008D47E /* SquaredLogoC-AppStore.png in Resources */,
-				7D454BD61A2909CA0008D47E /* SquaredLogoC-60.png in Resources */,
-				7D454BD91A2909CA0008D47E /* SquaredLogoC-76.png in Resources */,
-				7DA7C0591A5498E20038AFE0 /* SquaredWatermark-66.png in Resources */,
 				7D26E2C61A10F997001849FF /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -896,6 +844,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -943,6 +892,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COMPRESS_PNG_FILES = YES;
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
