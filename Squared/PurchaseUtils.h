@@ -13,6 +13,7 @@
 
 + (NSArray *)listProductIdentifiers;
 
+- (NSString *)vigenereFromFile:(NSString *)path;
 - (NSString *)getRootCertificateVigenere;
 
 - (NSInteger)getCurrentValidationStage;

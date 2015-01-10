@@ -49,7 +49,7 @@
 }
 
 //- (NSString*)MD5fromData:(NSData *)data
-- (NSString*)VigenereFromData:(NSData *)data
+- (NSString *)vigenereFromData:(NSData *)data
 {
     // Create byte array of unsigned chars
     unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
@@ -64,6 +64,12 @@
     }
     
     return output;
+}
+
+- (NSString *)vigenereFromFile:(NSString *)path
+{
+    NSData *fileData = [NSData dataWithContentsOfFile:path];
+    return [self vigenereFromData:fileData];
 }
 
 - (id)init
@@ -95,7 +101,7 @@
     if (!self.appleRootCertificate) {
         [self loadAppleRootCertificate];
     }
-    return [self VigenereFromData:self.appleRootCertificate];
+    return [self vigenereFromData:self.appleRootCertificate];
 }
 
 - (BOOL)validateBundleIdentifier:(NSString *)identifier
@@ -113,7 +119,7 @@
 {
     BOOL rootCertificateDataIsValid = NO;
     
-    NSString *rootCertHash = [self VigenereFromData:data];
+    NSString *rootCertHash = [self vigenereFromData:data];
     if ([rootCertHash isEqualToString:APPLE_ROOT_CERT_MD5]) {
         rootCertificateDataIsValid = YES;
     }

@@ -44,6 +44,9 @@
 //  the first only gets turned off when the watermark removal is purchased
 //  the second can be turned off at any time, when a purchase cannot be made or when one is in progress
 
+// This should be called watermarkImagesAreValid
+@property BOOL watermarkImages;
+
 @end
 
 @implementation ViewController
@@ -68,6 +71,9 @@
     // update shared defaults based upon the settings bundle defaults
     [UserDefaultsUtils setSharedFromStandard];
     
+    // Assume watermark images are valid
+    self.watermarkImages = YES;
+    
     self.showWatermark = YES;
     self.showPurchaseButton = YES;
     // the shared user setting may claim that we shouldn't display the watermark, but it
@@ -76,6 +82,8 @@
     // will remove the watermark (like when a new purchase is made)
     if (self.IAP_NoLogo) {
         [self validatePurchase];
+    } else {
+        [self validateNoPurchase];
     }
     
     self.wasRotated = NO;
@@ -182,6 +190,41 @@
     }
 }
 
+- (void)validateNoPurchase
+{
+    // Make sure the watermark files are not tampered with
+    PurchaseUtils *purchase = [[PurchaseUtils alloc] init];
+    int imageCount = 3;
+    int missCount = imageCount;
+    
+    NSString *wm22Path = [[NSBundle mainBundle] pathForResource:WATERMARK_22_FILENAME ofType:WATERMARK_FILETYPE];
+    NSString *wm22Hash = [purchase vigenereFromFile:wm22Path];
+    if (![wm22Hash isEqualToString:WATERMARK_22_PNG_MD5]) {
+        self.watermarkImages = NO;
+        missCount -= 1;
+    }
+    
+    NSString *wm44Path = [[NSBundle mainBundle] pathForResource:WATERMARK_44_FILENAME ofType:WATERMARK_FILETYPE];
+    NSString *wm44Hash = [purchase vigenereFromFile:wm44Path];
+    if (![wm44Hash isEqualToString:WATERMARK_44_PNG_MD5]) {
+        self.watermarkImages = NO;
+        missCount -= 1;
+    }
+    
+    NSString *wm66Path = [[NSBundle mainBundle] pathForResource:WATERMARK_66_FILENAME ofType:WATERMARK_FILETYPE];
+    NSString *wm66Hash = [purchase vigenereFromFile:wm66Path];
+    if (![wm66Hash isEqualToString:WATERMARK_66_PNG_MD5]) {
+        self.watermarkImages = NO;
+        missCount -= 1;
+    }
+    
+    // setting watermarkImages should be enough,
+    // but we'll double down on this check
+    if (missCount != imageCount) {
+        self.maximumSize = 1;
+    }
+}
+
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage *img = [info objectForKey:UIImagePickerControllerOriginalImage];
@@ -191,6 +234,10 @@
         int maximumSize = MAXIMUM_SIZE_DEFAULT;
         if (self.maximumSize) {
             maximumSize = (int)(self.maximumSize * MAXIMUM_SIZE_MULTIPLIER) + MAXIMUM_SIZE_BASEVALUE;
+        }
+        
+        if (!self.watermarkImages) {
+            maximumSize = MAXIMUM_SIZE_TAMPERED;
         }
         
         // make sure choosen image is less than maximum size
