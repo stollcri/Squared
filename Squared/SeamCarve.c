@@ -458,9 +458,13 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
     int outerLoop = 0;
     int padLinesTop = 0;
     int padLinesBottom = 0;
+    
     int mirorForPadding = 0;
     int smearForPadding = 0;
     int colorForPadding = 0;
+    int mirorForPaddingB = 0;
+    int smearForPaddingB = 0;
+    
     if (padMode >= PAD_MODE_BORDERED_BEGIN) {
         outerLoop = tImgWidth;
         int padLines = tImgWidth - tImgHeight;
@@ -520,6 +524,10 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
             mirorForPadding = 1;
         } else if (padMode == PAD_MODE_SMEAR) {
             smearForPadding = 1;
+        } else if (padMode == PAD_MODE_B_MIRROR) {
+            mirorForPaddingB = 1;
+        } else if (padMode == PAD_MODE_B_SMEAR) {
+            smearForPaddingB = 1;
         }
     } else {
         outerLoop = tImgHeight;
@@ -556,7 +564,7 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
             }
             ++rowCounter;
         } else {
-            if (!colorForPadding && !mirorForPadding && !smearForPadding) {
+            if (!colorForPadding && !mirorForPadding && !smearForPadding && !mirorForPaddingB && !smearForPaddingB) {
                 for (int i = 0; i < tImgWidth; ++i) {
                     tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
                     tImg[tImgPixelLoc]   = padColorR;
@@ -619,6 +627,46 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
                         tImg[tImgPixelLoc]   = sImgPixels[pixelLocation].r;
                         tImg[tImgPixelLoc+1] = sImgPixels[pixelLocation].g;
                         tImg[tImgPixelLoc+2] = sImgPixels[pixelLocation].b;
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                }
+            } else if (mirorForPaddingB) {
+                if (j < padLinesTop) {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = ((padLinesTop - j) * sImgWidth) + i;
+                        tImg[tImgPixelLoc]   = max((sImgPixels[pixelLocation].r - ((padLinesTop - j) * 2)), 0);
+                        tImg[tImgPixelLoc+1] = max((sImgPixels[pixelLocation].g - ((padLinesTop - j) * 2)), 0);
+                        tImg[tImgPixelLoc+2] = max((sImgPixels[pixelLocation].b - ((padLinesTop - j) * 2)), 0);
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                } else {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = (sImgHeight * sImgWidth) - (sImgWidth * (j - padLinesBottom + 1)) + i;
+                        tImg[tImgPixelLoc]   = max((sImgPixels[pixelLocation].r - ((j - padLinesBottom) * 2)), 0);
+                        tImg[tImgPixelLoc+1] = max((sImgPixels[pixelLocation].g - ((j - padLinesBottom) * 2)), 0);
+                        tImg[tImgPixelLoc+2] = max((sImgPixels[pixelLocation].b - ((j - padLinesBottom) * 2)), 0);
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                }
+            } else if (smearForPaddingB) {
+                if (j < padLinesTop) {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = i;
+                        tImg[tImgPixelLoc]   = max((sImgPixels[pixelLocation].r - ((padLinesTop - j) * 2)), 0);
+                        tImg[tImgPixelLoc+1] = max((sImgPixels[pixelLocation].g - ((padLinesTop - j) * 2)), 0);
+                        tImg[tImgPixelLoc+2] = max((sImgPixels[pixelLocation].b - ((padLinesTop - j) * 2)), 0);
+                        tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
+                    }
+                } else {
+                    for (int i = 0; i < tImgWidth; ++i) {
+                        tImgPixelLoc = (j * (tImgWidth * pixelDepth)) + (i * pixelDepth);
+                        pixelLocation = (sImgHeight * sImgWidth) - sImgWidth + i;
+                        tImg[tImgPixelLoc]   = max((sImgPixels[pixelLocation].r - ((j - padLinesBottom) * 2)), 0);
+                        tImg[tImgPixelLoc+1] = max((sImgPixels[pixelLocation].g - ((j - padLinesBottom) * 2)), 0);
+                        tImg[tImgPixelLoc+2] = max((sImgPixels[pixelLocation].b - ((j - padLinesBottom) * 2)), 0);
                         tImg[tImgPixelLoc+3] = sImgPixels[pixelLocation].a;
                     }
                 }
