@@ -80,6 +80,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7D0277BD1A6EF3C00072E956 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
+		7D0277BE1A6EF3C00072E956 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		7D0277BF1A6EF3EA0072E956 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Main.strings; sourceTree = "<group>"; };
+		7D0277C01A6EF3EA0072E956 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		7D0277C11A6EF4160072E956 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Main.strings; sourceTree = "<group>"; };
+		7D0277C21A6EF4160072E956 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		7D0277C31A6EF4520072E956 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Main.strings; sourceTree = "<group>"; };
+		7D0277C41A6EF4520072E956 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		7D0277C51A6EF8CB0072E956 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Main.strings; sourceTree = "<group>"; };
+		7D0277C61A6EF8CB0072E956 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		7D09C95B1A4CD63200F1C5EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		7D16EF561A50D5FC00A86A6F /* UserDefaultsUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserDefaultsUtils.h; path = Squared/UserDefaultsUtils.h; sourceTree = "<group>"; };
 		7D16EF571A50D5FC00A86A6F /* UserDefaultsUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserDefaultsUtils.m; path = Squared/UserDefaultsUtils.m; sourceTree = "<group>"; };
@@ -831,6 +841,11 @@
 				7D3F58641A61896C0095B10B /* he */,
 				7D3F58661A618B7F0095B10B /* id */,
 				7D3F58681A618CBB0095B10B /* ms */,
+				7D0277BD1A6EF3C00072E956 /* ru */,
+				7D0277BF1A6EF3EA0072E956 /* hu */,
+				7D0277C11A6EF4160072E956 /* cs */,
+				7D0277C31A6EF4520072E956 /* el */,
+				7D0277C51A6EF8CB0072E956 /* uk */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -863,6 +878,11 @@
 				7D3F58651A61896C0095B10B /* he */,
 				7D3F58671A618B7F0095B10B /* id */,
 				7D3F58691A618CBB0095B10B /* ms */,
+				7D0277BE1A6EF3C00072E956 /* ru */,
+				7D0277C01A6EF3EA0072E956 /* hu */,
+				7D0277C21A6EF4160072E956 /* cs */,
+				7D0277C41A6EF4520072E956 /* el */,
+				7D0277C61A6EF8CB0072E956 /* uk */,
 			);
 			name = LaunchScreen.xib;
 			sourceTree = "<group>";
