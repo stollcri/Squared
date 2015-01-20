@@ -521,9 +521,11 @@ void carveSeams(struct Pixel *sImgPixels, int sImgWidth, int sImgHeight, unsigne
             
             colorForPadding = 1;
         } else if (padMode == PAD_MODE_MIRROR) {
-            mirorForPadding = 1;
+            //mirorForPadding = 1;
+            mirorForPaddingB = 1;
         } else if (padMode == PAD_MODE_SMEAR) {
-            smearForPadding = 1;
+            //smearForPadding = 1;
+            smearForPaddingB = 1;
         } else if (padMode == PAD_MODE_B_MIRROR) {
             mirorForPaddingB = 1;
         } else if (padMode == PAD_MODE_B_SMEAR) {
