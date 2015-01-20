@@ -715,32 +715,6 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
         }
     }
     
-    int energyGwthS;
-    //int energyGandS;
-    for (int j = 0; j < sImgHeight; ++j) {
-        for (int i = 0; i < sImgWidth; ++i) {
-            sImgPixelLoc = (j * pixelWidth) + (i * pixelDepth);
-            pixelLocation = (j * sImgWidth) + i;
-            double gaussianValue1 = image[pixelLocation].gaussA;
-            double gaussianValue2 = image[pixelLocation].gaussB;
-            double gaussianDifference = abs(gaussianValue1 - gaussianValue2);
-            
-            energyGwthS = (gaussianDifference + (image[pixelLocation].sobelA / 100) * 20);
-            //energyGandS = 0;//((int)gaussianDifference & (int)(image[pixelLocation].sobelA / 100)) * 32;
-            //image[pixelLocation].energy = min(max((energyGwthS + energyGandS), 0), 255);
-            image[pixelLocation].energy = min(max(energyGwthS, 0), 255);
-            
-            // handle freeze/melt masks
-            if (sImgMask[sImgPixelLoc] >= 255) {
-                // if it just zero then the seams become straight and more unnatural
-                image[pixelLocation].energy = (image[pixelLocation].energy / 97);
-            }
-            if (sImgMask[sImgPixelLoc+2] >= 255) {
-                image[pixelLocation].energy = ((image[pixelLocation].energy + 1) * 13);
-            }
-        }
-    }
-    
     // handle faces
     int faceBeginX = 0;
     int faceBeginY = 0;
@@ -768,6 +742,34 @@ struct Pixel *createImageData(unsigned char *sImg, int sImgWidth, int sImgHeight
             for (int k = xLoopBegin; k < xLoopEnd; ++k) {
                 pixelLocation = (j * sImgWidth) + k;
                 image[pixelLocation].energy = ((image[pixelLocation].energy + 1) * 7);
+            }
+        }
+    }
+    
+    int energyGwthS;
+    //int energyGandS;
+    for (int j = 0; j < sImgHeight; ++j) {
+        for (int i = 0; i < sImgWidth; ++i) {
+            sImgPixelLoc = (j * pixelWidth) + (i * pixelDepth);
+            pixelLocation = (j * sImgWidth) + i;
+            double gaussianValue1 = image[pixelLocation].gaussA;
+            double gaussianValue2 = image[pixelLocation].gaussB;
+            double gaussianDifference = abs(gaussianValue1 - gaussianValue2);
+            
+            energyGwthS = (gaussianDifference + (image[pixelLocation].sobelA / 100) * 20);
+            //energyGandS = 0;//((int)gaussianDifference & (int)(image[pixelLocation].sobelA / 100)) * 32;
+            //image[pixelLocation].energy = min(max((energyGwthS + energyGandS), 0), 255);
+            image[pixelLocation].energy = min(max(energyGwthS, 0), 255);
+            
+            // handle melt mask
+            if (sImgMask[sImgPixelLoc] >= 255) {
+                // if it just zero then the seams become straight and more unnatural
+                image[pixelLocation].energy = (image[pixelLocation].energy / 23);
+            }
+            
+            // handle freeze mask
+            if (sImgMask[sImgPixelLoc+2] >= 255) {
+                image[pixelLocation].energy = ((image[pixelLocation].energy + 1) * 13);
             }
         }
     }
