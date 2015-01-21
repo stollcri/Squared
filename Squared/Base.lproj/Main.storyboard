@@ -240,13 +240,29 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WwY-dH-dht">
+                                <rect key="frame" x="170" y="188" width="260" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="USs-HT-qqt"/>
+                                    <constraint firstAttribute="width" constant="260" id="dOb-Pe-eWx"/>
+                                </constraints>
+                                <state key="normal" title="Restore Purchase">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="doRestore:" destination="WuT-WV-rXc" eventType="touchUpInside" id="0EG-Q8-rQh"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="WwY-dH-dht" firstAttribute="top" secondItem="0h8-Rk-8OW" secondAttribute="bottom" constant="8" id="5CA-my-Q4O"/>
                             <constraint firstAttribute="centerX" secondItem="M9j-qc-f0F" secondAttribute="centerX" id="C1t-GL-q43"/>
+                            <constraint firstItem="WwY-dH-dht" firstAttribute="top" secondItem="M9j-qc-f0F" secondAttribute="bottom" constant="25" id="Dom-bQ-qEP"/>
                             <constraint firstItem="aXO-Ng-pYI" firstAttribute="trailing" secondItem="dYz-1R-Uuf" secondAttribute="trailingMargin" id="FlG-zu-cjj"/>
                             <constraint firstItem="M9j-qc-f0F" firstAttribute="top" secondItem="aXO-Ng-pYI" secondAttribute="bottom" constant="8" id="HBW-ls-bHY"/>
                             <constraint firstItem="axW-HF-sFY" firstAttribute="top" secondItem="ab6-if-ms0" secondAttribute="bottom" constant="20" id="J1l-8j-RL1"/>
+                            <constraint firstAttribute="centerX" secondItem="WwY-dH-dht" secondAttribute="centerX" id="RcL-Rb-q11"/>
                             <constraint firstItem="0h8-Rk-8OW" firstAttribute="trailing" secondItem="dYz-1R-Uuf" secondAttribute="trailingMargin" id="T0a-z5-ut6"/>
                             <constraint firstItem="aXO-Ng-pYI" firstAttribute="top" secondItem="Gpb-oC-TOe" secondAttribute="bottom" constant="20" id="Xwe-yg-Lhi"/>
                             <constraint firstItem="aXO-Ng-pYI" firstAttribute="leading" secondItem="dYz-1R-Uuf" secondAttribute="leadingMargin" id="a8h-hD-KaN"/>
@@ -254,10 +270,16 @@
                             <constraint firstItem="0h8-Rk-8OW" firstAttribute="top" secondItem="M9j-qc-f0F" secondAttribute="bottom" constant="8" id="vHw-rI-eVF"/>
                             <constraint firstAttribute="centerX" secondItem="ab6-if-ms0" secondAttribute="centerX" id="w2N-nM-LY6"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="5CA-my-Q4O"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="buyButton" destination="M9j-qc-f0F" id="E41-l8-7Fz"/>
                         <outlet property="mainText" destination="aXO-Ng-pYI" id="qpP-3q-cSD"/>
+                        <outlet property="restoreButton" destination="WwY-dH-dht" id="LKR-he-4Xa"/>
                         <outlet property="thanksText" destination="0h8-Rk-8OW" id="8UU-eW-Ccq"/>
                     </connections>
                 </viewController>

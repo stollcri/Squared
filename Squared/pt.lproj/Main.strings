@@ -13,3 +13,6 @@
 
 /* Class = "IBUIButton"; normalTitle = "Remove Logo"; ObjectID = "zl6-8h-c50"; */
 "zl6-8h-c50.normalTitle" = "Remover logo";
+
+/* Class = "IBUIButton"; normalTitle = "Restore Purchase"; ObjectID = "WwY-dH-dht"; */
+"WwY-dH-dht.normalTitle" = "Restaurar Compra";

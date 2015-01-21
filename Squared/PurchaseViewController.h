@@ -15,9 +15,11 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *mainText;
 @property (weak, nonatomic) IBOutlet UIButton *buyButton;
+@property (weak, nonatomic) IBOutlet UIButton *restoreButton;
 @property (weak, nonatomic) IBOutlet UILabel *thanksText;
 
 - (IBAction)doBuy:(id)sender;
+- (IBAction)doRestore:(id)sender;
 - (IBAction)doCancel:(id)sender;
 - (IBAction)deTest:(id)sender;
 

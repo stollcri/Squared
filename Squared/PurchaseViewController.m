@@ -82,17 +82,20 @@
 - (void)disableBuyButton
 {
     [self.buyButton setEnabled:NO];
+    [self.restoreButton setEnabled:NO];
 }
 
 - (void)enableBuyButton
 {
     [self.buyButton setEnabled:YES];
+    [self.restoreButton setEnabled:YES];
 }
 
 - (void)showThanks
 {
     [self.mainText setHidden:YES];
     [self.buyButton setHidden:YES];
+    [self.restoreButton setHidden:YES];
     [self.thanksText setHidden:NO];
 }
 
@@ -120,6 +123,11 @@
     SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
     payment.quantity = 1;
     [[SKPaymentQueue defaultQueue] addPayment:payment];
+}
+
+- (IBAction)doRestore:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"org.christopherstoll.squared.purchaserestore" object:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)doCancel:(id)sender

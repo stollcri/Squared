@@ -112,6 +112,7 @@
     [defaultNotifCenter addObserver:self selector:@selector(squareImageComplete:) name:@"org.christopherstoll.squared.squarecomplete" object:nil];
     [defaultNotifCenter addObserver:self selector:@selector(squareImageBorderTransition:) name:@"org.christopherstoll.squared.squaretransition" object:nil];
     
+    [defaultNotifCenter addObserver:self selector:@selector(purchaseRestore:) name:@"org.christopherstoll.squared.purchaserestore" object:nil];
     [defaultNotifCenter addObserver:self selector:@selector(purchaseStarted:) name:@"org.christopherstoll.squared.purchasepending" object:nil];
     [defaultNotifCenter addObserver:self selector:@selector(purchaseFailed:) name:@"org.christopherstoll.squared.purchasefailed" object:nil];
     [defaultNotifCenter addObserver:self selector:@selector(purchaseCompleted:) name:@"org.christopherstoll.squared.purchased" object:nil];
@@ -435,6 +436,13 @@
 }
 
 #pragma mark - Notification handlers
+
+- (void)purchaseRestore:(NSNotification *)notification
+{
+    if (notification) {
+        [self validatePurchase];
+    }
+}
 
 - (void)purchaseStarted:(NSNotification *)notification
 {

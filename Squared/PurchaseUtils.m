@@ -152,9 +152,13 @@
     loadedValidRootCert = [self loadAppleRootCertificate];
     self.currentValidationStage += 1;
     
-    BOOL receiptSignatureIsValid = NO;
     NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
     NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
+    if (!receiptData) {
+        return NO;
+    }
+    
+    BOOL receiptSignatureIsValid = NO;
     if (loadedValidRootCert) {
         receiptSignatureIsValid = [self validateSignatureOfReceiptData:receiptData withCertificate:self.appleRootCertificate];
     }
