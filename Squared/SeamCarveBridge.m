@@ -24,6 +24,7 @@
     CIImage *image = [CIImage imageWithCGImage:sourceImage.CGImage];
     CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace
                                               context:nil options:[NSDictionary dictionaryWithObject:CIDetectorAccuracyHigh forKey:CIDetectorAccuracy]];
+    // TODO: check image orientation, do rotated images get image detection?
     return [detector featuresInImage:image];
 }
 
@@ -82,6 +83,8 @@
     if (context) {
         CGContextDrawImage(context, CGRectMake(0, 0, imgWidth, imgHeight), imgRef);
         CGContextRelease(context);
+        // TODO: test using the line below instead of the release statement
+        //imgRef = nil;
         // This causes zombies which when released result in bad access errors
         //CGImageRelease(imgRef);
     } else {

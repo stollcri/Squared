@@ -206,7 +206,10 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    UIImage *img = [info objectForKey:UIImagePickerControllerOriginalImage];
+    UIImage *img = [info objectForKey:UIImagePickerControllerEditedImage];
+    if (!img) {
+        img = [info objectForKey:UIImagePickerControllerOriginalImage];
+    }
     
     // TODO: move to bridge class
     if (img) {
