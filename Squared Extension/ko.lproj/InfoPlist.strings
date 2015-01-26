@@ -1,0 +1,10 @@
+/*
+ InfoPlist.strings
+ Squared
+ 
+ Created by Christopher Stoll on 1/26/15.
+ Copyright (c) 2015 Christopher Stoll. All rights reserved.
+ */
+
+CFBundleDisplayName = "제곱";
+NSHumanReadableCopyright = "저작권 2015 C Stoll. 모든 권리 보유.";

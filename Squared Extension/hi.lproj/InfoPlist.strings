@@ -1,0 +1,10 @@
+/*
+ InfoPlist.strings
+ Squared
+ 
+ Created by Christopher Stoll on 1/26/15.
+ Copyright (c) 2015 Christopher Stoll. All rights reserved.
+ */
+
+CFBundleDisplayName = "चुकता";
+NSHumanReadableCopyright = "कॉपीराइट 2015 C Stoll सर्वाधिकार सुरक्षित";

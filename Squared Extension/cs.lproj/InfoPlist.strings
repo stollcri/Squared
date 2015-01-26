@@ -1,0 +1,10 @@
+/*
+ InfoPlist.strings
+ Squared
+ 
+ Created by Christopher Stoll on 1/26/15.
+ Copyright (c) 2015 Christopher Stoll. All rights reserved.
+ */
+
+CFBundleDisplayName = "Čtvercový";
+NSHumanReadableCopyright = "Copyright 2015 C. Stoll. Všechna práva vyhrazena.";
